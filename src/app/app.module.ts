@@ -9,7 +9,7 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { DataService} from "./pages/services/data.service";
-import {HeaderComponent} from "./header/header.component";
+import { CallNumber } from '@ionic-native/call-number';
 
 @NgModule({
   declarations: [AppComponent],

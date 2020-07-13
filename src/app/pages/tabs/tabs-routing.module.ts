@@ -9,29 +9,26 @@ const routes: Routes = [
     children:[
       {
         path:'produits',
-        children:[
-          {
-            path:'',
-            loadChildren: () => import('../produits/produits.module').then(m => m.ProduitsPageModule)
-          }
-        ]
+        loadChildren: () => import('../produits/produits.module').then(m => m.ProduitsPageModule)
       },
       {
         path:'historique',
-        children:[
-          {
-            path:'',
-            loadChildren: () => import('../historique/historique.module').then(m => m.HistoriquePageModule)
-          }
-        ]
+        loadChildren: () => import('../historique/historique.module').then(m => m.HistoriquePageModule)
       },
       {
-        path:'',
-        redirectTo:'/tabs/produits',
-        pathMatch:'full'
+        path:'documents',
+        loadChildren: () => import('../documents/documents.module').then(m => m.DocumentsPageModule)
+      },
+      {
+        path:'contact'
+      },
+      {
+        path: '',
+        redirectTo: '/tabs/produits',
+        pathMatch: 'full'
       }
     ]
-  },
+ },
   {
     path:'',
     redirectTo:'/tabs/produits',

@@ -9,7 +9,15 @@ const routes: Routes = [
   {
     path: 'settings',
     loadChildren: () => import('./pages/settings/settings.module').then(m => m.SettingsPageModule)
+  },  {
+    path: 'documents',
+    loadChildren: () => import('./pages/documents/documents.module').then( m => m.DocumentsPageModule)
+  },
+  {
+    path: 'contact',
+    loadChildren: () => import('./pages/contact/contact.module').then( m => m.ContactPageModule)
   }
+
 ];
 
 @NgModule({
