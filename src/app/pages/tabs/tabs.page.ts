@@ -24,6 +24,7 @@ export class TabsPage {
 
   // création de la modal
   async popUpModal() {
+
     const enterAnimation = (baseEl: any) => {
     // création de l'animation via AnimationControleur
     const backdropAnimation = this.animationCtrl.create()
@@ -34,7 +35,7 @@ export class TabsPage {
     .addElement(baseEl.querySelector('.modal-wrapper'));
 
     // la méthode fromTo permet de dire de quels parametres ça commence / ça fini
-    wrapperAnimation.fromTo('transform', 'scaleX(0.1) scaleY(0,1)', 'translateX(0%) scaleX(1) scaleY(1)')
+    wrapperAnimation.fromTo('transform', 'scaleX(0.1) scaleY(0.1)', 'translateX(0%) scaleX(1) scaleY(1)')
     .fromTo('opacity', 0, 1);
 
     backdropAnimation.fromTo('opacity', 0.01, 0.4);

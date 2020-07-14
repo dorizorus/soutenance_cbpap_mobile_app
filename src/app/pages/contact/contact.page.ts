@@ -12,7 +12,8 @@ export class ContactPage implements OnInit {
   // import d'Animation Controleur servant à créer une anim
   constructor(public modalController : ModalController,
               public animationCtrl : AnimationController,
-              private callNumber: CallNumber) { }
+              private callNumber: CallNumber
+) { }
 
   ngOnInit() {
   }
