@@ -1,9 +1,10 @@
 
 export class Client{
 
-  private code: number;
-  private companyName: string;
-  private adress: string;
+  private id: number;
+  private nom: string;
+  private adresse: string;
+  private numeroTel : number;
 
   constructor() { }
 }

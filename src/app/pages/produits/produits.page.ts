@@ -11,7 +11,7 @@ import {SingleProduitPage} from "../single-produit/single-produit.page";
 })
 export class ProduitsPage implements OnInit {
 
-  private tabProduits = [
+  public tabProduits = [
     { name:'Machine à laver',
       description:'description blabla'
     },

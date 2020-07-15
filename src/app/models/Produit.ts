@@ -1,11 +1,10 @@
 
 export class Produit{
 
-  private id:number;
-  private shortName:string;
-  private longName:string;
-  private price:number;
-  private picturePath:string;
+  private ref: string;
+  private libelle:string;
+  private prixUnitaire:number;
+  private famille:string;
 
   constructor() { }
 }
