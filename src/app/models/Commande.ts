@@ -1,9 +1,9 @@
 import {Client} from "./Client";
+import {OrderLine} from "./OrderLine";
 
 export class Commande{
 
-  private id:number;
-  private client: Client;
-
-  constructor() { }
+  id:number;
+  client: Client;
+  orderLines: OrderLine[];
 }

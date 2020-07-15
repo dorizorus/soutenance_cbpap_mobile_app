@@ -15,7 +15,6 @@ import {HeaderComponent} from "../../header/header.component";
     FormsModule,
     IonicModule,
     DocumentsPageRoutingModule
-    
   ],
   exports: [HeaderComponent],
   declarations: [DocumentsPage, HeaderComponent]
