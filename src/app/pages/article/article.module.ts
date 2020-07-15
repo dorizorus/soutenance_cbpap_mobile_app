@@ -4,8 +4,8 @@ import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { ProduitsPage } from './produits.page';
-import { ProduitsPageRoutingModule} from "./produits-routing.module";
+import { ArticlePage } from './article.page';
+import { ArticlesPageRoutingModule } from "./article-routing.module";
 import {HeaderComponent} from "../../header/header.component";
 
 @NgModule({
@@ -13,9 +13,9 @@ import {HeaderComponent} from "../../header/header.component";
     CommonModule,
     FormsModule,
     IonicModule,
-    ProduitsPageRoutingModule
+    ArticlesPageRoutingModule
   ],
   exports: [HeaderComponent],
-  declarations: [ProduitsPage, HeaderComponent]
+  declarations: [ArticlePage, HeaderComponent]
 })
-export class ProduitsPageModule {}
+export class ArticlesPageModule {}
