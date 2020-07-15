@@ -12,4 +12,8 @@ export class DocumentsPage implements OnInit {
   ngOnInit() {
   }
 
+  onClick() {
+    console.log("test");
+  }
+
 }

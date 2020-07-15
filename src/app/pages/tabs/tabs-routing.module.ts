@@ -30,7 +30,7 @@ const routes: Routes = [
             children: [
               {
                 path:'',
-                loadChildren: '../documents/documents.module#DocumentsPageModule'
+                loadChildren: () => import('../documents/documents.module').then( m => m.DocumentsPageModule)
             }
           ]
           },

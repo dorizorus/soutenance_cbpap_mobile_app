@@ -7,7 +7,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HistoriquePage implements OnInit {
 
-  private historique = [
+  public historique = [
     { name:'Commande 1',
       produits:[
         {
