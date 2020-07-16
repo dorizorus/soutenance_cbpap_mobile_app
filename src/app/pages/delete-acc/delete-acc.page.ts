@@ -25,4 +25,8 @@ export class DeleteAccPage implements OnInit {
     return await modal.present();
   }
 
+  retourArriere() {
+    this.navCtrl.navigateBack(['/settings']);
+  }
+
 }

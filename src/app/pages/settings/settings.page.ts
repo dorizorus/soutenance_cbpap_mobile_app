@@ -37,7 +37,7 @@ export class SettingsPage implements OnInit {
   }
   // Avance vers la page suppression de manière directe, comme une redirection
   async versSuppression() {
-    this.navCtrl.navigateForward('/delete-acc');
+    this.navCtrl.navigateForward('/settings/delete-acc');
 }
   // Fait apparaitre une alerte pour la confirmation. Le handler permet de faire des actions
   // via la fonction flechée

@@ -30,7 +30,7 @@ export class HeaderComponent{
     // permet d'avancer vers une route selectionné. L'avantage c'est que cela créer une animation
     // adéquate (fondu "avant" ou "arrière" d'un back button). Une des nombreuses manière de naviguer
     async versSettings() {
-        this.navCtrl.navigateForward('/settings');
+        this.navCtrl.navigateForward('settings');
     }
 
 

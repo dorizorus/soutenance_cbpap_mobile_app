@@ -31,7 +31,16 @@ export class HistoriquePage implements OnInit {
                 id: 1,
                 numeroTel: '101010',
                 nom: 'test',
-                adresse: 'somewhere'
+                adresse: 'somewhere',
+                email : '',
+                mdp : '',
+                image : '',
+                ville  :
+                    {
+                        id : 55,
+                        nomVille : "Metz",
+                        codePostal : 57000
+                    }
             },
             orderLines: [
                 {
@@ -63,7 +72,16 @@ export class HistoriquePage implements OnInit {
                 id: 2,
                 numeroTel: '101010222',
                 nom: 'test2',
-                adresse: 'somewhere2'
+                adresse: 'somewhere2',
+                email : '',
+                mdp : '',
+                image : '',
+                ville  :
+                    {
+                        id : 55,
+                        nomVille : "Metz",
+                        codePostal : 57000
+                    }
             },
             orderLines: [
                 {
