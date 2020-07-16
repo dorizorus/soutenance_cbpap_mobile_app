@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 import { ArticlePage } from './article.page';
-import {SingleArticlePage} from "../single-article/single-article.page";
 
 const routes: Routes = [
   {
