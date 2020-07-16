@@ -2,16 +2,16 @@ import { Component, OnInit } from '@angular/core';
 import {DataService} from "../services/data.service";
 import {Router} from "@angular/router";
 import {ModalController} from "@ionic/angular";
-import {SingleProduitPage} from "../single-produit/single-produit.page";
+import {SingleArticlePage} from "../single-article/single-article.page";
 
 @Component({
-  selector: 'app-produits',
-  templateUrl: './produits.page.html',
-  styleUrls: ['./produits.page.scss'],
+  selector: 'app-articles',
+  templateUrl: './article.page.html',
+  styleUrls: ['./article.page.scss'],
 })
-export class ProduitsPage implements OnInit {
+export class ArticlePage implements OnInit {
 
-  public tabProduits = [
+  public tabArticles = [
     { name:'Machine à laver',
       description:'description blabla'
     },
@@ -29,11 +29,11 @@ export class ProduitsPage implements OnInit {
   ngOnInit() {
   }
 
-  async onLoadProduit(produitData) {
-    this.navParamsService.setData(produitData);
+  async onLoadArticle(articleData) {
+    this.navParamsService.setData(articleData);
     const modal = await this.modalController.create({
-      component: SingleProduitPage,
-      cssClass:'modal-single-produit',
+      component: SingleArticlePage,
+      cssClass:'modal-single-article',
       backdropDismiss:true
     });
     return await modal.present();

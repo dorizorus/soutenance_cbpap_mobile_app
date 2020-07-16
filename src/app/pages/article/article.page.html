@@ -1,0 +1,8 @@
+<app-header></app-header>
+
+<ion-content class="ion-padding">
+  <strong>Liste des articles :</strong>
+  <ion-list>
+    <ion-item detail *ngFor="let article of tabArticles" (click)="onLoadArticle(article)" > {{article.name}} </ion-item>
+  </ion-list>
+</ion-content>

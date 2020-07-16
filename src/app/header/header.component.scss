@@ -4,22 +4,27 @@ ion-title{
 
 ion-icon{
   zoom: 2;
-  padding:0.5em;
-}
-ion-icon:hover{
-  background: #d1d1d1;
-}
-
-.image {
-  width: 70%;
-  height: 70%;
-}
-
-.icones {
-  font-size: x-large;
+  padding:3px;
 }
 
 .colonne {
   margin-top: -30px;
 }
 
+ion-toggle{
+  height: 20px;
+  width: 35px;
+}
+
+.logo{
+  text-align: center;
+}
+ion-col{
+  padding: 5px;
+  margin-bottom: 20px;
+
+}
+
+ion-col{
+  margin: 0px;
+}

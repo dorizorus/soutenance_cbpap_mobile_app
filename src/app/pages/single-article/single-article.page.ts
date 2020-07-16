@@ -4,21 +4,21 @@ import {ModalController} from "@ionic/angular";
 import {Router} from "@angular/router";
 
 @Component({
-  selector: 'app-single-produit',
-  templateUrl: './single-produit.page.html',
-  styleUrls: ['./single-produit.page.scss'],
+  selector: 'app-single-article',
+  templateUrl: './single-article.page.html',
+  styleUrls: ['./single-article.page.scss'],
 })
-export class SingleProduitPage implements OnInit {
-  private produit;
+export class SingleArticlePage implements OnInit {
+  private article;
 
   constructor(private dataNav: DataService,
               private modalController:ModalController,
               private router: Router) {
-    this.produit = dataNav.getData();
+    this.article = dataNav.getData();
   }
 
   ngOnInit() {
     // pour eviter d'entrer par l'url - pas forcement utile
-    this.modalController.dismiss(this).catch((error) => this.router.navigateByUrl('/tabs/produits'));
+    this.modalController.dismiss(this).catch((error) => this.router.navigateByUrl('/tabs/article'));
   }
 }

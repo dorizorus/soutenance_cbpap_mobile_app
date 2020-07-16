@@ -1,20 +1,13 @@
-import { Component, OnInit } from '@angular/core';
-import {ProduitsPage} from "../produits/produits.page";
-import {HistoriquePage} from "../historique/historique.page";
-import { DocumentsPage } from '../documents/documents.page';
-import { ContactPage } from '../contact/contact.page';
-import { AnimationController, ModalController } from '@ionic/angular';
+import {Component, OnInit} from '@angular/core';
+import {ContactPage} from '../contact/contact.page';
+import {AnimationController, ModalController} from '@ionic/angular';
 
 @Component({
-  selector: 'app-tabs',
-  templateUrl: './tabs.page.html',
-  styleUrls: ['./tabs.page.scss'],
+    selector: 'app-tabs',
+    templateUrl: './tabs.page.html',
+    styleUrls: ['./tabs.page.scss'],
 })
 export class TabsPage {
-  private appareilsPage = ProduitsPage;
-  private historiquePage = HistoriquePage;
-  private documentPage = DocumentsPage;
-  private contactPage = ContactPage;
 
   constructor(public modalController : ModalController,
     public animationCtrl : AnimationController) { }
@@ -53,17 +46,16 @@ export class TabsPage {
     const leaveAnimation = (baseEl: any) => {
     return enterAnimation(baseEl).direction('reverse');
     }
-
     // Création du modal avec les animations et les css défini
     const modal = await this.modalController.create({
-    component: ContactPage,
-    enterAnimation,
-    leaveAnimation,
-    cssClass : 'modal-pop'
-    });
+      component: ContactPage,
+      enterAnimation,
+      leaveAnimation,
+      cssClass: 'modal-pop'
+  });
 
-    // lancement du modal
-    return await modal.present();
+  // lancement du modal
+  return await modal.present();
+
   }
-
 }
