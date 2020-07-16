@@ -9,11 +9,9 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { DataService} from "./pages/services/data.service";
-import { CallNumber } from '@ionic-native/call-number';
-import { SingleCommandePipe } from './pages/single-commande.pipe';
 
 @NgModule({
-  declarations: [AppComponent, SingleCommandePipe],
+  declarations: [AppComponent],
   entryComponents: [],
   imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule],
   providers: [

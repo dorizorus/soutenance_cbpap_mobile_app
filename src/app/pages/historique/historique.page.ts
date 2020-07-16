@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {Commande} from "../../models/Commande";
 import {Client} from "../../models/Client";
+import {OrderService} from "../../services/order.service";
 
 @Component({
     selector: 'app-historique',
@@ -13,7 +14,7 @@ export class HistoriquePage implements OnInit {
     private commande1: Commande;
     private commande2: Commande;
 
-    constructor() {
+    constructor(private orderService:OrderService) {
     }
 
     ngOnInit() {
@@ -85,6 +86,6 @@ export class HistoriquePage implements OnInit {
     }
 
     onLoadCommande(commande) {
-        console.log(commande)
+        this.orderService.setCommande(commande);
     }
 }
