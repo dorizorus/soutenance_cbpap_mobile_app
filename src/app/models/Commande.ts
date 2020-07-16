@@ -3,7 +3,7 @@ import {OrderLine} from "./OrderLine";
 
 export class Commande{
 
-  id:number;
+  orderNumber:string;
   client: Client;
   orderLines: OrderLine[];
 }

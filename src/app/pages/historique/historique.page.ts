@@ -24,7 +24,7 @@ export class HistoriquePage implements OnInit {
         this.commande1 = new Commande();
         this.commande2 = new Commande();
         this.commande1 = {
-            id: 1,
+            orderNumber: 'MOBI1337',
             client: {id:1,
             numeroTel:'101010',
             nom:'test',
@@ -53,7 +53,7 @@ export class HistoriquePage implements OnInit {
           ]
         };
       this.commande2 = {
-        id: 2,
+        orderNumber: 'mobydick',
         client: {id:2,
           numeroTel:'101010222',
           nom:'test2',
@@ -81,10 +81,7 @@ export class HistoriquePage implements OnInit {
           }
         ]
       };
-        this.historique.push(this.commande1);
-        this.historique.push(this.commande2);
-
-        return this.historique;
+        return [this.commande1,this.commande2];
     }
 
     onLoadCommande(commande) {

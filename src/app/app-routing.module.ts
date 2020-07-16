@@ -9,7 +9,11 @@ const routes: Routes = [
     {
         path: 'login',
         loadChildren: () => import('./pages/login/login.module').then(m => m.LoginPageModule)
-    }
+    },  {
+    path: 'single-commande',
+    loadChildren: () => import('./pages/single-commande/single-commande.module').then( m => m.SingleCommandePageModule)
+  }
+
 ];
 
 @NgModule({

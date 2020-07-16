@@ -3,6 +3,6 @@
 <ion-content class="ion-padding">
   <strong>Liste des articles :</strong>
   <ion-list>
-    <ion-item *ngFor="let article of tabArticles" (click)="onLoadArticle(article)" > {{article.name}} </ion-item>
+    <ion-item detail *ngFor="let article of tabArticles" (click)="onLoadArticle(article)" > {{article.name}} </ion-item>
   </ion-list>
 </ion-content>
