@@ -28,7 +28,7 @@ const routes: Routes = [
     },
     {
         path:'',
-        redirectTo:'/nav',
+        redirectTo:'/nav/article',
         pathMatch:'full'
     }
 ];
