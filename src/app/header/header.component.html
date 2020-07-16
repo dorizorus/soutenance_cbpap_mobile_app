@@ -1,10 +1,11 @@
 <ion-header>
-  <ion-grid>
+  <ion-grid> <!-- créer un quadrillage permettant de positionner des colonnes et des lignes -->
     <ion-toolbar>
-      <ion-row>
+      <ion-row> <!-- permet d'ajouter une ligne, enfant du grid et mere de ion-col-->
         <ion-col size="4">
           <ion-avatar>
-            <img class="image" src="assets/icon/favicon.png" alt="avatar">
+            <img class="image" src="assets/icon/devanturePizzaHut.png" 
+            alt="avatar" (click)="versSettings()">
           </ion-avatar>
         </ion-col>
         <ion-col size="4">
@@ -42,7 +43,7 @@
           <div>-5% <small>retrait entrepôt</small></div>
         </ion-col>
         <ion-col size="2">
-          <ion-toggle></ion-toggle>
+          <ion-toggle></ion-toggle> <!-- ajoute le bouton activé/désactivé -->
         </ion-col>
       </ion-row>
     </ion-toolbar>

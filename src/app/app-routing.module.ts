@@ -32,7 +32,12 @@ const routes: Routes = [
     path: 'produits',
     loadChildren: () => import('./pages/produits/produits.module').then( m => m.ProduitsPageModule)
     //loadChildren: './pages/documents/documents.module#DocumentsPageModule'
+  },  {
+    path: 'delete-acc',
+    loadChildren: () => import('./pages/delete-acc/delete-acc.module').then( m => m.DeleteAccPageModule)
   }
+
+
   /*{
     path: 'contact',
     loadChildren: () => import('./pages/contact/contact.module').then( m => m.ContactPageModule)

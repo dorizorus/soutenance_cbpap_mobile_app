@@ -1,13 +1,46 @@
 <ion-header>
     <ion-toolbar>
-        <ion-buttons slot="start">
-            <ion-button color="dark" (click)="dissmisModal()">
-                <ion-icon name="caret-back-outline"></ion-icon>
-            </ion-button>
-        </ion-buttons>
-        <ion-title>Informations compte</ion-title>
+                <ion-button slot="start">
+                    
+    <!-- A terme, mettre <ion-back-button></ion-back-button>.
+    Il créera tout seul la route vers l'arrière sans rien spécifier -->
+                    <ion-back-button  defaultHref="/tabs"></ion-back-button>
+                </ion-button>
+                <img src="assets/icon/logo.jpg" alt="logo">
     </ion-toolbar>
-</ion-header>
+</ion-header> 
+
 <ion-content>
-nom, code client, adresse, password ...
-</ion-content>
+    <ion-title>Selection du compte</ion-title>
+    <ion-grid>
+        <ion-row align-items-center justify-content-center>
+            <ion-col align-self-center [size]="12" >
+                <div>
+                    <ion-avatar>
+                        <ion-img class="image" src="{{client.image}}" alt="avatar"></ion-img>
+                    </ion-avatar>
+                </div>
+            </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col>
+                <br/>
+                <p><strong>{{client.nom}}</strong></p>
+                <p>{{client.adresse}}</p>
+                <p>{{client.ville.nomVille}}, {{client.ville.codePostal}}</p>
+            </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col>
+                <ion-button color="danger" (click)="alertConfirm()">
+                    Supprimer le compte de l'appareil
+                </ion-button>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+
+    <!-- <ion-list>
+        <ion-item button *ngFor="let commande of commandes">
+            {{ commande.libelle }}
+        </ion-item>
+    </ion-list> -->

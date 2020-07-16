@@ -9,7 +9,7 @@ import { CallNumber } from '@ionic-native/call-number/ngx';
   providers : [CallNumber]
 })
 export class ContactPage implements OnInit {
-  // import d'Animation Controleur servant à créer une anim
+  // import d'AnimationController servant à créer une animation custom
   constructor(public modalController : ModalController,
               public animationCtrl : AnimationController,
               private callNumber: CallNumber
@@ -18,6 +18,8 @@ export class ContactPage implements OnInit {
   ngOnInit() {
   }
 
+  // Alors cette création de modal ne sert à a rien mais je l'avais mis pour une raison. Je sais
+  // plus laquelle par contre. Je rectifierais ça
 
   // création de la modal
   async presentModal() {
@@ -36,7 +38,7 @@ export class ContactPage implements OnInit {
 
       backdropAnimation.fromTo('opacity', 0.01, 0.4);
 
-      // on retourne l'animation
+      // on retourne l'animation crer avec ses différents élément
       return this.animationCtrl.create()
         .addElement(baseEl)
         .easing('cubic-bezier(0.36,0.66,0.04,1)')
@@ -45,7 +47,7 @@ export class ContactPage implements OnInit {
         .addAnimation([backdropAnimation, wrapperAnimation]);
     }
 
-      // 
+      // pour l'animation de retour, on joue simplement l'inverse de l'animation d'entrée
     const leaveAnimation = (baseEl: any) => {
       return enterAnimation(baseEl).direction('reverse');
     }
@@ -55,13 +57,17 @@ export class ContactPage implements OnInit {
       component: ContactPage,
       enterAnimation,
       leaveAnimation,
+      backdropDismiss: true,
       cssClass : 'modal-pop'
     });
 
-    // lancement du modal
+    // apparition du modal
     return await modal.present();
   }
 
+  
+    // permet de faire disparaitre le modal via cette méthode mais on utilise backdropdismiss
+    // qui permet de fermer la modal dés qu'on clique a l'exterieur de celle ci. Non utilisé
   dissmisModal() {
     this.modalController.dismiss();
   }

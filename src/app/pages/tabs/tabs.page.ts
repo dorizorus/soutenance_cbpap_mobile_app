@@ -40,7 +40,7 @@ export class TabsPage {
 
     backdropAnimation.fromTo('opacity', 0.01, 0.4);
 
-    // on retourne l'animation
+    // on retourne l'animation avec ses différents éléments
     return this.animationCtrl.create()
     .addElement(baseEl)
     .easing('cubic-bezier(0.36,0.66,0.04,1)')
@@ -49,7 +49,7 @@ export class TabsPage {
     .addAnimation([backdropAnimation, wrapperAnimation]);
     }
 
-    // 
+    // pour l'animation de retour, on joue simplement l'inverse de l'animation d'entrée
     const leaveAnimation = (baseEl: any) => {
     return enterAnimation(baseEl).direction('reverse');
     }

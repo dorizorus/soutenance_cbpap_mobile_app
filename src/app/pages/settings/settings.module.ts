@@ -7,7 +7,8 @@ import { IonicModule } from '@ionic/angular';
 import { SettingsPageRoutingModule } from './settings-routing.module';
 
 import { SettingsPage } from './settings.page';
-import {HeaderComponent} from "../../header/header.component";
+import { HeaderComponent } from '../../header/header.component';
+
 
 @NgModule({
   imports: [
