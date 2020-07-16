@@ -1,19 +1,25 @@
 <app-header></app-header>
 <ion-toolbar>
-  <ion-buttons slot="start">
-    <ion-back-button icon="chevron-back-outline" default-href="/"></ion-back-button>
-  </ion-buttons>
-  {{commande.orderNumber}}
+    <ion-buttons slot="start">
+        <ion-back-button icon="chevron-back-outline" default-href="/"></ion-back-button>
+    </ion-buttons>
+    {{commande.orderNumber}}
 </ion-toolbar>
 <ion-content class="ion-padding">
-  <ion-item lines="full" *ngFor="let orderLine of commande.orderLines">
-    <div slot="start">
-      {{orderLine.article.libelle + ' x' + orderLine.quantity}}
+    <ion-item color="red" *ngFor="let orderLine of commande.orderLines">
+        <div slot="start">
+            {{orderLine.article.libelle + ' x' + orderLine.quantity}}
+        </div>
+        <div slot="end">
+            prix :{{orderLine.article.prixUnitaire * orderLine.quantity}} €
+        </div>
+    </ion-item>
+    <div class="total">
+        <div *ngIf="remise">
+            <p>Sous-total HT : <b>{{total | number : '1.2-2'}} €</b></p>
+            <p>Retraît entreprise(remise 5%) : <b class="retrait"> - {{total * 0.05 | number : '1.2-2'}}</b> €</p>
+        </div>
+        <div>TOTAL HT : <b>{{total * 0.95 | number : '1.2-2'}} €</b></div>
     </div>
-    <div slot="end" >
-      prix :{{orderLine.article.prixUnitaire*orderLine.quantity}} €
-    </div>
-  </ion-item>
 
-  TOTAL HT : {{total}} €
 </ion-content>
