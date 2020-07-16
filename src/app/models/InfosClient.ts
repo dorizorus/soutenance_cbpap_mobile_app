@@ -6,5 +6,5 @@ export class InfosClient {
     email : string;
     mdp : string;
     client : Client;
-    ville: Ville;
+    ville: Ville; 
 }
