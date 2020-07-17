@@ -2,7 +2,14 @@ import {NgModule} from '@angular/core';
 import {PreloadAllModules, RouterModule, Routes} from '@angular/router';
 
 const routes: Routes = [
-    {
+    /* {   
+    path: '',
+    // redirectTo : 'login', Login déconne car la route pour accéder au tabs ne marche pas
+    redirectTo : 'nav', // La redirection vers nav déconne aussi.
+    pathMatch : 'full'
+
+    },*/
+    { // Actuellement on se sert du rooting de tabs (nav) ici pour tout démarrer
         path: '',
         loadChildren: () => import('./pages/tabs/tabs.module').then(m => m.TabsPageModule)
     },
@@ -17,7 +24,7 @@ const routes: Routes = [
     {
       path : 'settings',
       loadChildren: () => import('./pages/settings/settings.module').then(m => m.SettingsPageModule)
-      }
+    }
 
 
 ];
