@@ -9,7 +9,10 @@ import {Router} from "@angular/router";
   styleUrls: ['./single-article.page.scss'],
 })
 export class SingleArticlePage implements OnInit {
-  private article;
+  public article;
+  nombreQuantite : number[] = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20];
+  quantite : 2;
+
 
   constructor(private dataNav: DataService,
               private modalController:ModalController,
@@ -19,6 +22,12 @@ export class SingleArticlePage implements OnInit {
 
   ngOnInit() {
     // pour eviter d'entrer par l'url - pas forcement utile
-    this.modalController.dismiss(this).catch((error) => this.router.navigateByUrl('/tabs/article'));
+    this.modalController.dismiss(this).catch((error) => this.router.navigateByUrl('/nav'));
   }
+
+  dismissModal() {
+    this.modalController.dismiss(this);
+  }
+
+  
 }

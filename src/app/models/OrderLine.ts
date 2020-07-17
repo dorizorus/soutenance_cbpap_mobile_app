@@ -1,8 +1,8 @@
-import {Produit} from "./Produit";
+import {Article} from "./Article";
 
 export class OrderLine{
 
     orderNumber:string;
-    article:Produit;
+    article: Article;
     quantity:number;
 }

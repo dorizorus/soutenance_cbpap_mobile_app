@@ -28,10 +28,12 @@
 // Pour appliquer des styles à un modal, il faut une spécificité CSS assez 
 // élevé car ce n'est pas dans la css du component du modal vu qu'il est généré
 // d'une manière spéciale.
+
 .modal-pop {
-  --background : transparent !important;
-  --border-color : red;
   --height : 70%;
   --width : 80%;
-  --border-width : 10px;
+}
+
+.modal-article {
+  --max-height: 80%;
 }

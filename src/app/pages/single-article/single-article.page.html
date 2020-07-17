@@ -1,8 +1,36 @@
+<ion-header translucent>
+  <ion-toolbar>
+    <ion-title>{{article.ref}}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismissModal()" color="correct">Fermer</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+
 <ion-content class="ion-padding">
+  <ion-thumbnail><img src="{{article.image.document}}"></ion-thumbnail>
   <ion-card *ngIf="article != null">
-    <ion-card-header>{{article.name}}</ion-card-header>
+    <ion-card-header>{{article.libelle}}</ion-card-header>
     <ion-card-content>
-      <p>{{article.description}}</p>
+      
+      <small>{{article.description.contenu}}</small>
     </ion-card-content>
   </ion-card>
+
+  <ion-item>
+    <ion-label>Selectionnez la quantité souhaité</ion-label>
+  </ion-item>
+  <ion-item>
+    <!-- Voir comment récupérer la quantité pour la repasser a l'exterieur de la modal -->
+    <ion-select interface="popover" placeholder="0">
+      <ion-item *ngFor="let chiffre of nombreQuantite">
+        <ion-select-option value="{{chiffre}}">
+          {{chiffre}}
+        </ion-select-option>
+      </ion-item>
+    </ion-select>
+  </ion-item>
+  <!-- Ajout de la fonction qui change l'opacité a réaliser-->
+    <ion-button color="danger">Réinitialiser</ion-button>
 </ion-content>

@@ -50,7 +50,9 @@ export class HistoriquePage implements OnInit {
                         ref: 'AL30',
                         famille: 'emballage',
                         libelle: 'rouleau alu + boite distrib',
-                        prixUnitaire: 10
+                        prixUnitaire: 10,
+                        image : { id : 1 , document : ''},
+                        description : { id : 1, contenu : ''}
                     }
                 },
                 {
@@ -60,7 +62,9 @@ export class HistoriquePage implements OnInit {
                         ref: 'DP113',
                         famille: 'decoration',
                         libelle: 'lapin coquin',
-                        prixUnitaire: 60
+                        prixUnitaire: 60,
+                        image : { id : 1 , document : ''},
+                        description : { id : 1, contenu : ''}
                     }
                 }
             ]
@@ -91,7 +95,10 @@ export class HistoriquePage implements OnInit {
                         ref: 'test',
                         famille: 'emballage',
                         libelle: 'rouleau alu + boite distrib',
-                        prixUnitaire: 15
+                        prixUnitaire: 15,
+                        image : { id : 1 , document : ''},
+                        description : { id : 1, contenu : ''}
+
                     }
                 },
                 {
@@ -101,7 +108,9 @@ export class HistoriquePage implements OnInit {
                         ref: 'GT35',
                         famille: 'verre',
                         libelle: 'gobelet',
-                        prixUnitaire: 12.65
+                        prixUnitaire: 12.65,
+                        image : { id : 1 , document : ''},
+                        description : { id : 1, contenu : ''}
                     }
                 }
             ]
