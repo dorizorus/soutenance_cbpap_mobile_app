@@ -3,6 +3,8 @@ import {DataService} from "../services/data.service";
 import {ModalController} from "@ionic/angular";
 import {SingleArticlePage} from "../single-article/single-article.page";
 import { Article } from 'src/app/models/Article';
+import { OrderLine } from 'src/app/models/OrderLine';
+import { OrderService } from 'src/app/services/order.service';
 
 @Component({
   selector: 'app-articles',
@@ -11,85 +13,61 @@ import { Article } from 'src/app/models/Article';
 })
 export class ArticlePage implements OnInit {
 
-  nombreQuantite : number[] = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
-
-  listeArticles : Article[] = [{
-    ref: 'AR578',
-    libelle: 'Carton cache',
-    prixUnitaire: 40.00,
-    famille:'Carton',
-    image : {
-      id : 1,
-      document : 'assets/icon/devanturePizzaHut.png'
-    },
-    description : {
-    id : 2,
-    contenu : "Un carton qui vous permet d'echapper à vos poursuivants, que ce soit un huissier ou un membre de votre famille qui réclame le prêt qu'il vous a attribué 10 ans auparavant. NE PAS APPROCHER DE LOUPS SAUVAGE, CETTE PROTECTION NE SUFFIRA PAS."
-    }
-  },
-  {
-    ref: '3EA45F',
-    libelle: 'Carton mystere',
-    prixUnitaire: 20.00,
-    famille:'Carton',
-    image : {
-      id : 1,
-      document : 'assets/icon/devanturePizzaHut.png'
-    },
-    description : {
-    id : 2,
-    contenu : "Un carton super grand"
-    }
-  },
-  {
-    ref: '98877RRF',
-    libelle: 'Carton nature',
-    prixUnitaire: 15.00,
-    famille:'Carton',
-    image : {
-      id : 1,
-      document : 'assets/icon/devanturePizzaHut.png'
-    },
-    description : {
-    id : 2,
-    contenu : "Un carton basique"
-    }
-  },
-  {
-    ref: 'AAA78ff',
-    libelle: 'Carton rosé',
-    prixUnitaire: 12.00,
-    famille:'Carton',
-    image : {
-      id : 1,
-      document : 'assets/icon/devanturePizzaHut.png'
-    },
-    description : {
-    id : 2,
-    contenu : "Un carton qui sent bon la rose"
-    }
-  }
-];
-
-  /*public tabArticles = [
-    { name:'Machine à laver',
-      description:'description blabla'
-    },
-    { name:'Télévision',
-      description:'description blabla'
-    },
-    { name:'Ordinateur',
-      description:'description blabla'
-    } 
-  ];*/
+  nombreQuantite : number[] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20];
+  listeArticles : Article[];
+  quantiteTotal : number;
+  orderLines : OrderLine[] = [];
+  ligne: OrderLine;
 
 
   constructor(private navParamsService:DataService,
-              private modalController: ModalController){ }
+              private modalController: ModalController,
+              private orderService : OrderService) { 
+            
+            // initialisation de notre liste d'article de base
+            this.initializeArticles();
+              }
 
   ngOnInit() {
   }
 
+  // Dés qu'une quantité est selectionné pour un produit, la méthode 
+  // est censée la transmettre au service mais ça déconne
+  onChange(ev : any, art : Article) {
+    console.log("Je me lance !");
+    const val = ev.target.value;
+    this.ligne = null;
+    this.quantiteTotal = 0;
+
+      // on ajoute une ligne pour l'afficher dans la commande par la suite
+      this.ligne = {
+        orderNumber : art.ref,
+        article : art,
+        quantity : val
+      }
+      // S'il n'y a pas de lignes, on ajoute directement. S'il y en a, on remplace
+      // la quantité de la ligne par la nouvelle. Le soucis c'est
+      // que ça créer des lignes a chaque changement et le calcul de la quantité marche pas
+      // Mettre en place le fait de retirer une ligne aussi
+      
+       if (!(this.orderLines.length === 0)) {
+        this.orderLines.forEach(element=> {
+          if (element.article.ref === this.ligne.article.ref) {
+            element.quantity = this.ligne.quantity;
+          } else {
+            this.orderLines.push(this.ligne);
+          }
+          this.quantiteTotal = this.quantiteTotal + element.quantity;
+        });
+      } else {
+        console.log("je suis vide!")
+        this.orderLines.push(this.ligne);
+      } 
+    console.log("La taille du tableau est de " + this.orderLines.length + " et la quantité est de " + this.quantiteTotal);
+    this.orderService.setTotalQuantity(this.quantiteTotal);
+  }
+
+  // créer une modal avec les donnée d'un article pour les transférer dans la modal
   async onLoadArticle(articleData) {
     this.navParamsService.setData(articleData);
     const modal = await this.modalController.create({
@@ -100,4 +78,89 @@ export class ArticlePage implements OnInit {
     return await modal.present();
   }
 
+  // initialisation de la liste d'articlé crée la dedans. On utilisera le back a la place ici
+  initializeArticles() {
+    this.listeArticles = [{
+      ref: 'AR578',
+      libelle: 'Carton cache',
+      prixUnitaire: 40.00,
+      famille:'Carton',
+      image : {
+        id : 1,
+        document : 'assets/icon/devanturePizzaHut.png'
+      },
+      description : {
+      id : 2,
+      contenu : "Un carton qui vous permet d'echapper à vos poursuivants, que ce soit un huissier ou un membre de votre famille qui réclame le prêt qu'il vous a attribué 10 ans auparavant. NE PAS APPROCHER DE LOUPS SAUVAGE, CETTE PROTECTION NE SUFFIRA PAS."
+      }
+    },
+    {
+      ref: '3EA45F',
+      libelle: 'Carton mystere',
+      prixUnitaire: 20.00,
+      famille:'Carton',
+      image : {
+        id : 1,
+        document : 'assets/icon/devanturePizzaHut.png'
+      },
+      description : {
+      id : 2,
+      contenu : "Un carton super grand"
+      }
+    },
+    {
+      ref: '98877RRF',
+      libelle: 'Carton nature',
+      prixUnitaire: 15.00,
+      famille:'Carton',
+      image : {
+        id : 1,
+        document : 'assets/icon/devanturePizzaHut.png'
+      },
+      description : {
+      id : 2,
+      contenu : "Un carton basique"
+      }
+    },
+    {
+      ref: 'AAA78ff',
+      libelle: 'Carton rosé',
+      prixUnitaire: 12.00,
+      famille:'Carton',
+      image : {
+        id : 1,
+        document : 'assets/icon/devanturePizzaHut.png'
+      },
+      description : {
+      id : 2,
+      contenu : "Un carton qui sent bon la rose"
+      }
+    }
+  ];
+    }
+
+    isNotZero() {
+
+    }
+
+
+  // méthode pour la searchbar de ionic.
+  getArticleSearched(ev: any) {
+
+    // on réinitialise la liste d'article a affiché en refaisant appel à la liste originelle
+    this.initializeArticles();
+
+    // set la valeur de l'input de la searchbar dans "val". On indique que c'est un input html
+    const val = (ev.target as HTMLInputElement).value;
+
+      // si rien n'est mis on affiche tout, sinon on filtre avec ce qui a été inséré
+    if (val && val.trim() !== '') {
+      this.listeArticles = this.listeArticles.filter((article) => {
+        return (article.ref.toLowerCase().indexOf(val.toLowerCase()) > -1 ||
+        article.libelle.toLowerCase().indexOf(val.toLowerCase()) > -1);
+      })
+    } 
+  }
+
 }
+

@@ -8,4 +8,5 @@ export class Article{
   famille:string;
   image : ImageArticle;
   description : Description;
+
 }

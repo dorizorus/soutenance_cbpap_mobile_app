@@ -13,13 +13,18 @@
           <img src="assets/icon/logo.jpg" alt="logo">
         </ion-col>
         <ion-col size="1">
-          <ion-icon class="icones" name="cart-outline" size="small"></ion-icon>
+          <ion-button (click)="goPanier()">
+            <ion-icon class="icones" name="cart-outline" size="small"></ion-icon>
+          </ion-button>
         </ion-col>
         <ion-col>
           <ion-badge color="primary">0</ion-badge>
         </ion-col>
-        <ion-col size="2">
+        <ion-col size="1">
           00.00
+        </ion-col>
+        <ion-col>
+          {{quantityTotal}}
         </ion-col>
       </ion-row>
       <ion-row>

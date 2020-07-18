@@ -24,7 +24,11 @@ const routes: Routes = [
     {
       path : 'settings',
       loadChildren: () => import('./pages/settings/settings.module').then(m => m.SettingsPageModule)
-    }
+    },  {
+    path: 'panier',
+    loadChildren: () => import('./pages/panier/panier.module').then( m => m.PanierPageModule)
+  }
+
 
 
 ];

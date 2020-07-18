@@ -1,7 +1,10 @@
 <app-header></app-header>
 
 <ion-content>
-  <ion-searchbar showCancelButton="focus" animated></ion-searchbar>
+  <!--Debounce permet d'attendre un certain temps avant le dernier input pour pas faire 458 requêtes 
+  $event sert à récolter les inputs et a les envoyer dans un objet de type DOM event (https://angular.io/guide/user-input)-->
+  <ion-searchbar showCancelButton="focus" debounce="500" (ionChange)="getArticleSearched($event)"
+  animated placeholder="Rechercher.." class="searchbar"></ion-searchbar>
   <ion-list>
     <ion-list-header>
       <ion-label>
@@ -14,7 +17,7 @@
       <ion-label>{{article.ref}}</ion-label>
       {{article.libelle}}
       {{article.prixUnitaire}}
-      <ion-select interface="popover" placeholder="0">
+      <ion-select interface="popover" placeholder="0" (ionChange)="onChange($event, article)">
         <ion-item *ngFor="let chiffre of nombreQuantite">
           <ion-select-option value="{{chiffre}}">
             {{chiffre}}

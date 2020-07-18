@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -6,6 +7,7 @@ import { Injectable } from '@angular/core';
 export class DataService {
 
   private data: any[];
+
   constructor() { }
 
   setData(data){
@@ -15,4 +17,8 @@ export class DataService {
   getData(){
     return this.data;
   }
+
+  
+
+
 }
