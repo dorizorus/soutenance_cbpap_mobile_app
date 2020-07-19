@@ -3,6 +3,7 @@ import {ModalController, NavController} from "@ionic/angular";
 import {SettingsPage} from "../pages/settings/settings.page";
 import { OrderService } from '../services/order.service';
 import { PanierPage } from '../pages/panier/panier.page';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-header',
@@ -12,27 +13,36 @@ import { PanierPage } from '../pages/panier/panier.page';
 export class HeaderComponent implements OnInit{
 
     quantityTotal : number;
+    quantityObsTotal : Observable<number>;
     constructor(private modalController:ModalController,
                 private navCtrl : NavController,
                 private orderService : OrderService
-                ) { }
+                ) {
+                    
+                 }
 
     ngOnInit() {
-        this.updateQuantity();
+        this.orderService.myData.subscribe((data) => {
+            this.quantityTotal = data;
+            console.log("Ma quantité vaut " + this.quantityTotal);
+        })
+      //this.updateQuantity();
     }
 
-
-    // Censé lancer ça a chaque changement dans la quantité mais marche pas
+    /*
+    // Censé se lancer a chaque changement dans la quantité mais marche pas
     updateQuantity() {
-        
+        console.log("Je suis dans l'update")
         this.orderService.quantityObservable.subscribe(
             (quantite : number) => {
+                console.log("Quantité vaut" + quantite);
                 this.quantityTotal = quantite;
                 console.log(this.quantityTotal)
                 console.log("Update en cours");
             }
         )
     }
+    */
 
     async goPanier() {
         const modal = await this.modalController.create({

@@ -18,6 +18,7 @@ export class ArticlePage implements OnInit {
   quantiteTotal : number;
   orderLines : OrderLine[] = [];
   ligne: OrderLine;
+  compt : number = 0;
 
 
   constructor(private navParamsService:DataService,
@@ -37,6 +38,7 @@ export class ArticlePage implements OnInit {
     const val = ev.target.value;
     this.ligne = null;
     this.quantiteTotal = 0;
+    
 
       // on ajoute une ligne pour l'afficher dans la commande par la suite
       this.ligne = {
@@ -45,28 +47,45 @@ export class ArticlePage implements OnInit {
         quantity : val
       }
       // S'il n'y a pas de lignes, on ajoute directement. S'il y en a, on remplace
-      // la quantité de la ligne par la nouvelle. Le soucis c'est
-      // que ça créer des lignes a chaque changement et le calcul de la quantité marche pas
-      // Mettre en place le fait de retirer une ligne aussi
+      // la quantité de la ligne par la nouvelle.
+      // !!  Créer des lignes a chaque changement et le calcul de la quantité marche pas
 
-       // if (!(this.orderLines.length === 0)) {
+      if (!(this.orderLines.length === 0)) {
         this.orderLines.forEach(element=> {
-          if (element.article.ref == this.ligne.article.ref) {
-            console.log("je rentre dans le for each");
-            element.quantity = this.ligne.quantity;
-            console.log(this.ligne.quantity);
+          if (this.ligne.article.ref === element.article.ref) {
+            this.checkQuantity(this.ligne, element);
           } else {
             this.orderLines.push(this.ligne);
           }
-          this.quantiteTotal += element.quantity;
-        });
-      /* } else {
-        console.log("je suis vide!")
+        })
+      } else {
         this.orderLines.push(this.ligne);
-      }*/
-    console.log("La taille du tableau est de " + this.orderLines.length + " et la quantité est de " + this.quantiteTotal);
-    // this.orderService.setTotalQuantity(this.quantiteTotal);
-    this.orderService.setTotalQuantity(8);
+      }
+
+      console.log("La taille du tableau est de " + this.orderLines.length + " et la quantité est de " + this.quantiteTotal);
+      // this.orderService.setTotalQuantity(this.quantiteTotal);
+      this.orderService.setTotalQuantity(this.compt++);
+
+  }
+
+
+  // Retire du tableau si une commande a 0 article et calcule le total de la quantité d'article
+  checkQuantity( ligneQuantity : OrderLine, element : OrderLine) {
+
+    if (ligneQuantity.quantity > element.quantity) {
+      // Si le quantité input est supérieure, on soustrait l'ancienne et on ajoute la nouvelle
+      this.quantiteTotal -= element.quantity;
+      this.quantiteTotal += ligneQuantity.quantity;
+
+      // Si la quantité input est inférieure et non égale à 0, on soustrait la différence
+    } else if ((ligneQuantity.quantity < element.quantity) && (!(ligneQuantity.quantity === 0))) {
+      this.quantiteTotal -= (element.quantity - ligneQuantity.quantity);
+
+      // Si aucun des deux critères n'est rempli, c'est que c'est à 0 donc on supprime la ligne
+    } else {
+      const cle = this.orderLines.indexOf(element)
+      this.orderLines.splice(cle, 1);
+    }
   }
 
   // créer une modal avec les donnée d'un article pour les transférer dans la modal

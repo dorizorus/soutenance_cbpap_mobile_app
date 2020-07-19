@@ -9,12 +9,51 @@ import { OrderLine } from 'src/app/models/OrderLine';
 })
 export class PanierPage implements OnInit {
 
-  panier : OrderLine[];
+
 
   constructor(private orderService: OrderService) { }
 
   ngOnInit() {
-    this.panier = this.orderService.getPanier();
+
   }
+
+  panier = [
+    {
+        orderNumber: 'commande1',
+        quantity: 10,
+        article: {
+            ref: 'AL30',
+            famille: 'emballage',
+            libelle: 'rouleau alu + boite distrib',
+            prixUnitaire: 10,
+            image : { id : 1 , document : ''},
+            description : { id : 1, contenu : ''}
+        }
+    },
+    {
+        orderNumber: 'commande1',
+        quantity: 12,
+        article: {
+            ref: 'DP113',
+            famille: 'decoration',
+            libelle: 'lapin coquin',
+            prixUnitaire: 60,
+            image : { id : 1 , document : ''},
+            description : { id : 1, contenu : ''}
+        }
+    },
+    {
+      orderNumber: 'commande1',
+      quantity: 7,
+      article: {
+          ref: '44888PP',
+          famille: 'decoration',
+          libelle: 'cache cache',
+          prixUnitaire: 40,
+          image : { id : 1 , document : ''},
+          description : { id : 1, contenu : ''}
+      }
+  }
+];
 
 }
