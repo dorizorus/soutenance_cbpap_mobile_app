@@ -7,7 +7,6 @@
             <img class="image" src="assets/icon/devanturePizzaHut.png" 
             alt="avatar" (click)="versSettings()">
           </ion-avatar>
-          <div><small>Mon entreprise à moi</small></div>
         </ion-col>
         <ion-col class="logo" size="4">
           <img src="assets/icon/logo.jpg" alt="logo">
@@ -17,35 +16,37 @@
             <ion-icon class="icones" name="cart-outline" size="small"></ion-icon>
           </ion-button>
         </ion-col>
-        <ion-col>
+        <ion-col size="1">
           <ion-badge color="primary">0</ion-badge>
         </ion-col>
-        <ion-col size="1">
-          00.00
-        </ion-col>
-        <ion-col>
-          {{quantityTotal}}
-        </ion-col>
-      </ion-row>
-      <ion-row>
-        <ion-col size="5">
-        </ion-col>
         <ion-col size="2">
-          <ion-icon class="icones" name="subway-outline" size="small"></ion-icon>
-        </ion-col>
-        <ion-col size="5">
-          <div><small>250€ avant la livraison</small></div>
+          <br/>00.00
         </ion-col>
       </ion-row>
       <ion-row class="colonne">
         <ion-col size="5">
+          <div><small>Mon entreprise</small></div>
+        </ion-col>
+        <ion-col size="1">
+          <ion-icon class="icones" name="subway-outline" size="small"></ion-icon>
+        </ion-col>
+        <ion-col size="6">
+          <span class="green">250€ </span><small>avant la livraison</small>
+        </ion-col>
+      </ion-row>
+      <ion-row  class="colonne">
+        <ion-col size="5">
 
         </ion-col>
-        <ion-col size="2">
+        <ion-col size="1">
           <ion-icon class="icones" name="home-outline" size="small"></ion-icon>
         </ion-col>
-        <ion-col size="3">
-          <div>-5% <small>retrait entrepôt</small></div>
+        <ion-col size="6">
+          <span class="green">-5%</span><small> retrait entrepôt</small>
+        </ion-col>
+      </ion-row>
+      <ion-row class="colonneMax">
+        <ion-col size="10">
         </ion-col>
         <ion-col size="2">
           <ion-toggle></ion-toggle> <!-- ajoute le bouton activé/désactivé -->

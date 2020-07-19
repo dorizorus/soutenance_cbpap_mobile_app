@@ -34,7 +34,6 @@ export class ArticlePage implements OnInit {
   // Dés qu'une quantité est selectionné pour un produit, la méthode 
   // est censée la transmettre au service mais ça déconne
   onChange(ev : any, art : Article) {
-    console.log("Je me lance !");
     const val = ev.target.value;
     this.ligne = null;
     this.quantiteTotal = 0;
@@ -49,22 +48,25 @@ export class ArticlePage implements OnInit {
       // la quantité de la ligne par la nouvelle. Le soucis c'est
       // que ça créer des lignes a chaque changement et le calcul de la quantité marche pas
       // Mettre en place le fait de retirer une ligne aussi
-      
-       if (!(this.orderLines.length === 0)) {
+
+       // if (!(this.orderLines.length === 0)) {
         this.orderLines.forEach(element=> {
-          if (element.article.ref === this.ligne.article.ref) {
+          if (element.article.ref == this.ligne.article.ref) {
+            console.log("je rentre dans le for each");
             element.quantity = this.ligne.quantity;
+            console.log(this.ligne.quantity);
           } else {
             this.orderLines.push(this.ligne);
           }
-          this.quantiteTotal = this.quantiteTotal + element.quantity;
+          this.quantiteTotal += element.quantity;
         });
-      } else {
+      /* } else {
         console.log("je suis vide!")
         this.orderLines.push(this.ligne);
-      } 
+      }*/
     console.log("La taille du tableau est de " + this.orderLines.length + " et la quantité est de " + this.quantiteTotal);
-    this.orderService.setTotalQuantity(this.quantiteTotal);
+    // this.orderService.setTotalQuantity(this.quantiteTotal);
+    this.orderService.setTotalQuantity(8);
   }
 
   // créer une modal avec les donnée d'un article pour les transférer dans la modal
