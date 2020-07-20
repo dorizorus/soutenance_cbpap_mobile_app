@@ -11,8 +11,6 @@ import {OrderService} from "../../services/order.service";
 export class HistoriquePage implements OnInit {
 
     public historique: Commande[];
-    private commande1: Commande;
-    private commande2: Commande;
 
     constructor(private orderService: OrderService) {
     }
@@ -22,9 +20,9 @@ export class HistoriquePage implements OnInit {
     }
 
     private initCommandes(): Commande[] {
-        this.commande1 = new Commande();
-        this.commande2 = new Commande();
-        this.commande1 = {
+        let commande1 = new Commande();
+        let commande2 = new Commande();
+        commande1 = {
             orderNumber: 'MOBI1337',
             date: null,
             client: {
@@ -69,7 +67,7 @@ export class HistoriquePage implements OnInit {
                 }
             ]
         };
-        this.commande2 = {
+        commande2 = {
             orderNumber: 'mobydick',
             date: null,
             client: {
@@ -115,7 +113,7 @@ export class HistoriquePage implements OnInit {
                 }
             ]
         };
-        return [this.commande1, this.commande2];
+        return [commande1, commande2];
     }
 
     onLoadCommande(commande) {

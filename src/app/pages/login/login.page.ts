@@ -1,20 +1,17 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component } from '@angular/core';
 import { ModalController, NavController } from '@ionic/angular';
-import { ContactPageModule } from 'appli_mobile_cbpapiers/src/app/pages/contact/contact.module';
+import {ContactPageModule} from "../contact/contact.module";
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
 })
-export class LoginPage implements OnInit {
+export class LoginPage {
 
   constructor(private navCtrl : NavController,
               private modalController : ModalController) { }
 
-  ngOnInit() {
-  }
   // permet d'amener vers la route x
   async navTabs() {
     this.navCtrl.navigateForward(['/settings']); // tabs déconnant, ça amene sur settings

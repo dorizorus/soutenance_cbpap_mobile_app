@@ -10,14 +10,15 @@ import {Router} from "@angular/router";
 })
 export class SingleCommandePage implements OnInit {
     commande: Commande;
-    total = 0;
+    total: number = 0;
     remise: boolean;
 
     constructor(private orderService: OrderService) {
+
     }
 
     ngOnInit(): void {
-        this.commande = this.orderService.getCommande()
+        this.commande = this.orderService.getCommande();
         this.total = 0;
         this.commande.orderLines.forEach(value => this.total += (value.article.prixUnitaire * value.quantity));
         this.remise = true;

@@ -15,11 +15,12 @@
         </div>
     </ion-item>
     <div class="total">
+
+            <p>Sous-total HT : <b>{{total}} €</b></p>
         <div *ngIf="remise">
-            <p>Sous-total HT : <b>{{total | number : '1.2-2'}} €</b></p>
-            <p>Retraît entreprise(remise 5%) : <b class="retrait"> - {{total * 0.05 | number : '1.2-2'}}</b> €</p>
+            <p>Retraît entreprise(remise 5%) : <b class="retrait"> - {{total * 0.05}}</b> €</p>
         </div>
-        <div>TOTAL HT : <b>{{total * 0.95 | number : '1.2-2'}} €</b></div>
+        <div>TOTAL HT : <b>{{total * 0.95}} €</b></div>
     </div>
 
 </ion-content>
