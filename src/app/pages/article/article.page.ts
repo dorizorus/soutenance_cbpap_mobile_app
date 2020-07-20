@@ -49,26 +49,22 @@ export class ArticlePage implements OnInit {
 
         if (ligne.quantity == 0) { // suppression
             if (this.orderLines.length != 0) {
-                let cle = this.orderLines.indexOf(ligne);
-                if (cle != -1)
-                    this.orderLines.splice(cle, 1);
+                let index = this.getArticlePosition(ligne);
+                if (index != -1)
+                    this.orderLines.splice(index, 1);
             }
-        } else { // ajout
-            let cle: number = this.getArticlePosition(ligne);
-            if (cle == -1) { // pas trouve donc on ajoute
+        } else { // ajout ou modif
+            let index: number = this.getArticlePosition(ligne);
+            if (index == -1) { // pas trouve donc on ajoute
                 this.orderLines.push(ligne);
                 this.quantiteTotal++;
             } else { // update
-                this.orderLines[cle] = ligne;
+                this.orderLines[index] = ligne;
             }
         }
-        this.orderService.setTotalQuantity(this.orderLines.length);
-        this.orderService.setCommande({
-            client: null,
-            date: null,
-            orderLines: this.orderLines,
-            orderNumber: null
-        })
+        this.orderService.setPanier(this.orderLines);
+        console.log(this.orderLines);
+        console.log(this.orderService.getPanier().length) // todo fix quand on met 0 ça delete pas
     }
 
     getArticlePosition(ligne: OrderLine): number {
@@ -80,6 +76,7 @@ export class ArticlePage implements OnInit {
             }
             index++;
         }
+        console.log(index + " index ")
         if (trouve)
             return index - 1;
         return -1;

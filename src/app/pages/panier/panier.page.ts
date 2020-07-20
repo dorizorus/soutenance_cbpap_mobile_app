@@ -7,53 +7,22 @@ import { OrderLine } from 'src/app/models/OrderLine';
   templateUrl: './panier.page.html',
   styleUrls: ['./panier.page.scss'],
 })
+// pour avoir un ngFor, ajouter PanierPage à app.module.ts dans declarations & entryComponents
 export class PanierPage implements OnInit {
 
-
+    panier:OrderLine[];
+    total: number;
 
   constructor(private orderService: OrderService) { }
 
   ngOnInit() {
-
+        this.orderService.myData.subscribe(data => {
+            this.panier = data;
+            }
+        )
   }
 
-  panier = [
-    {
-        orderNumber: 'commande1',
-        quantity: 10,
-        article: {
-            ref: 'AL30',
-            famille: 'emballage',
-            libelle: 'rouleau alu + boite distrib',
-            prixUnitaire: 10,
-            image : { id : 1 , document : ''},
-            description : { id : 1, contenu : ''}
-        }
-    },
-    {
-        orderNumber: 'commande1',
-        quantity: 12,
-        article: {
-            ref: 'DP113',
-            famille: 'decoration',
-            libelle: 'lapin coquin',
-            prixUnitaire: 60,
-            image : { id : 1 , document : ''},
-            description : { id : 1, contenu : ''}
-        }
-    },
-    {
-      orderNumber: 'commande1',
-      quantity: 7,
-      article: {
-          ref: '44888PP',
-          famille: 'decoration',
-          libelle: 'cache cache',
-          prixUnitaire: 40,
-          image : { id : 1 , document : ''},
-          description : { id : 1, contenu : ''}
-      }
-  }
-];
-
+    test() {
+        console.log(this.panier)
+    }
 }
