@@ -14,7 +14,7 @@ export class LoginPage {
 
   // permet d'amener vers la route x
   async navTabs() {
-    this.navCtrl.navigateForward(['/settings']); // tabs déconnant, ça amene sur settings
+    this.navCtrl.navigateForward(['/nav/article']); 
   }
 
   // censé faire apparaitre la modal mais ne marche pas non plus. La modal est créer dans tabs.ts

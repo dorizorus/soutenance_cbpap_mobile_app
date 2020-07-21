@@ -16,6 +16,7 @@ export class PanierPage implements OnInit {
   constructor(private orderService: OrderService) { }
 
   ngOnInit() {
+      // on subscribe aux données (ici un tableau de ligne de commande du panier), dès qu'un changement est detecté on les récupère
         this.orderService.myData.subscribe(data => {
             this.panier = data;
             }

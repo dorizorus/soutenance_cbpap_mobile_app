@@ -3,7 +3,7 @@ import {PreloadAllModules, RouterModule, Routes} from '@angular/router';
 
 const routes: Routes = [
     { // Actuellement on se sert du rooting de tabs (nav) ici pour tout démarrer
-        path: '',
+        path: 'nav',
         loadChildren: () => import('./pages/tabs/tabs.module').then(m => m.TabsPageModule)
     },
     {
@@ -13,7 +13,12 @@ const routes: Routes = [
     {
         path: 'settings',
         loadChildren: () => import('./pages/settings/settings.module').then(m => m.SettingsPageModule)
-    }
+    }, {
+    path : '',
+    redirectTo : 'login',
+    pathMatch: 'full'
+  }
+
 ];
 
 @NgModule({

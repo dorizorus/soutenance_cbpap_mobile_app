@@ -64,7 +64,7 @@ export class ArticlePage implements OnInit {
         }
         this.orderService.setPanier(this.orderLines);
         console.log(this.orderLines);
-        console.log(this.orderService.getPanier().length) // todo fix quand on met 0 ça delete pas
+        console.log(this.orderService.getPanier().length) 
     }
 
     getArticlePosition(ligne: OrderLine): number {

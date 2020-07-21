@@ -7,6 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { SingleCommandePageRoutingModule } from './single-commande-routing.module';
 
 import { SingleCommandePage } from './single-commande.page';
+import { HeaderComponent } from 'appli_mobile_cbpapiers/src/app/header/header.component';
 
 @NgModule({
   imports: [
@@ -15,6 +16,7 @@ import { SingleCommandePage } from './single-commande.page';
     IonicModule,
     SingleCommandePageRoutingModule
   ],
-  declarations: [SingleCommandePage]
+  exports: [HeaderComponent],
+  declarations: [SingleCommandePage, HeaderComponent]
 })
 export class SingleCommandePageModule {}

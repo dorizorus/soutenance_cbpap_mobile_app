@@ -1,7 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {Commande} from "../../models/Commande";
 import {OrderService} from "../../services/order.service";
-import {Router} from "@angular/router";
 
 @Component({
     selector: 'app-single-commande',
@@ -11,7 +10,7 @@ import {Router} from "@angular/router";
 export class SingleCommandePage implements OnInit {
     commande: Commande;
     total: number = 0;
-    remise: boolean;
+    remise: boolean;   
 
     constructor(private orderService: OrderService) {
 
