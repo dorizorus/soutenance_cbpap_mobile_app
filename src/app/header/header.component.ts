@@ -14,6 +14,7 @@ export class HeaderComponent implements OnInit {
 
     panier: OrderLine[];
     total: number = 0;
+    actif : boolean = false;
 
     constructor(private modalController: ModalController,
                 private navCtrl: NavController,
@@ -28,16 +29,27 @@ export class HeaderComponent implements OnInit {
         })
     }
 
-    private updateTotal() {
-        this.total = 0;
-        this.panier.forEach(value => this.total += (value.article.prixUnitaire * value.quantity));
+    toggled() {
+        this.actif = (!this.actif);
+        this.updateTotal();
     }
+
+    private updateTotal() {
+        // Si le toggle est activé on applique la remise
+        this.total = 0;
+        if (!this.actif)
+            this.panier.forEach(value => this.total += (value.article.prixUnitaire * value.quantity));
+        else
+            this.panier.forEach(value => this.total += ((value.article.prixUnitaire * value.quantity) * 0.95));
+    }
+
+
 
     async goPanier() {
         const modal = await this.modalController.create({
             component: PanierPage,
-            backdropDismiss: true,
-            cssClass: 'modal-pop'
+            cssClass: 'modal-article',
+            backdropDismiss: true
         });
         return await modal.present();
     }
@@ -50,7 +62,7 @@ export class HeaderComponent implements OnInit {
         const modal = await this.modalController.create({
             component: SettingsPage,
             backdropDismiss: true,
-            cssClass: 'modal-pop'
+            cssClass: 'modal-panier'
         });
         // ouvre la modal
         return await modal.present();

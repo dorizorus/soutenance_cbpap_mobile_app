@@ -7,7 +7,7 @@ import { OrderLine } from 'src/app/models/OrderLine';
   templateUrl: './panier.page.html',
   styleUrls: ['./panier.page.scss'],
 })
-// pour avoir un ngFor, ajouter PanierPage à app.module.ts dans declarations & entryComponents
+// dans le cas d'un "can't bind" to ngFor", ajouter PanierPage à app.module.ts dans declarations & entryComponents
 export class PanierPage implements OnInit {
 
     panier:OrderLine[];
