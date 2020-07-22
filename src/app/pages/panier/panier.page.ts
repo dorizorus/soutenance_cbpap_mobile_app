@@ -10,6 +10,7 @@ import { OrderLine } from 'src/app/models/OrderLine';
 // dans le cas d'un "can't bind" to ngFor", ajouter PanierPage à app.module.ts dans declarations & entryComponents
 export class PanierPage implements OnInit {
 
+    nombreQuantite: number[] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
     panier:OrderLine[];
     total: number;
 
