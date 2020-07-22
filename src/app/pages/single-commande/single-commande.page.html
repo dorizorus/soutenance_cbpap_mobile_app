@@ -23,9 +23,12 @@
             TOTAL HT : <span> <b>{{total * 0.95 |number : '1.2-2'}}</b> €</span>
         </div>
         <ion-button color="success" size="small">Commander à nouveau</ion-button>
-        <div>
-            <ion-button [disabled]="canEdit" color="danger"  size="small" fill="solid">Annuler</ion-button>
-            <ion-button [disabled]="canEdit" color="warning" size="small" fill="solid">Editer</ion-button>
+        <div *ngIf="canEdit">
+            <span> TEMPS RESTANT {{commande.date | date : 'H' }}h{{commande.date | date : 'mm' }} POUR : </span>
+            <div>
+                <ion-button [disabled]="canEdit" color="danger"  size="small" fill="solid">Annuler</ion-button>
+                <ion-button [disabled]="canEdit" color="warning" size="small" fill="solid">Editer</ion-button>
+            </div>
         </div>
     </div>
 </ion-content>

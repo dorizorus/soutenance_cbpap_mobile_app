@@ -122,7 +122,7 @@ export class ArticlePage implements OnInit {
     initializeArticles() {
         this.listeArticles = [{
             ref: 'AR578',
-            libelle: 'Carton cache',
+            libelle: 'Carton cache test long texte jtriueothikre',
             prixUnitaire: 40.00,
             famille: 'Carton',
             image: {

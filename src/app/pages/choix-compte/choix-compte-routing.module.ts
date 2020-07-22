@@ -11,7 +11,7 @@ const routes: Routes = [
   },
   {
     path: 'settings',
-    component: SettingsPage
+    loadChildren: () => import('../settings/settings.module').then( m => m.SettingsPageModule)
   }
 ];
 

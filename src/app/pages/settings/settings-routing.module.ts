@@ -11,7 +11,7 @@ const routes: Routes = [
   },
   {
     path:'delete-acc',
-    component:DeleteAccPage
+    loadChildren: () => import('../delete-acc/delete-acc.module').then( m => m.DeleteAccPageModule)
   }
 ];
 

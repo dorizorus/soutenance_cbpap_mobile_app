@@ -26,7 +26,7 @@ export class SingleCommandePage implements OnInit {
         let limite:Date = this.commande.date;
         limite.setHours(limite.getHours() + 3);
 
-        if(limite.getTime() > new Date().getTime()){
+        if(limite.getTime() >= new Date().getTime()){
             this.canEdit = true;
         }
     }

@@ -23,7 +23,7 @@ export class HistoriquePage implements OnInit {
         let commande2 = new Commande();
         commande1 = {
             orderNumber: 'MOBI1337',
-            date: new Date('10-10-2010'),
+            date: new Date(2018,8,22),
             client: {
                 id: 1,
                 numeroTel: '101010',

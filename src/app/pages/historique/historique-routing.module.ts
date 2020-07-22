@@ -11,7 +11,7 @@ const routes: Routes = [
   },
   {
     path:'single-commande',
-    component:SingleCommandePage
+    loadChildren: () => import('../single-commande/single-commande.module').then( m => m.SingleCommandePageModule)
   }
 ]; 
 
