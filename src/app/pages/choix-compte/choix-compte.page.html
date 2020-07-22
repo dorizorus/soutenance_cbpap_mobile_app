@@ -1,0 +1,25 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-button slot="start">
+        <ion-back-button></ion-back-button>
+    </ion-button>
+    <img src="assets/icon/logo.jpg" alt="logo">
+  </ion-toolbar>
+</ion-header> 
+
+<ion-content>
+  <ion-list>
+    <ion-list-header>Selection du compte </ion-list-header>
+    <ion-item (click)="toSettings()">
+      <ion-avatar slot="start"><img src="{{client.image}}"></ion-avatar>
+      <ion-label>{{client.nom}}</ion-label>
+      <ion-label>{{client.ville.nomVille}}</ion-label>
+    </ion-item>
+  </ion-list>
+
+  <!-- normalement c'est pas la page login mais une page qui y ressemble et qui ajouterais un compte. On aurait donc un tableau de comptes-->
+  <ion-item routerLink="/login">
+    <ion-icon name="add-circle-outline"></ion-icon>
+    <ion-label>Ajoutez un nouveau compte</ion-label>>
+  </ion-item>
+</ion-content>

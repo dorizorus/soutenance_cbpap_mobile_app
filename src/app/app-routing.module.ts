@@ -11,13 +11,15 @@ const routes: Routes = [
         loadChildren: () => import('./pages/login/login.module').then(m => m.LoginPageModule)
     },
     {
-        path: 'settings',
-        loadChildren: () => import('./pages/settings/settings.module').then(m => m.SettingsPageModule)
-    }, {
+      path: 'choix-compte',
+      loadChildren: () => import('./pages/choix-compte/choix-compte.module').then( m => m.ChoixComptePageModule)
+    },
+     {
     path : '',
     redirectTo : 'login',
     pathMatch: 'full'
   }
+
 
 ];
 

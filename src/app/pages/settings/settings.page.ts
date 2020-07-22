@@ -3,6 +3,7 @@ import {NavController, AlertController} from "@ionic/angular";
 
 import { Ville } from 'src/app/models/Ville';
 import { Client } from 'src/app/models/Client';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-settings',
@@ -12,29 +13,21 @@ import { Client } from 'src/app/models/Client';
 export class SettingsPage implements OnInit {
 
   constructor(private navCtrl : NavController,
-              private alertCtrl : AlertController ) { }
+              private alertCtrl : AlertController,
+              private userService : UserService ) { }
 
-  client : Client =
-    {
-      id : 2,
-      nom: "Pizza Chez Moi Sarl",
-      adresse: "5 rue des pizzaiolo",
-      email : "chezmoi@pizzasarl.com",
-      mdp : "458dsqfdkdsqlfkqsd54",
-      image : "assets/icon/devanturePizzaHut.png",
-      numeroTel : "0387254981",
-      ville  :
-      {
-        id : 55,
-        nomVille : "Metz",
-        codePostal : 57000
-      }
-
-    };
+    client : Client;
 
   ngOnInit() {
-
+    this.loadClient();
   }
+
+
+  async loadClient() {
+    this.client = this.userService.getClient();
+    console.log(this.client.nom);
+  }
+
   // Avance vers la page suppression de manière directe, comme une redirection
   async versSuppression() {
     this.navCtrl.navigateForward('/settings/delete-acc');

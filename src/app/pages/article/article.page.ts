@@ -5,6 +5,8 @@ import {SingleArticlePage} from "../single-article/single-article.page";
 import {Article} from 'src/app/models/Article';
 import {OrderLine} from 'src/app/models/OrderLine';
 import {OrderService} from 'src/app/services/order.service';
+import { UserService } from 'src/app/services/user.service';
+import { Client } from 'src/app/models/Client';
 
 @Component({
     selector: 'app-articles',
@@ -21,10 +23,13 @@ export class ArticlePage implements OnInit {
 
     constructor(private navParamsService: DataService,
                 private modalController: ModalController,
-                private orderService: OrderService) {
+                private orderService: OrderService,
+                private userService : UserService) {
 
         // initialisation de notre liste d'article de base
         this.initializeArticles();
+        this.initClient();
+        
     }
 
     ngOnInit() {
@@ -174,8 +179,26 @@ export class ArticlePage implements OnInit {
         ];
     }
 
-    isNotZero() {
-
+    initClient(){
+      let clientFactice = new Client();
+      clientFactice =
+              {
+        id : 2,
+        nom: "Pizza Chez Moi Sarl",
+        adresse: "5 rue des pizzaiolo",
+        email : "chezmoi@pizzasarl.com",
+        mdp : "458dsqfdkdsqlfkqsd54",
+        image : "assets/icon/devanturePizzaHut.png",
+        numeroTel : "0387254981",
+        ville  :
+        {
+          id : 55,
+          nomVille : "Metz",
+          codePostal : 57000
+        }
+  
+      };
+      this.userService.setClient(clientFactice);
     }
 
 

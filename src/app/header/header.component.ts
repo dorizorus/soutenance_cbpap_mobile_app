@@ -4,6 +4,8 @@ import {SettingsPage} from "../pages/settings/settings.page";
 import {OrderService} from '../services/order.service';
 import {PanierPage} from '../pages/panier/panier.page';
 import {OrderLine} from "../models/OrderLine";
+import { UserService } from '../services/user.service';
+import { Client } from '../models/Client';
 
 @Component({
     selector: 'app-header',
@@ -15,10 +17,12 @@ export class HeaderComponent implements OnInit {
     panier: OrderLine[];
     total: number = 0;
     actif : boolean = false;
+    client : Client;
 
     constructor(private modalController: ModalController,
                 private navCtrl: NavController,
-                private orderService: OrderService
+                private orderService: OrderService,
+                private userService : UserService
     ) {
     }
 
@@ -26,7 +30,8 @@ export class HeaderComponent implements OnInit {
         this.orderService.myData.subscribe((data) => {
             this.panier = data;
             this.updateTotal();
-        })
+        });
+        this.client = this.userService.getClient()
     }
 
     toggled() {
@@ -71,7 +76,7 @@ export class HeaderComponent implements OnInit {
     // permet d'avancer vers une route selectionné. L'avantage c'est que cela créer une animation
     // adéquate (fondu "avant" ou "arrière" d'un back button). Une des nombreuses manière de naviguer
     async versSettings() {
-        this.navCtrl.navigateForward('settings');
+        this.navCtrl.navigateForward('choix-compte');
     }
 
 
