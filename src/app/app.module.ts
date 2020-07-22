@@ -10,9 +10,10 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { SingleCommandePage } from './pages/single-commande/single-commande.page';
+import {HeaderComponent} from "./header/header.component";
 
 @NgModule({
-  declarations: [AppComponent, PanierPage, SingleCommandePage],
+  declarations: [AppComponent, PanierPage, SingleCommandePage, HeaderComponent],
   entryComponents: [PanierPage, SingleCommandePage],
   imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule],
   providers: [

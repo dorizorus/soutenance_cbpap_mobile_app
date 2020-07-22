@@ -24,7 +24,7 @@ export class HistoriquePage implements OnInit {
         let commande2 = new Commande();
         commande1 = {
             orderNumber: 'MOBI1337',
-            date: null,
+            date: new Date('10-10-2010'),
             client: {
                 id: 1,
                 numeroTel: '101010',
@@ -69,7 +69,7 @@ export class HistoriquePage implements OnInit {
         };
         commande2 = {
             orderNumber: 'mobydick',
-            date: null,
+            date: new Date(),
             client: {
                 id: 2,
                 numeroTel: '101010222',
@@ -96,7 +96,6 @@ export class HistoriquePage implements OnInit {
                         prixUnitaire: 15,
                         image : { id : 1 , document : ''},
                         description : { id : 1, contenu : ''}
-
                     }
                 },
                 {

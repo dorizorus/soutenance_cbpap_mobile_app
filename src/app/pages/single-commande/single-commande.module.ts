@@ -1,22 +1,23 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import {NgModule} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {FormsModule} from '@angular/forms';
 
-import { IonicModule } from '@ionic/angular';
+import {IonicModule} from '@ionic/angular';
 
-import { SingleCommandePageRoutingModule } from './single-commande-routing.module';
+import {SingleCommandePageRoutingModule} from './single-commande-routing.module';
 
-import { SingleCommandePage } from './single-commande.page';
-import {HeaderComponent} from '../../header/header.component';
+import {SingleCommandePage} from './single-commande.page';
+import {HeaderComponent} from "../../header/header.component";
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    IonicModule,
-    SingleCommandePageRoutingModule
-  ],
-  exports: [HeaderComponent],
-  declarations: [SingleCommandePage, HeaderComponent]
+    imports: [
+        CommonModule,
+        FormsModule,
+        IonicModule,
+        SingleCommandePageRoutingModule,
+    ],
+    exports: [HeaderComponent],
+    declarations: [HeaderComponent]
 })
-export class SingleCommandePageModule {}
+export class SingleCommandePageModule {
+}

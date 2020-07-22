@@ -10,7 +10,8 @@ import {OrderService} from "../../services/order.service";
 export class SingleCommandePage implements OnInit {
     commande: Commande;
     total: number = 0;
-    remise: boolean;   
+    remise: boolean;
+    canEdit:boolean;
 
     constructor(private orderService: OrderService) {
 
@@ -20,6 +21,13 @@ export class SingleCommandePage implements OnInit {
         this.commande = this.orderService.getCommande();
         this.total = 0;
         this.commande.orderLines.forEach(value => this.total += (value.article.prixUnitaire * value.quantity));
-        this.remise = true;
+        this.remise = true; // todo recup du service
+
+        let limite:Date = this.commande.date;
+        limite.setHours(limite.getHours() + 3);
+
+        if(limite.getTime() > new Date().getTime()){
+            this.canEdit = true;
+        }
     }
 }
