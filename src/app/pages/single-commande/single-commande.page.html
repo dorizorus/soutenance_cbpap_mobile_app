@@ -3,24 +3,29 @@
     <ion-buttons slot="start">
         <ion-back-button icon="chevron-back-outline" default-href="/"></ion-back-button>
     </ion-buttons>
-    {{commande.orderNumber}}
+    {{commande.orderNumber | uppercase}}
 </ion-toolbar>
 <ion-content class="ion-padding">
-    <ion-item color="red" *ngFor="let orderLine of commande.orderLines">
-        <div slot="start">
-            {{orderLine.article.libelle + ' x' + orderLine.quantity}}
-        </div>
-        <div slot="end">
-            prix :{{orderLine.article.prixUnitaire * orderLine.quantity}} €
+    <ion-item *ngFor="let orderLine of commande.orderLines">
+        {{orderLine.article.libelle + ' x' + orderLine.quantity}}
+        <div slot="end" class="green">
+            {{orderLine.article.prixUnitaire * orderLine.quantity |number : '1.2-2'}}
         </div>
     </ion-item>
-    <div class="total">
-
-            <p>Sous-total HT : <b>{{total}} €</b></p>
-        <div *ngIf="remise">
-            <p>Retraît entreprise(remise 5%) : <b class="retrait"> - {{total * 0.05}}</b> €</p>
+    <div class="bottom">
+        <div class="total-line">
+            Sous-total HT : <b>{{total |number : '1.2-2'}}</b> €
         </div>
-        <div>TOTAL HT : <b>{{total * 0.95}} €</b></div>
+        <div class="total-line" *ngIf="remise">
+            <div>Retraît entreprise(remise 5%) : <b class="retrait"> - {{total * 0.05 |number : '1.2-2'}}</b> €</div>
+        </div>
+        <div class="total-line">
+            TOTAL HT : <span> <b>{{total * 0.95 |number : '1.2-2'}}</b> €</span>
+        </div>
+        <ion-button color="success" size="small">Commander à nouveau</ion-button>
+        <div>
+            <ion-button [disabled]="canEdit" color="danger"  size="small" fill="solid">Annuler</ion-button>
+            <ion-button [disabled]="canEdit" color="warning" size="small" fill="solid">Editer</ion-button>
+        </div>
     </div>
-
 </ion-content>
