@@ -7,6 +7,10 @@ const routes: Routes = [
   {
     path: '',
     component: SingleCommandePage
+  },
+  {
+    path:'recommande',
+    loadChildren: () => import('../recommande/recommande.module').then( m => m.RecommandePageModule)
   }
 ];
 

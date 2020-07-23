@@ -16,7 +16,7 @@ export class HeaderComponent implements OnInit {
 
     panier: OrderLine[];
     total: number = 0;
-    actif : boolean = false;
+    remise : boolean = false;
     client : Client;
 
     constructor(private modalController: ModalController,
@@ -35,14 +35,14 @@ export class HeaderComponent implements OnInit {
     }
 
     toggled() {
-        this.actif = (!this.actif);
+        this.remise = !this.remise;
         this.updateTotal();
     }
 
     private updateTotal() {
         // Si le toggle est activé on applique la remise
         this.total = 0;
-        if (!this.actif)
+        if (!this.remise)
             this.panier.forEach(value => this.total += (value.article.prixUnitaire * value.quantity));
         else
             this.panier.forEach(value => this.total += ((value.article.prixUnitaire * value.quantity) * 0.95));

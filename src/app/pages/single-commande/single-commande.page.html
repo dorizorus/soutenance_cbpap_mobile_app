@@ -13,21 +13,22 @@
         </div>
     </ion-item>
     <div class="bottom">
-        <div class="total-line">
-            Sous-total HT : <b>{{total |number : '1.2-2'}}</b> €
+        <div *ngIf="total > 250; else fraisLivraison">
+            TOTAL HT : <span> <b>{{total |number : '1.2-2'}}</b> €</span>
         </div>
-        <div class="total-line" *ngIf="remise">
-            <div>Retraît entreprise(remise 5%) : <b class="retrait"> - {{total * 0.05 |number : '1.2-2'}}</b> €</div>
+        <ng-template #fraisLivraison>
+            <p>Frais de livraison pour commande < à 250€ : <b class="green">20€</b></p>
+            <p>Total HT : <span> <b>{{total + 20 |number : '1.2-2'}}</b> €</span></p>
+        </ng-template>
+        <div>
+            <ion-button color="success" size="small" routerLink="/nav/historique/single-commande/recommande">Commander à nouveau</ion-button>
         </div>
-        <div class="total-line">
-            TOTAL HT : <span> <b>{{total * 0.95 |number : '1.2-2'}}</b> €</span>
-        </div>
-        <ion-button color="success" size="small">Commander à nouveau</ion-button>
         <div *ngIf="canEdit">
             <span> TEMPS RESTANT {{commande.date | date : 'H' }}h{{commande.date | date : 'mm' }} POUR : </span>
+
             <div>
-                <ion-button [disabled]="canEdit" color="danger"  size="small" fill="solid">Annuler</ion-button>
-                <ion-button [disabled]="canEdit" color="warning" size="small" fill="solid">Editer</ion-button>
+                <ion-button (click)="alertConfirm()" color="danger"  size="small" fill="solid">Annuler</ion-button>
+                <ion-button (click)="updatePanier()" color="warning" size="small" fill="solid" routerLink="/nav/article">Editer</ion-button>
             </div>
         </div>
     </div>

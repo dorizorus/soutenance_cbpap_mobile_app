@@ -111,7 +111,52 @@ export class HistoriquePage implements OnInit {
                 }
             ]
         };
-        return [commande1, commande2];
+        let commande3 = {
+            orderNumber: 'test',
+            date: new Date(),
+            client: {
+                id: 2,
+                numeroTel: '101010222',
+                nom: 'test2',
+                adresse: 'somewhere2',
+                email : '',
+                mdp : '',
+                image : '',
+                ville  :
+                    {
+                        id : 55,
+                        nomVille : "Metz",
+                        codePostal : 57000
+                    }
+            },
+            orderLines: [
+                {
+                    orderNumber: 'commande2',
+                    quantity: 1,
+                    article: {
+                        ref: 'test',
+                        famille: 'emballage',
+                        libelle: 'rouleau alu + boite distrib',
+                        prixUnitaire: 15,
+                        image : { id : 1 , document : ''},
+                        description : { id : 1, contenu : ''}
+                    }
+                },
+                {
+                    orderNumber: 'commande2',
+                    quantity: 1,
+                    article: {
+                        ref: 'GT35',
+                        famille: 'verre',
+                        libelle: 'gobelet',
+                        prixUnitaire: 12.65,
+                        image : { id : 1 , document : ''},
+                        description : { id : 1, contenu : ''}
+                    }
+                }
+            ]
+        };
+        return [commande1, commande2, commande3];
     }
 
     onLoadCommande(commande) {

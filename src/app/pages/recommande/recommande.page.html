@@ -1,0 +1,36 @@
+<ion-toolbar>
+  <ion-buttons slot="start">
+    <ion-back-button icon="chevron-back-outline" default-href="/"></ion-back-button>
+  </ion-buttons>
+  {{commande.orderNumber | uppercase}}
+</ion-toolbar>
+<ion-content class="ion-padding">
+  <ion-item *ngFor="let orderLine of commande.orderLines">
+    {{orderLine.article.libelle + ' x' + orderLine.quantity}}
+    <div slot="end" class="green">
+      {{orderLine.article.prixUnitaire * orderLine.quantity |number : '1.2-2'}}
+    </div>
+  </ion-item>
+  <div class="bottom">
+    -5% retrait entrepot : <span slot="end"><ion-toggle (ionChange)="toggled()"></ion-toggle> <!-- ajoute le bouton remise --></span>
+    <div *ngIf="total > 250; else fraisLivraison">
+      <div *ngIf="remise; else sansRemise">
+        <p>Retrait entrepôt</p>
+      </div>
+      <ng-template #sansRemise>
+        <p>Frais de livraison pour commande > à 250€ : <b class="green">0€</b></p>
+      </ng-template>
+    </div>
+    <ng-template #fraisLivraison>
+      <div *ngIf="remise; else sansRemise">
+        <p>Retrait entrepôt</p>
+      </div>
+      <ng-template #sansRemise>
+        <p>Frais de livraison pour commande < à 250€ : <b class="green">20€</b></p>
+      </ng-template>
+    </ng-template>
+    <p>TOTAL HT : <span> <b>{{total |number : '1.2-2'}}</b> €</span></p>
+    <ion-button (click)="lancerCommande()" color="success">Commander à l'identique</ion-button>
+    <ion-button (click)="updatePanier()" color="success" routerLink="/nav/article">Ajouter les articles au panier</ion-button>
+  </div>
+</ion-content>
