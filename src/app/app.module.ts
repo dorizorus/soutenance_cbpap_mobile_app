@@ -11,10 +11,11 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { SingleCommandePage } from './pages/single-commande/single-commande.page';
 import {HeaderComponent} from "./header/header.component";
+import {ValidationComPage} from "./pages/validation-com/validation-com.page";
 
 @NgModule({
-  declarations: [AppComponent, PanierPage, SingleCommandePage, HeaderComponent],
-  entryComponents: [PanierPage, SingleCommandePage],
+  declarations: [AppComponent, PanierPage, SingleCommandePage, HeaderComponent, ValidationComPage],
+  entryComponents: [PanierPage, SingleCommandePage, ValidationComPage],
   imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule],
   providers: [
     StatusBar,

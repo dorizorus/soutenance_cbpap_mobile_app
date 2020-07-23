@@ -1,36 +1,65 @@
-<ion-toolbar class="ion-padding">
-        <ion-label><strong>Mon panier</strong></ion-label>
-</ion-toolbar>
+<ion-header>
+    <ion-item>
+        <div>
+            <img src="assets/icon/logo.jpg" alt="logo">
+        </div>
+        <ion-button (click)="onDismiss()" slot="end">
+            <ion-icon name="close-outline"></ion-icon>
+        </ion-button>
+    </ion-item>
+</ion-header>
 <ion-content class="ion-padding">
-    <ion-list>
- 
+    <ion-label><strong>Mon panier :</strong></ion-label>
 
+
+    <div *ngIf="panier.length != 0">
+        <ion-button (click)="deleteAll()" color="danger">
+            Vider le panier
+        </ion-button>
+    </div>
+    <ion-list>
         <ion-item *ngFor="let ligne of panier">
-            <ion-row>
-                <ion-col size="auto">
-                    <ion-avatar><img src="{{ligne.article.articleImage.image}}"></ion-avatar>
-                </ion-col>
-                <ion-col size="auto">
-                    {{ligne.article.label}}
-                </ion-col>
-                <ion-col size="auto">
-                    {{ligne.article.unitPrice}}
-                </ion-col>
-                <ion-col size="auto">
-                    <ion-select interface="popover" placeholder="{{ligne.quantity}}">
-                    <ion-item *ngFor="let chiffre of nombreQuantite">
-                        <ion-select-option value="{{chiffre}}">
+            <ion-avatar><img src="{{ligne.article.articleImage.image}}"></ion-avatar>
+            <span class="small">
+            <ion-label><strong> Réf : {{ligne.article.reference}}</strong></ion-label>
+                {{ligne.article.label}}
+        </span>
+            <span class="align">
+            {{ligne.article.unitPrice}}
+        </span>
+            <ion-select interface="popover" slot="end" placeholder="{{ligne.quantity}}">
+                <ion-item *ngFor="let chiffre of nombreQuantite">
+                    <ion-select-option value="{{chiffre}}">
                         {{chiffre}}
-                        </ion-select-option>
-                    </ion-item>
-                    </ion-select>
-                </ion-col>
-                <ion-row>
-                    <ion-col size = "auto" class="colonne">
-                        <ion-label><small>Réf : {{ligne.article.reference}}</small></ion-label>
-                    </ion-col>
-                </ion-row> 
-            </ion-row>
-        </ion-item> 
+                    </ion-select-option>
+                </ion-item>
+            </ion-select>
+            <span slot="end">
+            <ion-button color="danger" (click)="deleteLine(ligne)">
+            <ion-icon name="trash-outline"></ion-icon>
+            </ion-button>
+        </span>
+        </ion-item>
     </ion-list>
+    <ion-label>Sous-total HT : {{total}} </ion-label><br/>
+    <div *ngIf="!remise">
+        <div *ngIf="total-250 >= 0; else pasRemise" class="green">
+            <small>LIVRAISON GRATUITE</small>
+        </div>
+        <ng-template #pasRemise>
+            <small> <span class="green">{{250 - total }} </span> € avant la livraison</small>
+        </ng-template>
+    </div>
+    <ion-row>
+        <ion-col size="auto">
+            <ion-icon class="icones" name="home-outline" size="small"></ion-icon>
+            <span class="green">-5%</span><small> retrait entrepôt</small>
+            <ion-toggle (ionChange)="toggled()" class="reductionHauteur"></ion-toggle>
+        </ion-col>
+    </ion-row>
+    <div>Total HT : </div>
+    <div>{{total}}</div>
+    <ion-button (click)="onCommandeValid()" color="success">
+        Commander
+    </ion-button>
 </ion-content>

@@ -13,7 +13,7 @@ import {Client} from 'src/app/models/Client';
     templateUrl: './article.page.html',
     styleUrls: ['./article.page.scss'],
 })
-export class ArticlePage implements OnInit {
+export class ArticlePage{
 
     nombreQuantite: number[] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
     listeArticles: Article[];
@@ -30,9 +30,6 @@ export class ArticlePage implements OnInit {
         this.initializeArticles();
         this.initClient();
 
-    }
-
-    ngOnInit() {
     }
 
     // Dés qu'une quantité est selectionné pour un produit, la méthode

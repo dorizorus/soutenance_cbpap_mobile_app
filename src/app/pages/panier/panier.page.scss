@@ -1,8 +1,25 @@
 .colonne {
-    margin-top: -18px;
-  }
+  margin-top: -18px;
+}
 
-  ion-avatar {
-    max-width: 35px;
-    max-height: 35px;
+ion-avatar {
+  max-width: 35px;
+  max-height: 35px;
+}
+
+.colonne {
+  margin-top: -18px;
+}
+
+.small {
+  font-size: small;
+}
+
+.right {
+  align-items: flex-end;
+  justify-content: flex-end;
+}
+
+.align {
+  text-align: center;
 }

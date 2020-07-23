@@ -4,8 +4,8 @@ import {SettingsPage} from "../pages/settings/settings.page";
 import {OrderService} from '../services/order.service';
 import {PanierPage} from '../pages/panier/panier.page';
 import {OrderLine} from "../models/OrderLine";
-import { UserService } from '../services/user.service';
-import { Client } from '../models/Client';
+import {UserService} from '../services/user.service';
+import {Client} from '../models/Client';
 
 @Component({
     selector: 'app-header',
@@ -16,13 +16,13 @@ export class HeaderComponent implements OnInit {
 
     panier: OrderLine[];
     total: number = 0;
-    remise : boolean = false;
-    client : Client;
+    remise: boolean = false;
+    client: Client;
 
     constructor(private modalController: ModalController,
                 private navCtrl: NavController,
                 private orderService: OrderService,
-                private userService : UserService
+                private userService: UserService
     ) {
     }
 
@@ -47,8 +47,6 @@ export class HeaderComponent implements OnInit {
         else
             this.panier.forEach(value => this.total += ((value.article.unitPrice * value.quantity) * 0.95));
     }
-
-
 
     async goPanier() {
         const modal = await this.modalController.create({
@@ -78,6 +76,4 @@ export class HeaderComponent implements OnInit {
     async versSettings() {
         this.navCtrl.navigateForward('choix-compte');
     }
-
-
 }
