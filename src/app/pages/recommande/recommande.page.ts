@@ -28,9 +28,9 @@ export class RecommandePage implements OnInit {
     // Si le toggle est activé on applique la remise
     this.total = 0;
     if (!this.remise)
-      this.commande.orderLines.forEach(value => this.total += (value.article.prixUnitaire * value.quantity));
+      this.commande.orderLines.forEach(value => this.total += (value.article.finalPrice * value.quantity));
     else
-      this.commande.orderLines.forEach(value => this.total += ((value.article.prixUnitaire * value.quantity) * 0.95));
+      this.commande.orderLines.forEach(value => this.total += ((value.article.finalPrice * value.quantity) * 0.95));
     if(this.total < 250 && !this.remise)
       this.total +=20;
   }

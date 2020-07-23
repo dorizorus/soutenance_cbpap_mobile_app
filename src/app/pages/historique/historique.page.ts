@@ -23,139 +23,148 @@ export class HistoriquePage implements OnInit {
         let commande2 = new Commande();
         commande1 = {
             orderNumber: 'MOBI1337',
-            date: new Date(2018,8,22),
-            client: {
-                id: 1,
-                numeroTel: '101010',
-                nom: 'test',
-                adresse: 'somewhere',
-                email : '',
-                mdp : '',
-                image : '',
-                ville  :
+            dateCommande: new Date(2018, 8, 22),
+            customer: {
+                id: '1',
+                phoneNumber: '101010',
+                name: 'test',
+                address: 'somewhere',
+                email: '',
+                password: '',
+                customerPicture: '',
+                city:
                     {
-                        id : 55,
-                        nomVille : "Metz",
-                        codePostal : 57000
-                    }
+                        id: 55,
+                        name: "Metz",
+                        postalCode: 57000
+                    },
+                customerFiles: ''
             },
             orderLines: [
                 {
                     orderNumber: 'commande1',
                     quantity: 10,
                     article: {
-                        ref: 'AL30',
-                        famille: 'emballage',
-                        libelle: 'rouleau alu + boite distrib',
-                        prixUnitaire: 10,
-                        image : { id : 1 , document : ''},
-                        description : { id : 1, contenu : ''}
+                        reference: 'AL30',
+                        family: 'emballage',
+                        label: 'rouleau alu + boite distrib',
+                        unitPrice: 10,
+                        finalPrice: 10,
+                        articleImage: {id: 1, image: ''},
+                        articleDetails: {id: 1, description: ''}
                     }
                 },
                 {
                     orderNumber: 'commande1',
                     quantity: 12,
                     article: {
-                        ref: 'DP113',
-                        famille: 'decoration',
-                        libelle: 'lapin coquin',
-                        prixUnitaire: 60,
-                        image : { id : 1 , document : ''},
-                        description : { id : 1, contenu : ''}
+                        reference: 'DP113',
+                        family: 'decoration',
+                        label: 'lapin coquin',
+                        unitPrice: 60,
+                        finalPrice: 60,
+                        articleImage: {id: 1, image: ''},
+                        articleDetails: {id: 1, description: ''}
                     }
                 }
             ]
         };
         commande2 = {
             orderNumber: 'mobydick',
-            date: new Date(),
-            client: {
-                id: 2,
-                numeroTel: '101010222',
-                nom: 'test2',
-                adresse: 'somewhere2',
-                email : '',
-                mdp : '',
-                image : '',
-                ville  :
+            dateCommande: new Date(),
+            customer: {
+                id: '2',
+                phoneNumber: '101010222',
+                name: 'test2',
+                address: 'somewhere2',
+                email: '',
+                password: '',
+                customerPicture: '',
+                city:
                     {
-                        id : 55,
-                        nomVille : "Metz",
-                        codePostal : 57000
-                    }
+                        id: 55,
+                        name: "Metz",
+                        postalCode: 57000
+                    },
+                customerFiles: ''
             },
             orderLines: [
                 {
                     orderNumber: 'commande2',
                     quantity: 10,
                     article: {
-                        ref: 'test',
-                        famille: 'emballage',
-                        libelle: 'rouleau alu + boite distrib',
-                        prixUnitaire: 15,
-                        image : { id : 1 , document : ''},
-                        description : { id : 1, contenu : ''}
+                        reference: 'test',
+                        family: 'emballage',
+                        label: 'rouleau alu + boite distrib',
+                        unitPrice: 15,
+                        finalPrice: 15,
+                        articleImage: {id: 1, image: ''},
+                        articleDetails: {id: 1, description: ''}
                     }
                 },
                 {
                     orderNumber: 'commande2',
                     quantity: 12,
                     article: {
-                        ref: 'GT35',
-                        famille: 'verre',
-                        libelle: 'gobelet',
-                        prixUnitaire: 12.65,
-                        image : { id : 1 , document : ''},
-                        description : { id : 1, contenu : ''}
+                        reference: 'GT35',
+                        family: 'verre',
+                        label: 'gobelet',
+                        unitPrice: 12.65,
+                        finalPrice: 12.65,
+                        articleImage: {id: 1, image: ''},
+                        articleDetails: {id: 1, description: ''}
                     }
                 }
             ]
         };
         let commande3 = {
             orderNumber: 'test',
-            date: new Date(),
-            client: {
-                id: 2,
-                numeroTel: '101010222',
-                nom: 'test2',
-                adresse: 'somewhere2',
-                email : '',
-                mdp : '',
-                image : '',
-                ville  :
+            dateCommande: new Date(),
+            customer: {
+                id: '2',
+                phoneNumber: '101010222',
+                name: 'test2',
+                address: 'somewhere2',
+                email: '',
+                password: '',
+                customerPicture: '',
+                city:
                     {
-                        id : 55,
-                        nomVille : "Metz",
-                        codePostal : 57000
-                    }
+                        id: 55,
+                        name: "Metz",
+                        postalCode: 57000
+                    },
+                customerFiles: ''
             },
             orderLines: [
                 {
                     orderNumber: 'commande2',
                     quantity: 1,
                     article: {
-                        ref: 'test',
-                        famille: 'emballage',
-                        libelle: 'rouleau alu + boite distrib',
-                        prixUnitaire: 15,
-                        image : { id : 1 , document : ''},
-                        description : { id : 1, contenu : ''}
+                        reference: 'test',
+                        family: 'emballage',
+                        label: 'rouleau alu + boite distrib',
+                        unitPrice: 15,
+                        finalPrice: 15,
+                        articleImage: {id: 1, image: ''},
+                        articleDetails: {id: 1, description: ''}
                     }
                 },
                 {
                     orderNumber: 'commande2',
                     quantity: 1,
                     article: {
-                        ref: 'GT35',
-                        famille: 'verre',
-                        libelle: 'gobelet',
-                        prixUnitaire: 12.65,
-                        image : { id : 1 , document : ''},
-                        description : { id : 1, contenu : ''}
+                        reference: 'GT35',
+                        family: 'verre',
+                        label: 'gobelet',
+                        unitPrice: 12.65,
+                        finalPrice: 12.65,
+                        articleImage: {id: 1, image: ''},
+                        articleDetails: {id: 1, description: ''}
                     }
                 }
             ]
-        };
+        }
         return [commande1, commande2, commande3];
     }
 

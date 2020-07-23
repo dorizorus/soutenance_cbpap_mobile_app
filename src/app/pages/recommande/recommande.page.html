@@ -6,9 +6,9 @@
 </ion-toolbar>
 <ion-content class="ion-padding">
   <ion-item *ngFor="let orderLine of commande.orderLines">
-    {{orderLine.article.libelle + ' x' + orderLine.quantity}}
+    {{orderLine.article.label + ' x' + orderLine.quantity}}
     <div slot="end" class="green">
-      {{orderLine.article.prixUnitaire * orderLine.quantity |number : '1.2-2'}}
+      {{orderLine.article.unitPrice * orderLine.quantity |number : '1.2-2'}}
     </div>
   </ion-item>
   <div class="bottom">

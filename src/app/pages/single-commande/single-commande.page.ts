@@ -21,9 +21,9 @@ export class SingleCommandePage implements OnInit {
     ngOnInit(): void {
         this.commande = this.orderService.getCommande();
         this.total = 0;
-        this.commande.orderLines.forEach(value => this.total += (value.article.prixUnitaire * value.quantity));
+        this.commande.orderLines.forEach(value => this.total += (value.article.finalPrice * value.quantity));
 
-        let limite:Date = this.commande.date;
+        let limite:Date = this.commande.dateCommande;
         limite.setHours(limite.getHours() + 3);
 
         if(limite.getTime() > new Date().getTime()){

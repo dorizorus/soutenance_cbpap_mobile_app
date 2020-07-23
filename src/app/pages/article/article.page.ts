@@ -5,8 +5,8 @@ import {SingleArticlePage} from "../single-article/single-article.page";
 import {Article} from 'src/app/models/Article';
 import {OrderLine} from 'src/app/models/OrderLine';
 import {OrderService} from 'src/app/services/order.service';
-import { UserService } from 'src/app/services/user.service';
-import { Client } from 'src/app/models/Client';
+import {UserService} from 'src/app/services/user.service';
+import {Client} from 'src/app/models/Client';
 
 @Component({
     selector: 'app-articles',
@@ -24,12 +24,12 @@ export class ArticlePage implements OnInit {
     constructor(private navParamsService: DataService,
                 private modalController: ModalController,
                 private orderService: OrderService,
-                private userService : UserService) {
+                private userService: UserService) {
 
         // initialisation de notre liste d'article de base
         this.initializeArticles();
         this.initClient();
-        
+
     }
 
     ngOnInit() {
@@ -69,7 +69,7 @@ export class ArticlePage implements OnInit {
         }
         this.orderService.setPanier(this.orderLines);
         console.log(this.orderLines);
-        console.log(this.orderService.getPanier().length) 
+        console.log(this.orderService.getPanier().length)
     }
 
     getArticlePosition(ligne: OrderLine): number {
@@ -121,84 +121,194 @@ export class ArticlePage implements OnInit {
     // initialisation de la liste d'articlé crée la dedans. On utilisera le back a la place ici
     initializeArticles() {
         this.listeArticles = [{
-            ref: 'AR578',
-            libelle: 'Carton cache test long texte jtriueothikre',
-            prixUnitaire: 40.00,
-            famille: 'Carton',
-            image: {
+            reference: 'AR578',
+            label: 'Carton cache test long texte jtriueothikre',
+            unitPrice: 40.00,
+            finalPrice: 40.00,
+            family: 'Carton',
+            articleImage: {
                 id: 1,
-                document: 'assets/icon/devanturePizzaHut.png'
+                image: 'assets/icon/devanturePizzaHut.png'
             },
-            description: {
+            articleDetails: {
                 id: 2,
-                contenu: "Un carton qui vous permet d'echapper à vos poursuivants, que ce soit un huissier ou un membre de votre famille qui réclame le prêt qu'il vous a attribué 10 ans auparavant. NE PAS APPROCHER DE LOUPS SAUVAGE, CETTE PROTECTION NE SUFFIRA PAS."
+                description: "Un carton qui vous permet d'echapper à vos poursuivants, que ce soit un huissier ou un membre de votre famille qui réclame le prêt qu'il vous a attribué 10 ans auparavant. NE PAS APPROCHER DE LOUPS SAUVAGE, CETTE PROTECTION NE SUFFIRA PAS."
             }
         },
             {
-                ref: '3EA45F',
-                libelle: 'Carton mystere',
-                prixUnitaire: 20.00,
-                famille: 'Carton',
-                image: {
+                reference: '3EA45F',
+                label: 'Carton mystere',
+                unitPrice: 20.00,
+                finalPrice: 20.00,
+                family: 'Carton',
+                articleImage: {
                     id: 1,
-                    document: 'assets/icon/devanturePizzaHut.png'
+                    image: 'assets/icon/devanturePizzaHut.png'
                 },
-                description: {
+                articleDetails: {
                     id: 2,
-                    contenu: "Un carton super grand"
+                    description: "Un carton super grand"
                 }
             },
             {
-                ref: '98877RRF',
-                libelle: 'Carton nature',
-                prixUnitaire: 15.00,
-                famille: 'Carton',
-                image: {
+                reference: '98877RRF',
+                label: 'Carton nature',
+                unitPrice: 15.00,
+                finalPrice: 15.00,
+                family: 'Carton',
+                articleImage: {
                     id: 1,
-                    document: 'assets/icon/devanturePizzaHut.png'
+                    image: 'assets/icon/devanturePizzaHut.png'
                 },
-                description: {
+                articleDetails: {
                     id: 2,
-                    contenu: "Un carton basique"
+                    description: "Un carton basique"
                 }
             },
             {
-                ref: 'AAA78ff',
-                libelle: 'Carton rosé',
-                prixUnitaire: 12.00,
-                famille: 'Carton',
-                image: {
+                reference: 'AAA78ff',
+                label: 'Carton rosé',
+                unitPrice: 12.00,
+                finalPrice: 12.00,
+                family: 'Carton',
+                articleImage: {
                     id: 1,
-                    document: 'assets/icon/devanturePizzaHut.png'
+                    image: 'assets/icon/devanturePizzaHut.png'
                 },
-                description: {
+                articleDetails: {
                     id: 2,
-                    contenu: "Un carton qui sent bon la rose"
+                    description: "Un carton qui sent bon la rose"
+                }
+            },
+            {
+                reference: 'AAA78ff',
+                label: 'Carton rosé',
+                unitPrice: 12.00,
+                finalPrice: 12.00,
+                family: 'Carton',
+                articleImage: {
+                    id: 1,
+                    image: 'assets/icon/devanturePizzaHut.png'
+                },
+                articleDetails: {
+                    id: 2,
+                    description: "Un carton qui sent bon la rose"
+                }
+            },
+            {
+                reference: 'AAA78ff',
+                label: 'Carton rosé',
+                unitPrice: 12.00,
+                finalPrice: 12.00,
+                family: 'Carton',
+                articleImage: {
+                    id: 1,
+                    image: 'assets/icon/devanturePizzaHut.png'
+                },
+                articleDetails: {
+                    id: 2,
+                    description: "Un carton qui sent bon la rose"
+                }
+            },
+            {
+                reference: 'AAA78ff',
+                label: 'Carton rosé',
+                unitPrice: 12.00,
+                finalPrice: 12.00,
+                family: 'Carton',
+                articleImage: {
+                    id: 1,
+                    image: 'assets/icon/devanturePizzaHut.png'
+                },
+                articleDetails: {
+                    id: 2,
+                    description: "Un carton qui sent bon la rose"
+                }
+            },
+            {
+                reference: 'AAA78ff',
+                label: 'Carton rosé',
+                unitPrice: 12.00,
+                finalPrice: 12.00,
+                family: 'Carton',
+                articleImage: {
+                    id: 1,
+                    image: 'assets/icon/devanturePizzaHut.png'
+                },
+                articleDetails: {
+                    id: 2,
+                    description: "Un carton qui sent bon la rose"
+                }
+            },
+            {
+                reference: 'AAA78ff',
+                label: 'Carton rosé',
+                unitPrice: 12.00,
+                finalPrice: 12.00,
+                family: 'Carton',
+                articleImage: {
+                    id: 1,
+                    image: 'assets/icon/devanturePizzaHut.png'
+                },
+                articleDetails: {
+                    id: 2,
+                    description: "Un carton qui sent bon la rose"
+                }
+            },
+            {
+                reference: 'AAA78ff',
+                label: 'Carton rosé',
+                unitPrice: 12.00,
+                finalPrice: 12.00,
+                family: 'Carton',
+                articleImage: {
+                    id: 1,
+                    image: 'assets/icon/devanturePizzaHut.png'
+                },
+                articleDetails: {
+                    id: 2,
+                    description: "Un carton qui sent bon la rose"
+                }
+            },
+            {
+                reference: 'AAA78ff',
+                label: 'Carton rosé',
+                unitPrice: 12.00,
+                finalPrice: 12.00,
+                family: 'Carton',
+                articleImage: {
+                    id: 1,
+                    image: 'assets/icon/devanturePizzaHut.png'
+                },
+                articleDetails: {
+                    id: 2,
+                    description: "Un carton qui sent bon la rose"
                 }
             }
         ];
     }
 
-    initClient(){
-      let clientFactice = new Client();
-      clientFactice =
-              {
-        id : 2,
-        nom: "Pizza Chez Moi Sarl",
-        adresse: "5 rue des pizzaiolo",
-        email : "chezmoi@pizzasarl.com",
-        mdp : "458dsqfdkdsqlfkqsd54",
-        image : "assets/icon/devanturePizzaHut.png",
-        numeroTel : "0387254981",
-        ville  :
-        {
-          id : 55,
-          nomVille : "Metz",
-          codePostal : 57000
-        }
-  
-      };
-      this.userService.setClient(clientFactice);
+    initClient() {
+        let clientFactice = new Client();
+        clientFactice =
+            {
+                id: '2',
+                name: "Pizza Chez Moi Sarl",
+                address: "5 rue des pizzaiolo",
+                email: "chezmoi@pizzasarl.com",
+                password: "458dsqfdkdsqlfkqsd54",
+                customerPicture: "assets/icon/devanturePizzaHut.png",
+                phoneNumber: "0387254981",
+                customerFiles: 'blabla',
+                city:
+                    {
+                        id: 55,
+                        name: "Metz",
+                        postalCode: 57000
+                    }
+
+            };
+        this.userService.setClient(clientFactice);
     }
 
 
@@ -214,8 +324,8 @@ export class ArticlePage implements OnInit {
         // si rien n'est mis on affiche tout, sinon on filtre avec ce qui a été inséré
         if (val && val.trim() !== '') {
             this.listeArticles = this.listeArticles.filter((article) => {
-                return (article.ref.toLowerCase().indexOf(val.toLowerCase()) > -1 ||
-                    article.libelle.toLowerCase().indexOf(val.toLowerCase()) > -1);
+                return (article.reference.toLowerCase().indexOf(val.toLowerCase()) > -1 ||
+                    article.label.toLowerCase().indexOf(val.toLowerCase()) > -1);
             })
         }
     }

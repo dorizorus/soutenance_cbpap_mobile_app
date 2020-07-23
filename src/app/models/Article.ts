@@ -7,8 +7,7 @@ export class Article {
   label: string;
   unitPrice: number;
   family: string;
-  articlePicture: ImageArticle;
+  articleImage: ImageArticle;
   articleDetails: Description;
   finalPrice: number;
-
 }

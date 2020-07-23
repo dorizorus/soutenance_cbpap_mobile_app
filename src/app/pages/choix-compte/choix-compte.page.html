@@ -11,9 +11,9 @@
   <ion-list>
     <ion-list-header>Selection du compte </ion-list-header>
     <ion-item (click)="toSettings()">
-      <ion-avatar slot="start"><img src="{{client.image}}"></ion-avatar>
-      <ion-label>{{client.nom}}</ion-label>
-      <ion-label>{{client.ville.nomVille}}</ion-label>
+      <ion-avatar slot="start"><img src="{{client.customerPicture}}"></ion-avatar>
+      <ion-label>{{client.name}}</ion-label>
+      <ion-label>{{client.city.name}}</ion-label>
     </ion-item>
   </ion-list>
 

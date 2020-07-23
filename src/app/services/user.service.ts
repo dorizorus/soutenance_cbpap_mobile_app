@@ -15,11 +15,11 @@ export class UserService {
 
 setClient(client : Client) {
   this.client = client;
-  console.log("CLient" + this.client.nom + " a été enregistré")
+  console.log("CLient" + this.client.name + " a été enregistré")
 }
 
 getClient(): Client {
-  console.log("Le client" + this.client.nom + " va être envoyé");
+  console.log("Le client" + this.client.name + " va être envoyé");
   return this.client;
 }
 

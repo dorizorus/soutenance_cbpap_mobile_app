@@ -13,12 +13,12 @@
     </ion-list-header>
 
     <ion-item *ngFor="let article of listeArticles">
-      <ion-thumbnail slot="start" (click)="onLoadArticle(article)"><img src="{{article.image.document}}"></ion-thumbnail>
+      <ion-thumbnail slot="start" (click)="onLoadArticle(article)"><img src="{{article.articleImage.image}}"></ion-thumbnail>
       <span class="small">
-        <ion-label>{{article.ref}}</ion-label>
-        {{article.libelle}}
+        <ion-label>{{article.reference}}</ion-label>
+        {{article.label}}
       </span>
-      <span slot="end">{{article.prixUnitaire}} € </span>
+      <span slot="end">{{article.unitPrice}} € </span>
       <ion-select slot="end" interface="popover" placeholder="0" (ionChange)="onChange($event, article)">
         <ion-item *ngFor="let chiffre of nombreQuantite">
           <ion-select-option value="{{chiffre}}">

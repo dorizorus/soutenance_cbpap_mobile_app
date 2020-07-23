@@ -7,9 +7,9 @@
 </ion-toolbar>
 <ion-content class="ion-padding">
     <ion-item *ngFor="let orderLine of commande.orderLines">
-        {{orderLine.article.libelle + ' x' + orderLine.quantity}}
+        {{orderLine.article.label + ' x' + orderLine.quantity}}
         <div slot="end" class="green">
-            {{orderLine.article.prixUnitaire * orderLine.quantity |number : '1.2-2'}}
+            {{orderLine.article.unitPrice * orderLine.quantity |number : '1.2-2'}}
         </div>
     </ion-item>
     <div class="bottom">
@@ -24,7 +24,7 @@
             <ion-button color="success" size="small" routerLink="/nav/historique/single-commande/recommande">Commander à nouveau</ion-button>
         </div>
         <div *ngIf="canEdit">
-            <span> TEMPS RESTANT {{commande.date | date : 'H' }}h{{commande.date | date : 'mm' }} POUR : </span>
+            <span> TEMPS RESTANT {{commande.dateCommande | date : 'H' }}h{{commande.dateCommande | date : 'mm' }} POUR : </span>
 
             <div>
                 <ion-button (click)="alertConfirm()" color="danger"  size="small" fill="solid">Annuler</ion-button>
