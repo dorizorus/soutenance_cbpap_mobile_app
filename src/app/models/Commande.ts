@@ -1,9 +1,10 @@
-import {Client} from "./Client";
-import {OrderLine} from "./OrderLine";
+import {Client} from './Client';
+import {OrderLine} from './OrderLine';
 
 export class Commande {
+
     orderNumber: string;
-    client: Client;
+    customer: Client;
     orderLines: OrderLine[];
-    date: Date;
+    dateCommande: Date;
 }
