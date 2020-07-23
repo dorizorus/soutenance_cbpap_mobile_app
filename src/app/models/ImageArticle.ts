@@ -1,4 +1,6 @@
 export class ImageArticle {
-    id : number;
-    document : string;
+
+    id: number;
+    image: string;
+
 }

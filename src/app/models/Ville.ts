@@ -1,5 +1,7 @@
 export class Ville {
+
     id: number;
-    nomVille: string;
-    codePostal : number;
+    name: string;
+    postalCode: number;
+
 }

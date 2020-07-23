@@ -1,4 +1,6 @@
 export class Description {
-    id : number;
-    contenu : string;
+
+    id: number;
+    description: string;
+
 }

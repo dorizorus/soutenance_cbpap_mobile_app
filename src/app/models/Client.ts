@@ -1,18 +1,15 @@
 import { Ville } from './Ville';
 
-export class Client{
+export class Client {
 
-  id: number;
-  nom: string;
-  adresse: string;
-  numeroTel : string;
+  id: string;
+  password: string;
+  name: string;
+  address: string;
+  phoneNumber: string;
   email: string;
-  mdp: string;
-  ville: Ville;
-  image: string;
- 
-
-
-  constructor() { }
+  city: Ville;
+  customerPicture: string;
+  customerFiles: string;
 
 }
