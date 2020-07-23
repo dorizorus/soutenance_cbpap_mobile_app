@@ -27,7 +27,7 @@
             <span class="align">
             {{ligne.article.unitPrice}}
         </span>
-            <ion-select interface="popover" slot="end" placeholder="{{ligne.quantity}}">
+            <ion-select (ionChange)="updatePanier()" interface="popover" slot="end" placeholder="{{ligne.quantity}}">
                 <ion-item *ngFor="let chiffre of nombreQuantite">
                     <ion-select-option value="{{chiffre}}">
                         {{chiffre}}

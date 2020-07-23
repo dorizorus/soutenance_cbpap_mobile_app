@@ -13,7 +13,7 @@ import {Client} from 'src/app/models/Client';
     templateUrl: './article.page.html',
     styleUrls: ['./article.page.scss'],
 })
-export class ArticlePage{
+export class ArticlePage implements OnInit{
 
     nombreQuantite: number[] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
     listeArticles: Article[];
@@ -29,7 +29,13 @@ export class ArticlePage{
         // initialisation de notre liste d'article de base
         this.initializeArticles();
         this.initClient();
+    }
 
+    ngOnInit(): void {
+        this.orderService.myData.subscribe( data =>{
+            this.orderLines = data;
+            this.updateSelect();
+        })
     }
 
     // Dés qu'une quantité est selectionné pour un produit, la méthode
@@ -37,7 +43,6 @@ export class ArticlePage{
     onChange(ev: any, art: Article) {
         const val = ev.target.value;
         this.quantiteTotal = 0;
-
 
         // on ajoute une ligne pour l'afficher dans la commande par la suite
         let ligne = {
@@ -65,8 +70,6 @@ export class ArticlePage{
             }
         }
         this.orderService.setPanier(this.orderLines);
-        console.log(this.orderLines);
-        console.log(this.orderService.getPanier().length)
     }
 
     getArticlePosition(ligne: OrderLine): number {
@@ -327,5 +330,25 @@ export class ArticlePage{
         }
     }
 
+    // met a jour les valeurs du ion-select
+    private updateSelect() {
+
+    }
+
+    getArticleQuantity(article:Article) {
+        let trouve: boolean = false;
+        let index = 0;
+        while (!trouve && index < this.orderLines.length) {
+            if (this.orderLines[index].article === article) {
+                trouve = true;
+            }
+            index++;
+        }
+        if (trouve) {
+            console.log(this.orderLines[index - 1].quantity);
+            return this.orderLines[index - 1].quantity;
+        }
+        return 0;
+    }
 }
 

@@ -19,7 +19,7 @@
         {{article.label}}
       </span>
       <span slot="end">{{article.unitPrice}} € </span>
-      <ion-select slot="end" interface="popover" placeholder="0" (ionChange)="onChange($event, article)">
+      <ion-select [selectedText]="getArticleQuantity(article)" slot="end" interface="popover" placeholder="0" (ionChange)="onChange($event, article)">
         <ion-item *ngFor="let chiffre of nombreQuantite">
           <ion-select-option value="{{chiffre}}">
             {{chiffre}}

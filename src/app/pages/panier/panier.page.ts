@@ -67,4 +67,8 @@ export class PanierPage implements OnInit {
         });
         return await modal.present();
     }
+
+    updatePanier() {
+        this.orderService.setPanier(this.panier);
+    }
 }
