@@ -1,9 +1,31 @@
-:host
+
+.header
 {
-    margin: auto;
+    margin-top: 1em;
+    margin-left: auto;
+    margin-bottom: auto;
+    margin-right: auto;
     text-align: center ;
     font-size: small;
 }
+
+.body {
+    margin: auto;
+    width: 80%;
+    font-size: small;
+    text-align: justify;
+}
+
+.body p {
+    text-align: center;
+}
+
+.box {
+    background-color: rgba(19, 167, 167, 0.2);
+    border-radius: 25px;
+
+}
+
 
 #numerophone {
     color: rgb(18, 163, 18);
@@ -11,4 +33,6 @@
 
 .icone-large {
     font-size: 25px;
+    margin-bottom: -8px;
+    margin-right: 8px;
 }

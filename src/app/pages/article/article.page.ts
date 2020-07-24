@@ -336,19 +336,23 @@ export class ArticlePage implements OnInit{
     }
 
     getArticleQuantity(article:Article) {
+        //console.log("Entré dans la méthode getArticle")
         let trouve: boolean = false;
         let index = 0;
         while (!trouve && index < this.orderLines.length) {
+            console.log("entrée dans le while");
             if (this.orderLines[index].article === article) {
                 trouve = true;
             }
             index++;
         }
         if (trouve) {
-            console.log(this.orderLines[index - 1].quantity);
+            console.log("Trouvé. La quantité de" + article.reference + "est de " +this.orderLines[index - 1].quantity);
             return this.orderLines[index - 1].quantity;
         }
+        //console.log("sortie de la méthode");
         return 0;
+        
     }
 }
 

@@ -41,6 +41,7 @@ export class PanierPage implements OnInit {
 
     deleteAll() {
         this.orderService.setPanier([]);
+        this.onDismiss();
     }
 
     toggled() {
