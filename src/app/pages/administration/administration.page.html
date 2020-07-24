@@ -19,7 +19,7 @@
     </ion-label>
     </ion-list-header>
 
-    <ion-item *ngFor="let client of comptes">
+    <ion-item (click)="test()" *ngFor="let client of comptes">
       <ion-avatar slot="start"><img src="{{client.customerPicture}}"></ion-avatar>
       <ion-label>{{client.name}}</ion-label>
       <ion-label>{{client.city.name}}</ion-label>

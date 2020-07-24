@@ -35,6 +35,9 @@ export class AdministrationPage implements OnInit {
     }
   }
 
+  test() {
+    console.log("test clic");
+  }
 
 initClient() {
   this.comptes = [

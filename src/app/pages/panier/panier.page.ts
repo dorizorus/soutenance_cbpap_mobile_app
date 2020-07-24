@@ -69,7 +69,31 @@ export class PanierPage implements OnInit {
         return await modal.present();
     }
 
-    updatePanier() {
+    /*updatePanier() {
+        this.orderService.setPanier(this.panier);
+    } */
+
+    updatePanier($event: any, ligne: OrderLine) {
+
+        // pour chaque orderLine du panier,
+        // on cherche la correspondance avec la ligne modifiée
+        this.panier.forEach(
+            (orderLine) => {
+                if (ligne.article.reference === orderLine.article.reference) {
+
+                    // une fois celle-ci trouvée, on met à jour la ligne avec la nouvelle quantité
+                    ligne.quantity = $event.target.value;
+
+                    // on cherche l'index de l'orderLine qu'on va mettre à jour
+                    const index = this.panier.indexOf(orderLine);
+
+                    // on met à jour la ligne dans le panier
+                    this.panier[index] = ligne;
+                }
+            }
+        );
+
+        // on met à jour le panier dans le service
         this.orderService.setPanier(this.panier);
     }
 }
