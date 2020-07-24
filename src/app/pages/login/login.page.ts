@@ -56,6 +56,10 @@ export class LoginPage implements OnInit {
         this.navCtrl.navigateForward(['/nav/article']);
     }
 
+    async navAdmin() {
+        this.navCtrl.navigateForward(['administration'])
+    }
+
     // censé faire apparaitre la modal mais ne marche pas non plus. La modal est créer dans tabs.ts
     async onContactPop() {
         const modal = await this.modalController.create({

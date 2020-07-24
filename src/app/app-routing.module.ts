@@ -14,11 +14,16 @@ const routes: Routes = [
       path: 'choix-compte',
       loadChildren: () => import('./pages/choix-compte/choix-compte.module').then( m => m.ChoixComptePageModule)
     },
+    {
+      path: 'administration',
+      loadChildren: () => import('./pages/administration/administration.module').then( m => m.AdministrationPageModule)
+    },
      {
     path : '',
     redirectTo : 'login',
     pathMatch: 'full'
   }
+
 ];
 
 @NgModule({
