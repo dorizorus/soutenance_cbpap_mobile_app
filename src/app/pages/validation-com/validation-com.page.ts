@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { OrderService } from 'src/app/services/order.service';
 
 @Component({
   selector: 'app-validation-com',
@@ -9,9 +10,11 @@ export class ValidationComPage implements OnInit {
 
   total:number;
 
-  constructor() { }
+  constructor(private orderService : OrderService) { }
 
   ngOnInit() {
+    this.total = this.orderService.getTotalMontantPanier();
+    console.log("total vaut " + this.total);
   }
 
 }

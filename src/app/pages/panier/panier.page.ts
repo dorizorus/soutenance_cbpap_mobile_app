@@ -23,10 +23,15 @@ export class PanierPage implements OnInit {
 
     ngOnInit() {
         // on subscribe aux données (ici un tableau de ligne de commande du panier), dès qu'un changement est detecté on les récupère
-        this.orderService.myData.subscribe(data => {
+        this.orderService.myData$.subscribe(data => {
                 this.panier = data;
             }
         )
+        
+        this.orderService.toggle$.subscribe((status) => {
+            this.remise = status;
+        })
+
         this.updateTotal();
     }
 
@@ -45,7 +50,7 @@ export class PanierPage implements OnInit {
     }
 
     toggled() {
-        this.remise = !this.remise;
+        this.orderService.setStatus(!this.orderService.getStatus());
         this.updateTotal();
     }
 
@@ -60,6 +65,7 @@ export class PanierPage implements OnInit {
     }
 
     async onCommandeValid() {
+        this.orderService.setTotalMontantPanier(this.total);
         this.modalController.dismiss();
         const modal = await this.modalController.create({
             component: ValidationComPage,
@@ -95,5 +101,6 @@ export class PanierPage implements OnInit {
 
         // on met à jour le panier dans le service
         this.orderService.setPanier(this.panier);
+        this.updateTotal();
     }
 }

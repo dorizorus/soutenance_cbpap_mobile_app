@@ -32,7 +32,7 @@ export class ArticlePage implements OnInit{
     }
 
     ngOnInit(): void {
-        this.orderService.myData.subscribe( data =>{
+        this.orderService.myData$.subscribe( data =>{
             this.orderLines = data;
             this.updateSelect();
         })

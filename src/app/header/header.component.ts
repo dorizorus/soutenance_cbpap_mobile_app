@@ -27,15 +27,24 @@ export class HeaderComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.orderService.myData.subscribe((data) => {
+        // on subscribe à toute nouvelles données du panier
+        this.orderService.myData$.subscribe((data) => {
             this.panier = data;
             this.updateTotal();
         });
+
+        // on subscribe à tout nouveau changement du status du toogle
+        this.orderService.toggle$.subscribe((status) => {
+            this.remise = status;
+            console.log(" 1 Entré dans le on init. Remise vaut " + this.remise)
+        })
+
         this.client = this.userService.getClient()
     }
 
     toggled() {
-        this.remise = !this.remise;
+        console.log("2 Cliqué! Remise vaut " + this.remise + " et est envoyé au service");
+        this.orderService.setStatus(!this.orderService.getStatus());
         this.updateTotal();
     }
 

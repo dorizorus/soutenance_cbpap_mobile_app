@@ -1,5 +1,28 @@
-.center{
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
+
+
+
+.header
+{
+    margin-top: 1em;
+    margin-left: auto;
+    margin-bottom: auto;
+    margin-right: auto;
+    text-align: center ;
+    font-size: small;
+}
+
+.body {
+  margin: auto;
+  width: 80%;
+  font-size: large;
+  text-align: justify;
+  text-align-last: center;
+}
+
+.end {
+  text-align: center;
+}
+
+.green {
+  color: green;
 }
