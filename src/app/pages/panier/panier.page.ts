@@ -1,8 +1,10 @@
-import {Component, OnInit} from '@angular/core';
+import {AfterViewChecked, AfterViewInit, Component, OnInit} from '@angular/core';
 import {OrderService} from 'src/app/services/order.service';
 import {OrderLine} from 'src/app/models/OrderLine';
 import {ModalController} from "@ionic/angular";
 import {ValidationComPage} from "../validation-com/validation-com.page";
+import { ChangeDetectorRef } from '@angular/core';
+
 
 @Component({
     selector: 'app-panier',
@@ -10,7 +12,7 @@ import {ValidationComPage} from "../validation-com/validation-com.page";
     styleUrls: ['./panier.page.scss'],
 })
 // dans le cas d'un "can't bind" to ngFor", ajouter PanierPage à app.module.ts dans declarations & entryComponents
-export class PanierPage implements OnInit {
+export class PanierPage implements OnInit,AfterViewChecked {
 
     nombreQuantite: number[] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
     panier: OrderLine[];
@@ -18,7 +20,8 @@ export class PanierPage implements OnInit {
     remise:boolean = false;
 
     constructor(private orderService: OrderService,
-                private modalController:ModalController) {
+                private modalController:ModalController,
+                private cdRef:ChangeDetectorRef) {
     }
 
     ngOnInit() {
@@ -80,7 +83,6 @@ export class PanierPage implements OnInit {
     } */
 
     updatePanier($event: any, ligne: OrderLine) {
-
         // pour chaque orderLine du panier,
         // on cherche la correspondance avec la ligne modifiée
         this.panier.forEach(
@@ -102,5 +104,10 @@ export class PanierPage implements OnInit {
         // on met à jour le panier dans le service
         this.orderService.setPanier(this.panier);
         this.updateTotal();
+    }
+
+    ngAfterViewChecked(): void {
+        this.remise = this.orderService.getStatus();
+        this.cdRef.detectChanges();
     }
 }

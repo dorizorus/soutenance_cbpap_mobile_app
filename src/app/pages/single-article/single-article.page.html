@@ -9,12 +9,12 @@
 
 
 <ion-content class="ion-padding">
-  <ion-thumbnail><img src="{{article.image.document}}"></ion-thumbnail>
+  <ion-thumbnail><img src="{{article.articleImage.image}}"></ion-thumbnail>
   <ion-card *ngIf="article != null">
-    <ion-card-header>{{article.libelle}}</ion-card-header>
+    <ion-card-header>{{article.label}}</ion-card-header>
     <ion-card-content>
       
-      <small>{{article.description.contenu}}</small>
+      <small>{{article.articleDetails.description}}</small>
     </ion-card-content>
   </ion-card>
 
