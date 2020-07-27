@@ -71,7 +71,7 @@ export class CartPage implements OnInit {
     }
 
     async createValidationOrder() {
-        this.orderService.setTotalMontantPanier(this.total);
+        this.orderService.setTotal(this.total);
         this.modalController.dismiss();
         const modal = await this.modalController.create({
             component: ValidationComPage,

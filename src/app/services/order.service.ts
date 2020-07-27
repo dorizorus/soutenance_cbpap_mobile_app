@@ -17,9 +17,9 @@ export class OrderService {
 
     constructor() {}
 
-    // transfère une order (utilisé dans l'history)
-    setOrder(commande: Order) {
-        this.order = commande;
+    // transfère une order (utilise dans l'history)
+    setOrder(cart: Order) {
+        this.order = cart;
     }
 
     getOrder(): Order {
@@ -37,16 +37,16 @@ export class OrderService {
     }
 
     // transfère le montant total du cart (utilisé dans la modal ValidationCom)
-    setTotalMontantPanier(total: number) {
+    setTotal(total: number) {
         this.total = total;
     }
 
-    getTotalMontantPanier() {
+    getTotal() {
         return this.total;
     }
 
-    setStatus(remise: boolean) {
-        this.toggle$.next(remise)
+    setStatus(warehouseRetrieval: boolean) {
+        this.toggle$.next(warehouseRetrieval)
     }
 
     getStatus() {

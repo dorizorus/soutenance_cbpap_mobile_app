@@ -13,6 +13,6 @@ export class ValidationComPage implements OnInit {
   constructor(private orderService : OrderService) { }
 
   ngOnInit() {
-    this.total = this.orderService.getTotalMontantPanier();
+    this.total = this.orderService.getTotal();
   }
 }
