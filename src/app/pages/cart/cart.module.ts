@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { PanierPageRoutingModule } from './cart-routing.module';
+import { CartPageRoutingModule } from './cart-routing.module';
 
 import { CartPage } from './cart.page';
 import { HeaderComponent } from 'src/app/header/header.component';
@@ -14,7 +14,7 @@ import { HeaderComponent } from 'src/app/header/header.component';
     CommonModule,
     FormsModule,
     IonicModule,
-    PanierPageRoutingModule
+    CartPageRoutingModule
   ],
   declarations: [CartPage, HeaderComponent]
 })
