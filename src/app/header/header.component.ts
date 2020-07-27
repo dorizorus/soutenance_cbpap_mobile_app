@@ -2,10 +2,10 @@ import {Component, OnInit} from '@angular/core';
 import {ModalController, NavController} from "@ionic/angular";
 import {SettingsPage} from "../pages/settings/settings.page";
 import {OrderService} from '../services/order.service';
-import {PanierPage} from '../pages/panier/panier.page';
+import {CartPage} from '../pages/cart/cart.page';
 import {OrderLine} from "../models/OrderLine";
 import {UserService} from '../services/user.service';
-import {Client} from '../models/Client';
+import {Customer} from '../models/Customer';
 
 @Component({
     selector: 'app-header',
@@ -16,23 +16,21 @@ export class HeaderComponent implements OnInit {
 
     panier: OrderLine[];
     total: number = 0;
-    remise: boolean = false;
-    client: Client;
+    remise = false;
+    client: Customer;
 
     constructor(private modalController: ModalController,
                 private navCtrl: NavController,
                 private orderService: OrderService,
                 private userService: UserService
-    ) {
-    }
+    ) {}
 
     ngOnInit() {
-        // on subscribe à toute nouvelles données du panier
+        // on subscribe à toute nouvelles données du cart
         this.orderService.myData$.subscribe((data) => {
             this.panier = data;
             this.updateTotal();
         });
-
         // on subscribe à tout nouveau changement du status du toogle
         this.orderService.toggle$.subscribe((status) => {
             this.remise = status;
@@ -42,12 +40,7 @@ export class HeaderComponent implements OnInit {
         this.client = this.userService.getClient()
     }
 
-    toggled() {
-        console.log("2 Cliqué! Remise vaut " + this.remise + " et est envoyé au service");
-        this.orderService.setStatus(!this.orderService.getStatus());
-        this.updateTotal();
-    }
-
+    // met a jour le prix total de la commande, base sur la liste des articles dans le cart
     private updateTotal() {
         // Si le toggle est activé on applique la remise
         this.total = 0;
@@ -57,32 +50,33 @@ export class HeaderComponent implements OnInit {
             this.panier.forEach(value => this.total += ((value.article.unitPrice * value.quantity) * 0.95));
     }
 
-    async goPanier() {
+    // cree une modale qui represente le cart
+    async createPanier() {
         const modal = await this.modalController.create({
-            component: PanierPage,
+            component: CartPage,
             cssClass: 'modal-article',
             backdropDismiss: true
         });
         return await modal.present();
     }
 
-    // on intègre la modal dans le constructeur pour pouvoir l'utiliser
-    // Async et Await sont présent afin que chaques lignes soient appellé une à une
-
-    // permet de créer la modal et de renvoyer au composant
-    async goSettings() {
-        const modal = await this.modalController.create({
-            component: SettingsPage,
-            backdropDismiss: true,
-            cssClass: 'modal-panier'
-        });
-        // ouvre la modal
-        return await modal.present();
-    }
-
     // permet d'avancer vers une route selectionné. L'avantage c'est que cela créer une animation
     // adéquate (fondu "avant" ou "arrière" d'un back button). Une des nombreuses manière de naviguer
-    async versSettings() {
-        this.navCtrl.navigateForward('choix-compte');
+    async goToSettings() {
+        this.navCtrl.navigateForward('acc-choice');
+    }
+
+    // probleme de synchronisation au depart
+    // solution ci-dessous, permet de fix le ion-toggle, erreur de synchro entre cart & header
+    // https://medium.com/@aleksandarmitrev/ionic-toggle-asynchronous-change-challenge-7e7cbdd50cb7
+    toggle($event: any) {
+        if (!this.remise) {
+            $event.stopImmediatePropagation();
+            $event.stopPropagation();
+            $event.preventDefault();
+            this.orderService.setStatus(!this.remise)
+        } else {
+            setTimeout(() => { this.remise= false; });
+        }
     }
 }

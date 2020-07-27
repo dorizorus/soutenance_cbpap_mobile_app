@@ -4,17 +4,17 @@ import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { ChoixComptePageRoutingModule } from './choix-compte-routing.module';
+import { AccChoicePageRoutingModule } from './acc-choice-routing.module';
 
-import { ChoixComptePage } from './choix-compte.page';
+import { AccChoicePage } from './acc-choice.page';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    ChoixComptePageRoutingModule
+    AccChoicePageRoutingModule
   ],
-  declarations: [ChoixComptePage]
+  declarations: [AccChoicePage]
 })
-export class ChoixComptePageModule {}
+export class AccChoicePageModule {}

@@ -10,6 +10,8 @@ export class DataService {
 
   constructor() { }
 
+  // todo SUPPRIMER
+
   setData(data){
     this.data = data ;
   }

@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Commande} from "../models/Commande";
+import {Order} from "../models/Order";
 import {BehaviorSubject} from 'rxjs';
 import {OrderLine} from '../models/OrderLine';
 
@@ -8,55 +8,48 @@ import {OrderLine} from '../models/OrderLine';
 })
 export class OrderService {
 
-    // todo faire 2 services - 1 comande, 1 panier
-    private commande: Commande;
-    private panier: OrderLine[];
-    private total : number;
-    private toggleStatus : boolean = false;
+    // todo faire 2 services - 1 comande, 1 cart
+    private order: Order;
+    private orderLines: OrderLine[];
+    private total: number;
     public myData$: BehaviorSubject<OrderLine[]> = new BehaviorSubject<OrderLine[]>([]);
     public toggle$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
+    constructor() {}
 
-    constructor() {
+    // transfère une order (utilise dans l'history)
+    setOrder(cart: Order) {
+        this.order = cart;
     }
 
-    // transfère une commande (utilisé dans l'historique)
-    setCommande(commande: Commande) {
-        this.commande = commande;
+    getOrder(): Order {
+        return this.order;
     }
 
-    getCommande(): Commande {
-        return this.commande;
-    }
-
-    // transfère un panier ( utilisé dans article, panier et header)
-    setPanier(panier: OrderLine[]) {
-        this.panier = panier;
-        this.myData$.next(this.panier);
+    // transfère un cart ( utilisé dans article, cart et header)
+    setCart(cart: OrderLine[]) {
+        this.orderLines = cart;
+        this.myData$.next(this.orderLines);
     }
 
     getPanier(): OrderLine[] {
-        return this.panier;
+        return this.orderLines;
     }
 
-    // transfère le montant total du panier (utilisé dans la modal ValidationCom)
-    setTotalMontantPanier(total : number) {
+    // transfère le montant total du cart (utilisé dans la modal ValidationCom)
+    setTotal(total: number) {
         this.total = total;
     }
 
-    getTotalMontantPanier() {
+    getTotal() {
         return this.total;
     }
 
-    // transfère l'état du toggle vis à vis du panier ou de la commande passé (utilisé dans header, panier)
-    setStatus(status : boolean) {
-        console.log("3 Entré dans setStatus, il vaut" + this.toggleStatus);
-        this.toggleStatus = status;
-        this.toggle$.next(this.toggleStatus);
-        console.log("4 Sortie de set status, il vaut " + this.toggleStatus);
+    setStatus(warehouseRetrieval: boolean) {
+        this.toggle$.next(warehouseRetrieval)
     }
 
     getStatus() {
-        return this.toggleStatus;
+        return this.toggle$.getValue();
     }
 }

@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ModalController, NavController} from '@ionic/angular';
 import {ContactPageModule} from "../contact/contact.module";
-import {Client} from 'src/app/models/Client';
+import {Customer} from 'src/app/models/Customer';
 import {UserService} from 'src/app/services/user.service';
 
 @Component({
@@ -11,7 +11,7 @@ import {UserService} from 'src/app/services/user.service';
 })
 export class LoginPage implements OnInit {
 
-    client: Client;
+    client: Customer;
 
     // to do : comparer les données envoyé en front avec le back, ensuite récupérer un token avec les infos pour qu'on puisse afficher
     // les infos dans certaines parties de l'application (genre la partie compte). Actuellement dans l'application, on utilise un service
@@ -29,7 +29,7 @@ export class LoginPage implements OnInit {
 
 
     initClient() {
-        let clientFactice = new Client();
+        let clientFactice = new Customer();
         clientFactice =
             {
                 id: '2',
@@ -51,17 +51,17 @@ export class LoginPage implements OnInit {
         this.userService.setClient(clientFactice);
     }
 
-    // permet d'amener vers la route x
-    async navTabs() {
+    // permet d'aller aux articles
+    async goToArticle() {
         this.navCtrl.navigateForward(['/nav/article']);
     }
 
-    async navAdmin() {
+    async goToAdministration() {
         this.navCtrl.navigateForward(['administration'])
     }
 
     // censé faire apparaitre la modal mais ne marche pas non plus. La modal est créer dans tabs.ts
-    async onContactPop() {
+    async createContact() {
         const modal = await this.modalController.create({
             component: ContactPageModule,
             cssClass: 'modal-pop',
@@ -69,5 +69,4 @@ export class LoginPage implements OnInit {
         });
         return await modal.present();
     }
-
 }

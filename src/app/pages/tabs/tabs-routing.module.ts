@@ -12,8 +12,8 @@ const routes: Routes = [
                 loadChildren: () => import('../article/article.module').then(m => m.ArticlesPageModule)
             },
             {
-                path:'historique',
-                loadChildren: () => import('../historique/historique.module').then(m => m.HistoriquePageModule)
+                path:'history',
+                loadChildren: () => import('../history/history.module').then(m => m.HistoryPageModule)
             },
             {
                 path:'documents',

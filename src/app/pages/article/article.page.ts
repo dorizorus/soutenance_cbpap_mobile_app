@@ -6,18 +6,18 @@ import {Article} from 'src/app/models/Article';
 import {OrderLine} from 'src/app/models/OrderLine';
 import {OrderService} from 'src/app/services/order.service';
 import {UserService} from 'src/app/services/user.service';
-import {Client} from 'src/app/models/Client';
+import {Customer} from 'src/app/models/Customer';
 
 @Component({
     selector: 'app-articles',
     templateUrl: './article.page.html',
     styleUrls: ['./article.page.scss'],
 })
-export class ArticlePage implements OnInit{
+export class ArticlePage implements OnInit {
 
-    nombreQuantite: number[] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
-    listeArticles: Article[];
-    quantiteTotal: number;
+    possibleQuantities: number[] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
+    articleList: Article[];
+    totalQuantity: number;
     orderLines: OrderLine[] = [];
 
 
@@ -32,46 +32,43 @@ export class ArticlePage implements OnInit{
     }
 
     ngOnInit(): void {
-        this.orderService.myData$.subscribe( data =>{
+        this.orderService.myData$.subscribe(data => {
             this.orderLines = data;
-            this.updateSelect();
         })
     }
 
-    // Dés qu'une quantité est selectionné pour un produit, la méthode
-    // est censée la transmettre au service mais ça déconne
+    // Dés qu'une quantité est selectionné pour un produit, la méthode la transmet au service
     onChange(ev: any, art: Article) {
         const val = ev.target.value;
-        this.quantiteTotal = 0;
+        this.totalQuantity = 0;
 
-        // on ajoute une ligne pour l'afficher dans la commande par la suite
-        let ligne = {
+        // on ajoute une line pour l'afficher dans la commande par la suite
+        let line = {
             orderNumber: null,
             article: art,
             quantity: val
         }
-        // S'il n'y a pas de lignes, on ajoute directement. S'il y en a, on remplace
-        // la quantité de la ligne par la nouvelle.
-        // !!  Créer des lignes a chaque changement et le calcul de la quantité marche pas
 
-        if (ligne.quantity == 0) { // suppression
+        // S'il n'y a pas de lignes, on ajoute directement. S'il y en a, on remplace la quantité de la line par la nouvelle.
+        if (line.quantity == 0) { // suppression
             if (this.orderLines.length != 0) {
-                let index = this.getArticlePosition(ligne);
+                let index = this.getArticlePosition(line);
                 if (index != -1)
                     this.orderLines.splice(index, 1);
             }
         } else { // ajout ou modif
-            let index: number = this.getArticlePosition(ligne);
+            let index: number = this.getArticlePosition(line);
             if (index == -1) { // pas trouve donc on ajoute
-                this.orderLines.push(ligne);
-                this.quantiteTotal++;
+                this.orderLines.push(line);
+                this.totalQuantity++;
             } else { // update
-                this.orderLines[index] = ligne;
+                this.orderLines[index] = line;
             }
         }
-        this.orderService.setPanier(this.orderLines);
+        this.orderService.setCart(this.orderLines);
     }
 
+    // permet de retrouver la position d'un article à patir d'une ligne de commande
     getArticlePosition(ligne: OrderLine): number {
         let trouve: boolean = false;
         let index = 0;
@@ -81,34 +78,13 @@ export class ArticlePage implements OnInit{
             }
             index++;
         }
-        console.log(index + " index ")
         if (trouve)
             return index - 1;
         return -1;
     }
 
-
-    // Retire du tableau si une commande a 0 article et calcule le total de la quantité d'article
-    checkQuantity(ligneQuantity: OrderLine, element: OrderLine) {
-
-        if (ligneQuantity.quantity > element.quantity) {
-            // Si le quantité input est supérieure, on soustrait l'ancienne et on ajoute la nouvelle
-            this.quantiteTotal -= element.quantity;
-            this.quantiteTotal += ligneQuantity.quantity;
-
-            // Si la quantité input est inférieure et non égale à 0, on soustrait la différence
-        } else if ((ligneQuantity.quantity < element.quantity) && (!(ligneQuantity.quantity === 0))) {
-            this.quantiteTotal -= (element.quantity - ligneQuantity.quantity);
-
-            // Si aucun des deux critères n'est rempli, c'est que c'est à 0 donc on supprime la ligne
-        } else {
-            const cle = this.orderLines.indexOf(element)
-            this.orderLines.splice(cle, 1);
-        }
-    }
-
-    // créer une modal avec les donnée d'un article pour les transférer dans la modal
-    async onLoadArticle(articleData) {
+    // quand on clique sur l'article, on affiche la description
+    async createArticleDetails(articleData) {
         this.navParamsService.setData(articleData);
         const modal = await this.modalController.create({
             component: SingleArticlePage,
@@ -118,9 +94,9 @@ export class ArticlePage implements OnInit{
         return await modal.present();
     }
 
-    // initialisation de la liste d'articlé crée la dedans. On utilisera le back a la place ici
+    // initialisation de la liste d'article cree. On utilisera le back a la place ici
     initializeArticles() {
-        this.listeArticles = [{
+        this.articleList = [{
             reference: 'AR578',
             label: 'Carton cache test long texte jtriueothikre',
             unitPrice: 40.00,
@@ -289,7 +265,7 @@ export class ArticlePage implements OnInit{
     }
 
     initClient() {
-        let clientFactice = new Client();
+        let clientFactice = new Customer();
         clientFactice =
             {
                 id: '2',
@@ -323,36 +299,27 @@ export class ArticlePage implements OnInit{
 
         // si rien n'est mis on affiche tout, sinon on filtre avec ce qui a été inséré
         if (val && val.trim() !== '') {
-            this.listeArticles = this.listeArticles.filter((article) => {
+            this.articleList = this.articleList.filter((article) => {
                 return (article.reference.toLowerCase().indexOf(val.toLowerCase()) > -1 ||
                     article.label.toLowerCase().indexOf(val.toLowerCase()) > -1);
             })
         }
     }
 
-    // met a jour les valeurs du ion-select
-    private updateSelect() {
-
-    }
-
-    getArticleQuantity(article:Article) {
-        //console.log("Entré dans la méthode getArticle")
+    // recupere la quantite d'un article dans la liste du cart
+    getArticleQuantity(article: Article) {
         let trouve: boolean = false;
         let index = 0;
         while (!trouve && index < this.orderLines.length) {
-            console.log("entrée dans le while");
             if (this.orderLines[index].article === article) {
                 trouve = true;
             }
             index++;
         }
-        if (trouve) {
-            console.log("Trouvé. La quantité de" + article.reference + "est de " +this.orderLines[index - 1].quantity);
+        if (trouve)
             return this.orderLines[index - 1].quantity;
-        }
-        //console.log("sortie de la méthode");
         return 0;
-        
+
     }
 }
 

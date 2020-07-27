@@ -1,10 +1,10 @@
-import {Client} from './Client';
+import {Customer} from './Customer';
 import {OrderLine} from './OrderLine';
 
-export class Commande {
+export class Order {
 
     orderNumber: string;
-    customer: Client;
+    customer: Customer;
     orderLines: OrderLine[];
     dateCommande: Date;
 }

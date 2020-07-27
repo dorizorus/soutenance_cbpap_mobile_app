@@ -12,64 +12,66 @@
     <ion-label><strong>Mon panier :</strong></ion-label>
 
 
-    <div *ngIf="panier.length != 0">
+    <div *ngIf="cart.length != 0">
         <ion-button (click)="deleteAll()" color="danger">
             Vider le panier
         </ion-button>
     </div>
     <ion-list>
-        <ion-item *ngFor="let ligne of panier">
-            <ion-avatar><img src="{{ligne.article.articleImage.image}}"></ion-avatar>
+        <ion-item *ngFor="let orderLine of cart">
+            <ion-avatar><img src="{{orderLine.article.articleImage.image}}"></ion-avatar>
             <span class="small">
-            <ion-label><strong>{{ligne.article.reference}}</strong></ion-label>
-                {{ligne.article.label}}
+            <ion-label><strong>{{orderLine.article.reference}}</strong></ion-label>
+                {{orderLine.article.label}}
             </span>
             <span class="align">
-            {{ligne.article.unitPrice}}
+            {{orderLine.article.unitPrice}} €
             </span>
-            <ion-select (ionChange)="updatePanier($event,ligne)" interface="popover" slot="end" placeholder="{{ligne.quantity}}">
-                <ion-item *ngFor="let chiffre of nombreQuantite">
+            <ion-select (ionChange)="updateCart($event,orderLine)" interface="popover" slot="end"
+                        placeholder="{{orderLine.quantity}}">
+                <ion-item *ngFor="let chiffre of possibleQuantities">
                     <ion-select-option value="{{chiffre}}">
                         {{chiffre}}
                     </ion-select-option>
                 </ion-item>
             </ion-select>
             <span slot="end">
-            <ion-button color="danger" (click)="deleteLine(ligne)">
+            <ion-button color="danger" (click)="deleteLine(orderLine)">
             <ion-icon name="trash-outline"></ion-icon>
             </ion-button>
         </span>
         </ion-item>
     </ion-list>
-    <div *ngIf="panier.length != 0; else paniervide" class="alignement">
+    <div *ngIf="cart.length != 0; else emptyCart" class="alignement">
         <div>
             <span slot="start">Sous-total HT : </span>
-            <span slot="end"> {{total}}</span>
+            <span slot="end"> {{total}} €</span>
         </div>
-        <div *ngIf="!remise">
-            <div *ngIf="total-250 >= 0; else pasRemise" class="green">
+        <div *ngIf="!warehouseRetrieval">
+            <div *ngIf="total-250 >= 0; else noDiscount" class="green">
                 <small>LIVRAISON GRATUITE</small>
             </div>
-            <ng-template #pasRemise>
+            <ng-template #noDiscount>
                 <span class="green">{{250 - total }} </span><small> € avant la livraison</small>
             </ng-template>
         </div>
         <div>
             <ion-icon class="icones" name="home-outline" size="small"></ion-icon>
             <span class="green">-5%</span><small> retrait entrepôt</small>
-            <ion-toggle (ionChange)="toggled()" checked={{remise}} class="reductionHauteur" color="success"></ion-toggle>
+            <ion-toggle (ionChange)="toggled()" [checked]="warehouseRetrieval" class="reductionHauteur"
+                        color="success"></ion-toggle>
         </div>
         <div>
             <span><strong>Total HT : </strong></span>
-            <span>{{total}}</span>
+            <span>{{total}} €</span>
         </div>
-        <ion-button (click)="onCommandeValid()" color="success">
+        <ion-button (click)="createValidationOrder()" color="success">
             Commander
         </ion-button>
     </div>
-    <ng-template #paniervide>
+    <ng-template #emptyCart>
         <div>
-            Le panier est vide :( 
+            Le panier est vide :(
         </div>
     </ng-template>
 </ion-content>

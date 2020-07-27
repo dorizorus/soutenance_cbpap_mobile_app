@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Client } from '../models/Client';
+import { Customer } from '../models/Customer';
 
 
 @Injectable({
@@ -7,28 +7,28 @@ import { Client } from '../models/Client';
 })
 export class UserService {
 
-  client : Client;
-  comptes : Client[];
+  client : Customer;
+  comptes : Customer[];
 
   constructor() { }
 
 
 
-setClient(client : Client) {
+setClient(client : Customer) {
   this.client = client;
   console.log("CLient" + this.client.name + " a été enregistré")
 }
 
-getClient(): Client {
+getClient(): Customer {
   console.log("Le client" + this.client.name + " va être envoyé");
   return this.client;
 }
 
-setComptesClients(comptes : Client[]) {
+setComptesClients(comptes : Customer[]) {
   this.comptes = comptes;
 }
 
-getComptesClients() : Client[] {
+getComptesClients() : Customer[] {
   return this.comptes;
 }
 

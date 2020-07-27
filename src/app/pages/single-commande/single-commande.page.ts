@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {Commande} from "../../models/Commande";
+import {Order} from "../../models/Order";
 import {OrderService} from "../../services/order.service";
 import {AlertController, NavController} from "@ionic/angular";
 
@@ -9,31 +9,32 @@ import {AlertController, NavController} from "@ionic/angular";
     styleUrls: ['./single-commande.page.scss'],
 })
 export class SingleCommandePage implements OnInit {
-    commande: Commande;
+    order: Order;
     total: number = 0;
-    canEdit:boolean;
+    canEdit: boolean;
 
     constructor(private orderService: OrderService,
-                private alertController:AlertController,
-                private navController:NavController) {
+                private alertController: AlertController,
+                private navController: NavController) {
     }
 
     ngOnInit(): void {
-        this.commande = this.orderService.getCommande();
+        this.order = this.orderService.getOrder();
         this.total = 0;
-        this.commande.orderLines.forEach(value => this.total += (value.article.finalPrice * value.quantity));
+        this.order.orderLines.forEach(value => this.total += (value.article.finalPrice * value.quantity));
 
-        let limite:Date = this.commande.dateCommande;
+        let limite: Date = this.order.dateCommande;
         limite.setHours(limite.getHours() + 3);
 
-        if(limite.getTime() > new Date().getTime()){
+        if (limite.getTime() > new Date().getTime()) {
             this.canEdit = true;
         }
     }
 
-    updatePanier() {
-        this.orderService.setPanier(this.commande.orderLines);
+    updateCart() {
+        this.orderService.setCart(this.order.orderLines);
     }
+
     async alertConfirm() {
         const alert = await this.alertController.create({
             header: "Annulation d'une commande",
@@ -50,7 +51,7 @@ export class SingleCommandePage implements OnInit {
                 }, {
                     text: "Oui",
                     handler: () => {
-                        this.envoiAnnulation();
+                        this.sendCancel();
                     }
                 }
             ]
@@ -58,7 +59,7 @@ export class SingleCommandePage implements OnInit {
         await alert.present();
     }
 
-    private envoiAnnulation() {
+    private sendCancel() {
         // todo ici envoyer pdf annulation commande & supprimer commande dans le app preference
         this.navController.navigateBack(['/nav/article']);
     }

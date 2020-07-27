@@ -1,5 +1,5 @@
-import { ImageArticle } from './ImageArticle';
-import { Description } from './Description';
+import { ArticlePicture } from './ArticlePicture';
+import { ArticleDetails } from './ArticleDetails';
 
 export class Article {
 
@@ -7,7 +7,7 @@ export class Article {
   label: string;
   unitPrice: number;
   family: string;
-  articleImage: ImageArticle;
-  articleDetails: Description;
+  articleImage: ArticlePicture;
+  articleDetails: ArticleDetails;
   finalPrice: number;
 }

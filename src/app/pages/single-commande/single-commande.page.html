@@ -3,10 +3,10 @@
     <ion-buttons slot="start">
         <ion-back-button icon="chevron-back-outline" default-href="/"></ion-back-button>
     </ion-buttons>
-    {{commande.orderNumber | uppercase}}
+    {{order.orderNumber | uppercase}}
 </ion-toolbar>
 <ion-content class="ion-padding">
-    <ion-item *ngFor="let orderLine of commande.orderLines">
+    <ion-item *ngFor="let orderLine of order.orderLines">
         {{orderLine.article.label + ' x' + orderLine.quantity}}
         <div slot="end" class="green">
             {{orderLine.article.unitPrice * orderLine.quantity |number : '1.2-2'}}
@@ -21,14 +21,14 @@
             <p>Total HT : <span> <b>{{total + 20 |number : '1.2-2'}}</b> €</span></p>
         </ng-template>
         <div>
-            <ion-button color="success" size="small" routerLink="/nav/historique/single-commande/recommande">Commander à nouveau</ion-button>
+            <ion-button color="success" size="small" routerLink="/nav/history/single-commande/recommande">Commander à nouveau</ion-button>
         </div>
         <div *ngIf="canEdit">
-            <span> TEMPS RESTANT {{commande.dateCommande | date : 'H' }}h{{commande.dateCommande | date : 'mm' }} POUR : </span>
+            <span> TEMPS RESTANT {{order.dateCommande | date : 'H' }}h{{order.dateCommande | date : 'mm' }} POUR : </span>
 
             <div>
                 <ion-button (click)="alertConfirm()" color="danger"  size="small" fill="solid">Annuler</ion-button>
-                <ion-button (click)="updatePanier()" color="warning" size="small" fill="solid" routerLink="/nav/article">Editer</ion-button>
+                <ion-button (click)="updateCart()" color="warning" size="small" fill="solid" routerLink="/nav/article">Editer</ion-button>
             </div>
         </div>
     </div>

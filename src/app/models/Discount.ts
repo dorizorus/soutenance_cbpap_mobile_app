@@ -1,10 +1,10 @@
 import {Article} from './Article';
-import {Client} from './Client';
+import {Customer} from './Customer';
 
 export class Discount {
 
     article: Article;
-    customer: Client;
+    customer: Customer;
     disocunt: number;
     clientPrice: number;
 }

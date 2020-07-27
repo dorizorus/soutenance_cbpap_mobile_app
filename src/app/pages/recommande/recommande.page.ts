@@ -1,46 +1,50 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {OrderService} from "../../services/order.service";
-import {Commande} from "../../models/Commande";
+import {Order} from "../../models/Order";
 
 @Component({
-  selector: 'app-recommande',
-  templateUrl: './recommande.page.html',
-  styleUrls: ['./recommande.page.scss'],
+    selector: 'app-recommande',
+    templateUrl: './recommande.page.html',
+    styleUrls: ['./recommande.page.scss'],
 })
 export class RecommandePage implements OnInit {
-  commande:Commande;
-  total:number = 0;
-  remise:boolean = false;
+    order: Order;
+    total: number = 0;
+    warehouseRetrieval: boolean = false;
 
-  constructor(private orderService: OrderService) { }
+    constructor(private orderService: OrderService) {
+    }
 
-  ngOnInit() {
-    this.commande = this.orderService.getCommande();
-    this.updateTotal();
-  }
+    ngOnInit() {
+        this.order = this.orderService.getOrder();
+        this.updateTotal();
+    }
 
-  toggled(){
-    this.remise = !this.remise;
-    this.updateTotal();
-  }
+    toggled() {
+        this.warehouseRetrieval = !this.warehouseRetrieval;
+        this.updateTotal();
+    }
 
-  private updateTotal() {
-    // Si le toggle est activé on applique la remise
-    this.total = 0;
-    if (!this.remise)
-      this.commande.orderLines.forEach(value => this.total += (value.article.finalPrice * value.quantity));
-    else
-      this.commande.orderLines.forEach(value => this.total += ((value.article.finalPrice * value.quantity) * 0.95));
-    if(this.total < 250 && !this.remise)
-      this.total +=20;
-  }
 
-  // todo faire en sorte d'envoyer pdf par mail
-  lancerCommande() {
+    // met a jour le total du cart en fonction des articles & de leur quantite & du discount, selon leur finalPrice
+    private updateTotal() {
+        // Si le toggle est activé on applique la remise
+        this.total = 0;
+        if (!this.warehouseRetrieval)
+            this.order.orderLines.forEach(value => this.total += (value.article.finalPrice * value.quantity));
+        else
+            this.order.orderLines.forEach(value => this.total += ((value.article.finalPrice * value.quantity) * 0.95));
+        if (this.total < 250 && !this.warehouseRetrieval)
+            this.total += 20;
+    }
 
-  }
+    // todo faire en sorte d'envoyer pdf par mail
+    startOrder() {
 
-  updatePanier() {
-    this.orderService.setPanier(this.commande.orderLines);
-  }
+    }
+
+    // met a jour le cart dans le service
+    updateCart() {
+        this.orderService.setCart(this.order.orderLines);
+    }
 }
