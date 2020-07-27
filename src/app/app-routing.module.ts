@@ -11,8 +11,8 @@ const routes: Routes = [
         loadChildren: () => import('./pages/login/login.module').then(m => m.LoginPageModule)
     },
     {
-      path: 'choix-compte',
-      loadChildren: () => import('./pages/choix-compte/choix-compte.module').then( m => m.ChoixComptePageModule)
+      path: 'acc-choice',
+      loadChildren: () => import('./pages/acc-choice/acc-choice.module').then(m => m.AccChoicePageModule)
     },
     {
       path: 'administration',

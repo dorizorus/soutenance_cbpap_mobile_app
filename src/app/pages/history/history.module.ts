@@ -4,9 +4,9 @@ import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { HistoriquePageRoutingModule } from './historique-routing.module';
+import { HistoryPageRoutingModule } from './history-routing.module';
 
-import { HistoriquePage } from './historique.page';
+import { HistoryPage } from './history.page';
 import {HeaderComponent} from "../../header/header.component";
 
 @NgModule({
@@ -14,9 +14,9 @@ import {HeaderComponent} from "../../header/header.component";
     CommonModule,
     FormsModule,
     IonicModule,
-    HistoriquePageRoutingModule
+    HistoryPageRoutingModule
   ],
   exports: [HeaderComponent],
-  declarations: [HistoriquePage, HeaderComponent]
+  declarations: [HistoryPage, HeaderComponent]
 })
-export class HistoriquePageModule {}
+export class HistoryPageModule {}

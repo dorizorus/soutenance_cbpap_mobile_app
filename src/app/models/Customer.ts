@@ -1,6 +1,6 @@
-import { Ville } from './Ville';
+import { City } from './City';
 
-export class Client {
+export class Customer {
 
   id: string;
   password: string;
@@ -8,7 +8,7 @@ export class Client {
   address: string;
   phoneNumber: string;
   email: string;
-  city: Ville;
+  city: City;
   customerPicture: string;
   customerFiles: string;
 

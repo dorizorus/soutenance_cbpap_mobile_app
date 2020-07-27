@@ -4,9 +4,9 @@ import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { PanierPageRoutingModule } from './panier-routing.module';
+import { PanierPageRoutingModule } from './cart-routing.module';
 
-import { PanierPage } from './panier.page';
+import { CartPage } from './cart.page';
 import { HeaderComponent } from 'src/app/header/header.component';
 
 @NgModule({
@@ -16,6 +16,6 @@ import { HeaderComponent } from 'src/app/header/header.component';
     IonicModule,
     PanierPageRoutingModule
   ],
-  declarations: [PanierPage, HeaderComponent]
+  declarations: [CartPage, HeaderComponent]
 })
 export class PanierPageModule {}

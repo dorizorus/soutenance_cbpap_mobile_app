@@ -1,27 +1,25 @@
 import {Component, OnInit} from '@angular/core';
-import {Commande} from "../../models/Commande";
+import {Order} from "../../models/Order";
 import {OrderService} from "../../services/order.service";
 
 @Component({
     selector: 'app-historique',
-    templateUrl: './historique.page.html',
-    styleUrls: ['./historique.page.scss'],
+    templateUrl: './history.page.html',
+    styleUrls: ['./history.page.scss'],
 })
-export class HistoriquePage implements OnInit {
+export class HistoryPage implements OnInit {
 
-    public historique: Commande[];
+    public history: Order[];
 
     constructor(private orderService: OrderService) {
     }
 
     ngOnInit() {
-        this.historique = this.initCommandes();
+        this.history = this.initOrders();
     }
 
-    private initCommandes(): Commande[] {
-        let commande1 = new Commande();
-        let commande2 = new Commande();
-        commande1 = {
+    private initOrders(): Order[] {
+        let order1 = {
             orderNumber: 'MOBI1337',
             dateCommande: new Date(2018, 8, 22),
             customer: {
@@ -69,7 +67,7 @@ export class HistoriquePage implements OnInit {
                 }
             ]
         };
-        commande2 = {
+        let order2 = {
             orderNumber: 'mobydick',
             dateCommande: new Date(),
             customer: {
@@ -117,7 +115,7 @@ export class HistoriquePage implements OnInit {
                 }
             ]
         };
-        let commande3 = {
+        let order3 = {
             orderNumber: 'test',
             dateCommande: new Date(),
             customer: {
@@ -165,10 +163,10 @@ export class HistoriquePage implements OnInit {
                 }
             ]
         }
-        return [commande1, commande2, commande3];
+        return [order1, order2, order3];
     }
 
-    onLoadCommande(commande) {
-        this.orderService.setCommande(commande);
+    onClickOrder(order: Order) {
+        this.orderService.setOrder(order);
     }
 }

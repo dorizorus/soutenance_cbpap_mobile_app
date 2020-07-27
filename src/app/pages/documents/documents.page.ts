@@ -1,19 +1,20 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 
 @Component({
-  selector: 'app-documents',
-  templateUrl: './documents.page.html',
-  styleUrls: ['./documents.page.scss'],
+    selector: 'app-documents',
+    templateUrl: './documents.page.html',
+    styleUrls: ['./documents.page.scss'],
 })
 export class DocumentsPage implements OnInit {
 
-  constructor() { }
+    constructor() {
+    }
 
-  ngOnInit() {
-  }
+    ngOnInit() {
+    }
 
-  onClick() {
-    console.log("test");
-  }
+    onClick() {
+        console.log("test");
+    }
 
 }

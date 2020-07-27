@@ -1,13 +1,13 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
-import { ChoixComptePage } from './choix-compte.page';
+import { AccChoicePage } from './acc-choice.page';
 import { SettingsPage } from '../settings/settings.page';
 
 const routes: Routes = [
   {
     path: '',
-    component: ChoixComptePage
+    component: AccChoicePage
   },
   {
     path: 'settings',
@@ -19,4 +19,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class ChoixComptePageRoutingModule {}
+export class AccChoicePageRoutingModule {}

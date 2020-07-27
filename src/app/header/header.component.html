@@ -5,18 +5,18 @@
         <ion-col size="4">
           <ion-avatar>
             <img class="image" src="assets/icon/devanturePizzaHut.png" 
-            alt="avatar" (click)="versSettings()">
+            alt="avatar" (click)="goToSettings()">
           </ion-avatar>
         </ion-col>
         <ion-col class="logo" size="4">
           <img src="assets/icon/logo.jpg" alt="logo">
         </ion-col>
         <ion-col size="1">
-          <ion-button color="light" (click)="goPanier()">
-            <ion-icon (click)="goPanier()" class="icones" name="cart-outline" size="small"></ion-icon>
+          <ion-button color="light" (click)="createPanier()">
+            <ion-icon (click)="createPanier()" class="icones" name="cart-outline" size="small"></ion-icon>
           </ion-button>
         </ion-col>
-        <ion-col size="1" (click)="goPanier()">
+        <ion-col size="1" (click)="createPanier()">
           <ion-badge color="success">{{panier.length}}</ion-badge>
         </ion-col>
         <ion-col size="2">
@@ -54,7 +54,7 @@
         <ion-col size="10">
         </ion-col>
         <ion-col size="2">
-          <ion-toggle (ionChange)="toggled()" checked={{remise}}></ion-toggle> <!-- ajoute le bouton remise -->
+          <ion-toggle [ngModel]="remise" (click)="toggle($event)"></ion-toggle>
         </ion-col>
       </ion-row>
     </ion-toolbar>

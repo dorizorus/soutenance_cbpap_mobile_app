@@ -24,7 +24,7 @@
   <ion-item>
     <!-- Voir comment récupérer la quantité pour la repasser a l'exterieur de la modal -->
     <ion-select interface="popover" placeholder="0">
-      <ion-item *ngFor="let chiffre of nombreQuantite">
+      <ion-item *ngFor="let chiffre of possibleQuantities">
         <ion-select-option value="{{chiffre}}">
           {{chiffre}}
         </ion-select-option>
