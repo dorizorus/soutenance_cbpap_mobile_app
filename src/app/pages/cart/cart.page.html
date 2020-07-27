@@ -52,7 +52,7 @@
                 <small>LIVRAISON GRATUITE</small>
             </div>
             <ng-template #noDiscount>
-                <span class="green">{{250 - total }} </span><small> € avant la livraison</small>
+                <span class="green">{{250 - total | number:'1.2-2' }} </span><small> € avant la livraison</small>
             </ng-template>
         </div>
         <div>
