@@ -2,6 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import {OrderService} from "../../services/order.service";
 import {Order} from "../../models/Order";
 
+import { cloneDeep } from 'lodash';
+
 @Component({
     selector: 'app-recommande',
     templateUrl: './recommande.page.html',
@@ -45,6 +47,9 @@ export class RecommandePage implements OnInit {
 
     // met a jour le cart dans le service
     updateCart() {
-        this.orderService.setCart(this.order.orderLines);
+        // fait un deep clone des lignes de la commande
+        const newCart = cloneDeep(this.order.orderLines);
+        // on met à jour le panier avec le clone
+        this.orderService.setCart(newCart);
     }
 }
