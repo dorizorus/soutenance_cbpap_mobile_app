@@ -1,0 +1,62 @@
+<ion-header>
+  <ion-grid> <!-- créer un quadrillage permettant de positionner des colonnes et des lignes -->
+    <ion-toolbar>
+      <ion-row> <!-- permet d'ajouter une ligne, enfant du grid et mere de ion-col-->
+        <ion-col size="4">
+          <ion-avatar>
+            <img class="image" src="assets/icon/devanturePizzaHut.png" 
+            alt="avatar" (click)="goToSettings()">
+          </ion-avatar>
+        </ion-col>
+        <ion-col class="logo" size="4">
+          <img src="assets/icon/logo.jpg" alt="logo">
+        </ion-col>
+        <ion-col size="1">
+          <ion-button color="light" (click)="createPanier()">
+            <ion-icon (click)="createPanier()" class="icones" name="cart-outline" size="small"></ion-icon>
+          </ion-button>
+        </ion-col>
+        <ion-col size="1" (click)="createPanier()">
+          <ion-badge color="success">{{panier.length}}</ion-badge>
+        </ion-col>
+        <ion-col size="2">
+          <br/>{{total | number : '1.2-2' | currency:'EUR'}}
+        </ion-col>
+      </ion-row>
+      <ion-row class="nom">
+        <ion-col size="5">
+          <div><small>{{ client.name }}</small></div>
+        </ion-col>
+        <ion-col size="1" *ngIf="!remise">
+          <ion-icon class="icones" name="subway-outline" size="small"></ion-icon>
+        </ion-col>
+        <ion-col size="6" *ngIf="!remise">
+          <div *ngIf="total-250 >= 0; else pasRemise" class="green">
+            <small>LIVRAISON GRATUITE</small>
+          </div>
+          <ng-template #pasRemise>
+            <small> <span class="green">{{250 - total }} </span> € avant la livraison</small>
+          </ng-template>
+        </ion-col>
+      </ion-row>
+      <ion-row  class="colonne">
+        <ion-col size="5">
+
+        </ion-col>
+        <ion-col size="1">
+          <ion-icon class="icones" name="home-outline" size="small"></ion-icon>
+        </ion-col>
+        <ion-col size="6">
+          <span class="green">-5%</span><small> retrait entrepôt</small>
+        </ion-col>
+      </ion-row>
+      <ion-row class="colonneMax">
+        <ion-col size="10">
+        </ion-col>
+        <ion-col size="2">
+          <ion-toggle [ngModel]="remise" (click)="toggle($event)"></ion-toggle>
+        </ion-col>
+      </ion-row>
+    </ion-toolbar>
+  </ion-grid>
+</ion-header>
