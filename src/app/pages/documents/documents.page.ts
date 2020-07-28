@@ -7,6 +7,7 @@ import {Component, OnInit} from '@angular/core';
 })
 export class DocumentsPage implements OnInit {
 
+    // inutilise puisque pas possible sans back
     constructor() {
     }
 

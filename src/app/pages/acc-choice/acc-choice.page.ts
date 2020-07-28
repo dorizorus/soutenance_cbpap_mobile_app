@@ -17,7 +17,7 @@ export class AccChoicePage implements OnInit {
     }
 
     ngOnInit() {
-        this.client = this.userService.getClient()
+        this.client = this.userService.getCustomer()
     }
 
     goToSettings() {

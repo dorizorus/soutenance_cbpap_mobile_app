@@ -1,19 +1,19 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
-import { ValidationComPage } from './validation-com.page';
+import { OrderValidationPage } from './order-validation.page';
 
-describe('ValidationComPage', () => {
-  let component: ValidationComPage;
-  let fixture: ComponentFixture<ValidationComPage>;
+describe('OrderValidationPage', () => {
+  let component: OrderValidationPage;
+  let fixture: ComponentFixture<OrderValidationPage>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ValidationComPage ],
+      declarations: [ OrderValidationPage ],
       imports: [IonicModule.forRoot()]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(ValidationComPage);
+    fixture = TestBed.createComponent(OrderValidationPage);
     component = fixture.componentInstance;
     fixture.detectChanges();
   }));

@@ -16,10 +16,6 @@ const routes: Routes = [
                 loadChildren: () => import('../history/history.module').then(m => m.HistoryPageModule)
             },
             {
-                path:'documents',
-                loadChildren: () => import('../documents/documents.module').then(m => m.DocumentsPageModule)
-            },
-            {
                 path:'',
                 redirectTo:'/nav/article',
                 pathMatch:'full'

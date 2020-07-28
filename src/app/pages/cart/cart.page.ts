@@ -2,8 +2,11 @@ import {Component, OnInit} from '@angular/core';
 import {OrderService} from 'src/app/services/order.service';
 import {OrderLine} from 'src/app/models/OrderLine';
 import {ModalController} from "@ionic/angular";
-import {ValidationComPage} from "../validation-com/validation-com.page";
+import {OrderValidationPage} from "../order-validation/order-validation.page";
 import {ChangeDetectorRef} from '@angular/core';
+import {WarehouseRetService} from "../../services/warehouse-ret.service";
+import {TotalService} from "../../services/total.service";
+import {CartService} from "../../services/cart.service";
 
 
 @Component({
@@ -21,18 +24,20 @@ export class CartPage implements OnInit {
 
     constructor(private orderService: OrderService,
                 private modalController: ModalController,
-                private cdRef: ChangeDetectorRef) {
+                private warehouseRetService: WarehouseRetService,
+                private totalService: TotalService,
+                private cartService: CartService) {
     }
 
     ngOnInit() {
-        this.warehouseRetrieval = this.orderService.getStatus();
+        this.warehouseRetrieval = this.warehouseRetService.getStatus();
         // on subscribe aux données (ici un tableau de ligne de commande du cart), dès qu'un changement est detecté on les récupère
-        this.orderService.myData$.subscribe(data => {
+        this.cartService.cart$.subscribe(data => {
                 this.cart = data;
             }
         )
 
-        this.orderService.toggle$.subscribe((status) => {
+        this.warehouseRetService.toggle$.subscribe((status) => {
             this.warehouseRetrieval = status;
         })
         this.updateTotal();
@@ -45,17 +50,17 @@ export class CartPage implements OnInit {
 
     deleteLine(orderLine: OrderLine) {
         this.cart.splice(this.cart.indexOf(orderLine), 1);
-        this.orderService.setCart(this.cart);
+        this.cartService.setCart(this.cart);
     }
 
     deleteAll() {
-        this.orderService.setCart([]);
+        this.cartService.setCart([]);
         this.onDismiss();
     }
 
     // toggle le warehouseRetrieval on-off
     toggled() {
-        this.orderService.setStatus(!this.orderService.getStatus());
+        this.warehouseRetService.setStatus(!this.warehouseRetService.getStatus());
         this.updateTotal();
     }
 
@@ -71,10 +76,10 @@ export class CartPage implements OnInit {
     }
 
     async createValidationOrder() {
-        this.orderService.setTotal(this.total);
+        this.totalService.setTotal(this.total);
         this.modalController.dismiss();
         const modal = await this.modalController.create({
-            component: ValidationComPage,
+            component: OrderValidationPage,
             cssClass: 'modal-pop',
             backdropDismiss: true
         });
@@ -101,7 +106,7 @@ export class CartPage implements OnInit {
         );
 
         // on met à jour le cart dans le service
-        this.orderService.setCart(this.cart);
+        this.cartService.setCart(this.cart);
         this.updateTotal();
     }
 }

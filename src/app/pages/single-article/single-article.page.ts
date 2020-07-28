@@ -4,6 +4,7 @@ import {ModalController} from "@ionic/angular";
 import {Router} from "@angular/router";
 import {Article} from "../../models/Article";
 import { OrderService } from 'src/app/services/order.service';
+import {ArticleService} from "../../services/article.service";
 
 @Component({
     selector: 'app-single-article',
@@ -15,7 +16,7 @@ export class SingleArticlePage implements OnInit {
     possibleQuantities: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
     isEmpty : boolean;
 
-    constructor(private articleNav : OrderService,
+    constructor(private articleNav : ArticleService,
                 private modalController: ModalController,
                 private router: Router) 
     {
@@ -32,6 +33,7 @@ export class SingleArticlePage implements OnInit {
         this.modalController.dismiss(this);
     }
 
+    // todo
     onReset() {
         
     }

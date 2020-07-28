@@ -119,7 +119,7 @@ export class AdministrationPage implements OnInit {
                     }
             }
         ];
-        this.userService.setComptesClients(this.comptes);
+        this.userService.setCustomerAccounts(this.comptes);
     }
 
 }

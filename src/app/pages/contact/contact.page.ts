@@ -20,7 +20,6 @@ export class ContactPage implements OnInit {
     }
 
     // création de la modal
-    // todo ça marche peut-être mais peut-être pas
     async presentModal() {
         const enterAnimation = (baseEl: any) => {
             // création de l'animation via AnimationControleur

@@ -4,9 +4,9 @@ import {FormsModule} from '@angular/forms';
 
 import {IonicModule} from '@ionic/angular';
 
-import {SingleCommandePageRoutingModule} from './single-commande-routing.module';
+import {SingleOrderPageRoutingModule} from './single-order-routing.module';
 
-import {SingleCommandePage} from './single-commande.page';
+import {SingleOrderPage} from './single-order.page';
 import {HeaderComponent} from "../../header/header.component";
 
 @NgModule({
@@ -14,10 +14,10 @@ import {HeaderComponent} from "../../header/header.component";
         CommonModule,
         FormsModule,
         IonicModule,
-        SingleCommandePageRoutingModule,
+        SingleOrderPageRoutingModule,
     ],
     exports: [HeaderComponent],
     declarations: [HeaderComponent]
 })
-export class SingleCommandePageModule {
+export class SingleOrderPageModule {
 }

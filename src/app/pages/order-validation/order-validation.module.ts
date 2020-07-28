@@ -4,17 +4,17 @@ import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { RecommandePageRoutingModule } from './recommande-routing.module';
+import { OrderValidationPageRoutingModule } from './order-validation-routing.module';
 
-import { RecommandePage } from './recommande.page';
+import { OrderValidationPage } from './order-validation.page';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    RecommandePageRoutingModule
+    OrderValidationPageRoutingModule
   ],
-  declarations: [RecommandePage]
+  declarations: [OrderValidationPage]
 })
-export class RecommandePageModule {}
+export class OrderValidationPageModule {}

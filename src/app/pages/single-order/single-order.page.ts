@@ -2,28 +2,30 @@ import {Component, OnInit} from '@angular/core';
 import {Order} from "../../models/Order";
 import {OrderService} from "../../services/order.service";
 import {AlertController, NavController} from "@ionic/angular";
+import { cloneDeep } from 'lodash';
+import {CartService} from "../../services/cart.service";
 
 @Component({
-    selector: 'app-single-commande',
-    templateUrl: './single-commande.page.html',
-    styleUrls: ['./single-commande.page.scss'],
+    selector: 'app-single-order',
+    templateUrl: './single-order.page.html',
+    styleUrls: ['./single-order.page.scss'],
 })
-export class SingleCommandePage implements OnInit {
+export class SingleOrderPage implements OnInit {
     order: Order;
     total: number = 0;
     canEdit: boolean;
 
     constructor(private orderService: OrderService,
+                private cartService:CartService,
                 private alertController: AlertController,
-                private navController: NavController) {
-    }
+                private navController: NavController) {}
 
     ngOnInit(): void {
         this.order = this.orderService.getOrder();
         this.total = 0;
         this.order.orderLines.forEach(value => this.total += (value.article.finalPrice * value.quantity));
 
-        let limite: Date = this.order.dateCommande;
+        let limite: Date = this.order.orderDate;
         limite.setHours(limite.getHours() + 3);
 
         if (limite.getTime() > new Date().getTime()) {
@@ -31,15 +33,10 @@ export class SingleCommandePage implements OnInit {
         }
     }
 
-    updateCart() {
-        this.orderService.setCart(this.order.orderLines);
-    }
-
     async alertConfirm() {
         const alert = await this.alertController.create({
-            header: "Annulation d'une commande",
-            //cssClass: 'maClasseCss'
-            message: 'Êtes-vous certain de vouloir annuler cette commande ?',
+            header: "Annulation d'une order",
+            message: 'Êtes-vous certain de vouloir annuler cette order ?',
             buttons: [
                 {
                     text: 'Non',
@@ -60,7 +57,16 @@ export class SingleCommandePage implements OnInit {
     }
 
     private sendCancel() {
-        // todo ici envoyer pdf annulation commande & supprimer commande dans le app preference
+        // todo ici envoyer pdf annulation order & supprimer order dans le app preference
+        this.navController.navigateBack(['/nav/article']);
+    }
+
+    // met a jour le cart dans le service
+    updateCart() {
+        // fait un deep clone des lignes de la order
+        const newCart = cloneDeep(this.order.orderLines);
+        // on met à jour le panier avec le clone
+        this.cartService.setCart(newCart);
         this.navController.navigateBack(['/nav/article']);
     }
 }

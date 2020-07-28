@@ -6,5 +6,5 @@ export class Order {
     orderNumber: string;
     customer: Customer;
     orderLines: OrderLine[];
-    dateCommande: Date;
+    orderDate: Date;
 }

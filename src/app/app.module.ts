@@ -9,14 +9,14 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
-import { SingleCommandePage } from './pages/single-commande/single-commande.page';
+import { SingleOrderPage } from './pages/single-order/single-order.page';
 import {HeaderComponent} from "./header/header.component";
-import {ValidationComPage} from "./pages/validation-com/validation-com.page";
+import {OrderValidationPage} from "./pages/order-validation/order-validation.page";
 import {FormsModule} from "@angular/forms";
 
 @NgModule({
-  declarations: [AppComponent, CartPage, SingleCommandePage, HeaderComponent, ValidationComPage],
-  entryComponents: [CartPage, SingleCommandePage, ValidationComPage],
+  declarations: [AppComponent, CartPage, SingleOrderPage, HeaderComponent, OrderValidationPage],
+  entryComponents: [CartPage, SingleOrderPage, OrderValidationPage],
     imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, FormsModule],
   providers: [
     StatusBar,

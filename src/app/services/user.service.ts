@@ -1,35 +1,32 @@
-import { Injectable } from '@angular/core';
-import { Customer } from '../models/Customer';
+import {Injectable} from '@angular/core';
+import {Customer} from '../models/Customer';
 
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 export class UserService {
 
-  client : Customer;
-  comptes : Customer[];
+    customer: Customer;
+    customerAccounts: Customer[];
 
-  constructor() { }
+    constructor() {
+    }
 
+    setCustomer(client: Customer) {
+        this.customer = client;
+    }
 
+    getCustomer(): Customer {
+        return this.customer;
+    }
 
-setClient(client : Customer) {
-  this.client = client;
-  console.log("CLient" + this.client.name + " a été enregistré")
-}
+    setCustomerAccounts(comptes: Customer[]) {
+        this.customerAccounts = comptes;
+    }
 
-getClient(): Customer {
-  console.log("Le client" + this.client.name + " va être envoyé");
-  return this.client;
-}
-
-setComptesClients(comptes : Customer[]) {
-  this.comptes = comptes;
-}
-
-getComptesClients() : Customer[] {
-  return this.comptes;
-}
+    getCustomerAccounts(): Customer[] {
+        return this.customerAccounts;
+    }
 
 }

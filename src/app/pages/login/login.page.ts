@@ -48,7 +48,7 @@ export class LoginPage implements OnInit {
                 customerFiles: ''
 
             };
-        this.userService.setClient(clientFactice);
+        this.userService.setCustomer(clientFactice);
     }
 
     // permet d'aller aux articles

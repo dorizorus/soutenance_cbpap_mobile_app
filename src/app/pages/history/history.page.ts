@@ -21,7 +21,7 @@ export class HistoryPage implements OnInit {
     private initOrders(): Order[] {
         let order1 = {
             orderNumber: 'MOBI1337',
-            dateCommande: new Date(2018, 8, 22),
+            orderDate: new Date(2018, 8, 22),
             customer: {
                 id: '1',
                 phoneNumber: '101010',
@@ -69,7 +69,7 @@ export class HistoryPage implements OnInit {
         };
         let order2 = {
             orderNumber: 'mobydick',
-            dateCommande: new Date(),
+            orderDate: new Date(),
             customer: {
                 id: '2',
                 phoneNumber: '101010222',
@@ -117,7 +117,7 @@ export class HistoryPage implements OnInit {
         };
         let order3 = {
             orderNumber: 'test',
-            dateCommande: new Date(),
+            orderDate: new Date(),
             customer: {
                 id: '2',
                 phoneNumber: '101010222',

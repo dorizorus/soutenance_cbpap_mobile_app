@@ -3,9 +3,10 @@ import {ModalController} from "@ionic/angular";
 import {SingleArticlePage} from "../single-article/single-article.page";
 import {Article} from 'src/app/models/Article';
 import {OrderLine} from 'src/app/models/OrderLine';
-import {OrderService} from 'src/app/services/order.service';
 import {UserService} from 'src/app/services/user.service';
 import {Customer} from 'src/app/models/Customer';
+import {CartService} from "../../services/cart.service";
+import {ArticleService} from "../../services/article.service";
 
 @Component({
     selector: 'app-articles',
@@ -17,13 +18,12 @@ export class ArticlePage implements OnInit {
     possibleQuantities: number[] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
     articleList: Article[];
     totalQuantity: number;
-    orderLines: OrderLine[] = [];
+    cart: OrderLine[] = [];
 
-
-    constructor(private navParamsService: OrderService,
-                private modalController: ModalController,
-                private orderService: OrderService,
-                private userService: UserService) {
+    constructor(private modalController: ModalController,
+                private cartService:CartService,
+                private userService: UserService,
+                private articleService:ArticleService) {
 
         // initialisation de notre liste d'article de base
         this.initializeArticles();
@@ -31,8 +31,8 @@ export class ArticlePage implements OnInit {
     }
 
     ngOnInit(): void {
-        this.orderService.myData$.subscribe(data => {
-            this.orderLines = data;
+        this.cartService.cart$.subscribe(data => {
+            this.cart = data;
         })
     }
 
@@ -50,29 +50,29 @@ export class ArticlePage implements OnInit {
 
         // S'il n'y a pas de lignes, on ajoute directement. S'il y en a, on remplace la quantité de la line par la nouvelle.
         if (line.quantity == 0) { // suppression
-            if (this.orderLines.length != 0) {
+            if (this.cart.length != 0) {
                 let index = this.getArticlePosition(line);
                 if (index != -1)
-                    this.orderLines.splice(index, 1);
+                    this.cart.splice(index, 1);
             }
         } else { // ajout ou modif
             let index: number = this.getArticlePosition(line);
             if (index == -1) { // pas trouve donc on ajoute
-                this.orderLines.push(line);
+                this.cart.push(line);
                 this.totalQuantity++;
             } else { // update
-                this.orderLines[index] = line;
+                this.cart[index] = line;
             }
         }
-        this.orderService.setCart(this.orderLines);
+        this.cartService.setCart(this.cart);
     }
 
     // permet de retrouver la position d'un article à patir d'une ligne de commande
     getArticlePosition(ligne: OrderLine): number {
         let trouve: boolean = false;
         let index = 0;
-        while (!trouve && index < this.orderLines.length) {
-            if (this.orderLines[index].article === ligne.article) {
+        while (!trouve && index < this.cart.length) {
+            if (this.cart[index].article === ligne.article) {
                 trouve = true;
             }
             index++;
@@ -84,7 +84,7 @@ export class ArticlePage implements OnInit {
 
     // quand on clique sur l'article, on affiche la description
     async createArticleDetails(articleData : Article) {
-        this.navParamsService.setArticle(articleData);
+        this.articleService.setArticle(articleData);
         const modal = await this.modalController.create({
             component: SingleArticlePage,
             cssClass: 'modal-article',
@@ -283,7 +283,7 @@ export class ArticlePage implements OnInit {
                     }
 
             };
-        this.userService.setClient(clientFactice);
+        this.userService.setCustomer(clientFactice);
     }
 
 
@@ -309,16 +309,15 @@ export class ArticlePage implements OnInit {
     getArticleQuantity(article: Article) {
         let trouve: boolean = false;
         let index = 0;
-        while (!trouve && index < this.orderLines.length) {
-            if (this.orderLines[index].article === article) {
+        while (!trouve && index < this.cart.length) {
+            if (this.cart[index].article === article) {
                 trouve = true;
             }
             index++;
         }
         if (trouve)
-            return this.orderLines[index - 1].quantity;
+            return this.cart[index - 1].quantity;
         return 0;
 
     }
 }
-

@@ -9,8 +9,8 @@ const routes: Routes = [
     component: HistoryPage
   },
   {
-    path:'single-commande',
-    loadChildren: () => import('../single-commande/single-commande.module').then( m => m.SingleCommandePageModule)
+    path:'single-order',
+    loadChildren: () => import('../single-order/single-order.module').then(m => m.SingleOrderPageModule)
   }
 ]; 
 

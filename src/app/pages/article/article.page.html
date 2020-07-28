@@ -1,7 +1,7 @@
 <app-header></app-header>
 
 <ion-content>
-  <!--Debounce permet d'attendre un certain temps avant le dernier input pour pas faire 458 requêtes 
+  <!--Debounce permet d'attendre un certain temps avant le dernier input pour pas faire 458 requêtes
   $event sert à récolter les inputs et a les envoyer dans un objet de type DOM event (https://angular.io/guide/user-input)-->
   <ion-searchbar showCancelButton="focus" debounce="500" (ionChange)="getArticleSearched($event)"
   animated placeholder="Rechercher.." class="searchbar"></ion-searchbar>
@@ -11,7 +11,6 @@
       <strong>Mes produits favoris :</strong>
     </ion-label>
     </ion-list-header>
-
     <ion-item *ngFor="let article of articleList">
       <ion-thumbnail slot="start" (click)="createArticleDetails(article)"><img src="{{article.articleImage.image}}"></ion-thumbnail>
       <span class="small">
@@ -29,10 +28,3 @@
     </ion-item>
   </ion-list>
 </ion-content>
-
-<!-- <ion-content class="ion-padding">
-  <strong>Liste des articles :</strong>
-  <ion-list>
-    <ion-item detail *ngFor="let article of tabArticles" (click)="onLoadArticle(article)" > {{article.name}} </ion-item>
-  </ion-list>
-</ion-content> -->

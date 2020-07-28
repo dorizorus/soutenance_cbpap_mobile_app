@@ -6,6 +6,8 @@ import {CartPage} from '../pages/cart/cart.page';
 import {OrderLine} from "../models/OrderLine";
 import {UserService} from '../services/user.service';
 import {Customer} from '../models/Customer';
+import {WarehouseRetService} from "../services/warehouse-ret.service";
+import {CartService} from "../services/cart.service";
 
 @Component({
     selector: 'app-header',
@@ -22,22 +24,23 @@ export class HeaderComponent implements OnInit {
     constructor(private modalController: ModalController,
                 private navCtrl: NavController,
                 private orderService: OrderService,
-                private userService: UserService
+                private cartSerivce:CartService,
+                private userService: UserService,
+                private warehouseRetService:WarehouseRetService
     ) {}
 
     ngOnInit() {
         // on subscribe à toute nouvelles données du cart
-        this.orderService.myData$.subscribe((data) => {
+        this.cartSerivce.cart$.subscribe((data) => {
             this.panier = data;
             this.updateTotal();
         });
         // on subscribe à tout nouveau changement du status du toogle
-        this.orderService.toggle$.subscribe((status) => {
+        this.warehouseRetService.toggle$.subscribe((status) => {
             this.remise = status;
-            console.log(" 1 Entré dans le on init. Remise vaut " + this.remise)
         })
 
-        this.client = this.userService.getClient()
+        this.client = this.userService.getCustomer()
     }
 
     // met a jour le prix total de la commande, base sur la liste des articles dans le cart
@@ -74,7 +77,7 @@ export class HeaderComponent implements OnInit {
             $event.stopImmediatePropagation();
             $event.stopPropagation();
             $event.preventDefault();
-            this.orderService.setStatus(!this.remise)
+            this.warehouseRetService.setStatus(!this.remise)
         } else {
             setTimeout(() => { this.remise= false; });
         }

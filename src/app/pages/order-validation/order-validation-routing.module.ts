@@ -1,12 +1,12 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
-import { ValidationComPage } from './validation-com.page';
+import { OrderValidationPage } from './order-validation.page';
 
 const routes: Routes = [
   {
     path: '',
-    component: ValidationComPage
+    component: OrderValidationPage
   }
 ];
 
@@ -14,4 +14,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class ValidationComPageRoutingModule {}
+export class OrderValidationPageRoutingModule {}

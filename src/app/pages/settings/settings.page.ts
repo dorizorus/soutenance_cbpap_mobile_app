@@ -23,7 +23,7 @@ export class SettingsPage implements OnInit {
     }
 
     async loadCustomer() {
-        this.client = this.userService.getClient();
+        this.client = this.userService.getCustomer();
     }
 
     // Avance vers la page suppression de manière directe, comme une redirection
