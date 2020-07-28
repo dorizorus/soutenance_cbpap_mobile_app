@@ -11,4 +11,8 @@
 
     <div class="end"><strong>Montant total : </strong> <span class="green"> {{total | number : '1.2-2'}}€</span> </div>
   </div>
+
+    <ion-button (click)="createPdf()" color="success" > Créer </ion-button>
+    <ion-button (click)="downloadPdf()" color="success"> Télécharger </ion-button>
+    <ion-button (click)="sendMail()" color="success"> Envoyer mail </ion-button>
 </ion-content>
