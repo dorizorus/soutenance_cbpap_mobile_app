@@ -3,6 +3,7 @@ import {DataService} from "../services/data.service";
 import {ModalController} from "@ionic/angular";
 import {Router} from "@angular/router";
 import {Article} from "../../models/Article";
+import { OrderService } from 'src/app/services/order.service';
 
 @Component({
     selector: 'app-single-article',
@@ -10,13 +11,16 @@ import {Article} from "../../models/Article";
     styleUrls: ['./single-article.page.scss'],
 })
 export class SingleArticlePage implements OnInit {
-    article;
+    article : Article;
     possibleQuantities: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
+    isEmpty : boolean;
 
-    constructor(private dataNav: DataService,
+    constructor(private articleNav : OrderService,
                 private modalController: ModalController,
-                private router: Router) {
-        this.article = dataNav.getData();
+                private router: Router) 
+    {
+    // TO DO En fait il faut pas passer un article mais une orderline avec la quantité
+        this.article = articleNav.getArticle();
     }
 
     ngOnInit() {
@@ -26,5 +30,9 @@ export class SingleArticlePage implements OnInit {
 
     dismissModal() {
         this.modalController.dismiss(this);
+    }
+
+    onReset() {
+        
     }
 }

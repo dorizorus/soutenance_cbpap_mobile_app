@@ -1,5 +1,4 @@
 import {Component, OnInit} from '@angular/core';
-import {DataService} from "../services/data.service";
 import {ModalController} from "@ionic/angular";
 import {SingleArticlePage} from "../single-article/single-article.page";
 import {Article} from 'src/app/models/Article';
@@ -21,7 +20,7 @@ export class ArticlePage implements OnInit {
     orderLines: OrderLine[] = [];
 
 
-    constructor(private navParamsService: DataService,
+    constructor(private navParamsService: OrderService,
                 private modalController: ModalController,
                 private orderService: OrderService,
                 private userService: UserService) {
@@ -84,8 +83,8 @@ export class ArticlePage implements OnInit {
     }
 
     // quand on clique sur l'article, on affiche la description
-    async createArticleDetails(articleData) {
-        this.navParamsService.setData(articleData);
+    async createArticleDetails(articleData : Article) {
+        this.navParamsService.setArticle(articleData);
         const modal = await this.modalController.create({
             component: SingleArticlePage,
             cssClass: 'modal-article',

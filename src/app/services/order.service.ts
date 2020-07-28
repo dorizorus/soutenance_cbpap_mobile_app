@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {Order} from "../models/Order";
 import {BehaviorSubject} from 'rxjs';
 import {OrderLine} from '../models/OrderLine';
+import { Article } from '../models/Article';
 
 @Injectable({
     providedIn: 'root'
@@ -12,6 +13,7 @@ export class OrderService {
     private order: Order;
     private orderLines: OrderLine[];
     private total: number;
+    private article : Article;
     public myData$: BehaviorSubject<OrderLine[]> = new BehaviorSubject<OrderLine[]>([]);
     public toggle$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
@@ -51,5 +53,13 @@ export class OrderService {
 
     getStatus() {
         return this.toggle$.getValue();
+    }
+
+    setArticle(article : Article) {
+        this.article = article;
+    }
+
+    getArticle() {
+        return this.article;
     }
 }
