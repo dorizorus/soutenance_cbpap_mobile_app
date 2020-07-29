@@ -68,9 +68,9 @@ export class OrderValidationPage implements OnInit {
                 //impression de la date au format dd/mm/yyyy hh'h'mm
                 {text: new Date().getDate() + '/' + ('0' + (new Date().getMonth() + 1)).slice(-2) + '/' + new Date().getFullYear() + ' ' + new Date().getHours() + 'h' + new Date().getMinutes(), alignment: 'right'},
                 {text: 'Commande : ' , style: 'subheader'},
-                {text: 'Ref client : ' + this.userService.getCustomer().id},
-                {text: this.userService.getCustomer().name},
-                {text: this.userService.getCustomer().address},
+                {text: 'Ref client : ' + this.userService.getActiveCustomer().id},
+                {text: this.userService.getActiveCustomer().name},
+                {text: this.userService.getActiveCustomer().address},
 
                 {
                     style: 'tableExample',
