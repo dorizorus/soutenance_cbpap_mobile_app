@@ -12,6 +12,7 @@ import {EmailComposer} from '@ionic-native/email-composer/ngx';
 
 import {CartService} from '../../services/cart.service';
 import {WarehouseRetService} from '../../services/warehouse-ret.service';
+import {UserService} from '../../services/user.service';
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
@@ -25,13 +26,16 @@ export class OrderValidationPage implements OnInit {
     total: number;
 
     pdfObj = null;
+    orderlines;
     
 
-    constructor(private totalService: TotalService, private plt: Platform, private file: File, private fileOpener: FileOpener, private emailComposer: EmailComposer, private cartService: CartService, private warehouseRetService: WarehouseRetService) {
+    constructor(private totalService: TotalService, private plt: Platform, private file: File, private fileOpener: FileOpener, private emailComposer: EmailComposer, private cartService: CartService, private warehouseRetService: WarehouseRetService, private userService: UserService) {
     }
 
     ngOnInit() {
         this.total = this.totalService.getTotal();
+        this.orderlines = this.cartService.getCart();
+        console.log(this.orderlines);
     }
 
     isWarehouseRet() {
@@ -40,42 +44,19 @@ export class OrderValidationPage implements OnInit {
 
 
     header = [
-        {text: 'ID', style: 'tableHeader', alignment: 'center'},
-        {text: 'Name', style: 'tableHeader', alignment: 'center'},
-        {text: 'Quantity', style: 'tableHeader', alignment: 'center'}
+        {text: 'Reference', style: 'tableHeader', alignment: 'center'},
+        {text: 'Quantité', style: 'tableHeader', alignment: 'center'},
+        {text: 'Prix', style: 'tableHeader', alignment: 'center'}
     ];
 
 
     myBody = [this.header];
 
-    ARTICLES = [
-        {
-            id: 1,
-            name: 'Tomates',
-            quantity: 5
-        },
-        {
-            id: 2,
-            name: 'Courgettes',
-            quantity: 3
-        },
-        {
-            id: 3,
-            name: 'Poireaux',
-            quantity: 4
-        },
-        {
-            id: 4,
-            name: 'Cerises',
-            quantity: 2
-        }
-    ];
-
 
     constructBody() {
-        for (const article of this.ARTICLES) {
+        for (const orderline of this.orderlines) {
             // @ts-ignore
-            this.myBody.push([`${article.id}`, `${article.name}`, `${article.quantity}`]);
+            this.myBody.push([`${orderline.article.reference}`, `${orderline.quantity}`, `${orderline.article.finalPrice * orderline.quantity  + '€'}`]);
         }
         return this.myBody;
     }
@@ -83,18 +64,13 @@ export class OrderValidationPage implements OnInit {
     createPdf() {
         let docDefinition = {
             content: [
-                {text: 'REMINDER', style: 'header'},
+                {text: 'CBPAPIERS', style: 'header'},
                 {text: new Date().toTimeString(), alignment: 'right'},
+                {text: 'Commande : ' , style: 'subheader'},
+                {text: 'Ref client : ' + this.userService.getCustomer().id},
+                {text: this.userService.getCustomer().name},
+                {text: this.userService.getCustomer().address},
 
-                // {text: 'From', style: 'subheader'},
-                // {text: this.letterObj.from},
-                //
-                // {text: 'To', style: 'subheader'},
-                // this.letterObj.to,
-
-                // {text: this.letterObj.text, style: 'story', margin: [0, 20, 0, 20]},
-
-                {text: 'Ma commande', style: 'subheader'},
                 {
                     style: 'tableExample',
                     table: {
@@ -103,10 +79,10 @@ export class OrderValidationPage implements OnInit {
                     }
                 },
                 {
-                    text: 'Total HT :' + this.total + ' €'
+                    text: 'Total HT : ' + this.total + ' €', alignment: 'right'
                 },
                 {
-                    text: 'Retrait entrepôt : ' + this.isWarehouseRet()
+                    text: 'Retrait entrepôt : ' + this.isWarehouseRet(), alignment: 'right'
                 }
             ],
             styles: {
