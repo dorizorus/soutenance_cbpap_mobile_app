@@ -35,7 +35,7 @@ export class OrderValidationPage implements OnInit {
     ngOnInit() {
         this.total = this.totalService.getTotal();
         this.orderlines = this.cartService.getCart();
-        console.log(this.orderlines);
+        console.log(new Date().getHours() + 'h' + new Date().getMinutes());
     }
 
     isWarehouseRet() {
@@ -65,7 +65,8 @@ export class OrderValidationPage implements OnInit {
         let docDefinition = {
             content: [
                 {text: 'CBPAPIERS', style: 'header'},
-                {text: new Date().toTimeString(), alignment: 'right'},
+                //impression de la date au format dd/mm/yyyy hh'h'mm
+                {text: new Date().getDate() + '/' + ('0' + (new Date().getMonth() + 1)).slice(-2) + '/' + new Date().getFullYear() + ' ' + new Date().getHours() + 'h' + new Date().getMinutes(), alignment: 'right'},
                 {text: 'Commande : ' , style: 'subheader'},
                 {text: 'Ref client : ' + this.userService.getCustomer().id},
                 {text: this.userService.getCustomer().name},
