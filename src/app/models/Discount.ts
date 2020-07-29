@@ -5,6 +5,6 @@ export class Discount {
 
     article: Article;
     customer: Customer;
-    disocunt: number;
+    discount: number;
     clientPrice: number;
 }

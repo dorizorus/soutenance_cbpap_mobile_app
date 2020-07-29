@@ -1,13 +1,14 @@
 import {Component, OnInit} from '@angular/core';
-import {ModalController, NavController} from "@ionic/angular";
-import {SettingsPage} from "../pages/settings/settings.page";
+import {ModalController, NavController} from '@ionic/angular';
+import {SettingsPage} from '../pages/settings/settings.page';
 import {OrderService} from '../services/order.service';
 import {CartPage} from '../pages/cart/cart.page';
-import {OrderLine} from "../models/OrderLine";
+import {OrderLine} from '../models/OrderLine';
 import {UserService} from '../services/user.service';
 import {Customer} from '../models/Customer';
-import {WarehouseRetService} from "../services/warehouse-ret.service";
-import {CartService} from "../services/cart.service";
+import {WarehouseRetService} from '../services/warehouse-ret.service';
+import {CartService} from '../services/cart.service';
+import {Subscription} from 'rxjs';
 
 @Component({
     selector: 'app-header',
@@ -16,45 +17,38 @@ import {CartService} from "../services/cart.service";
 })
 export class HeaderComponent implements OnInit {
 
-    panier: OrderLine[];
-    total: number = 0;
-    remise = false;
+    cart: OrderLine[];
+    total = 0;
+    WHRetrieval = false;
     client: Customer;
 
     constructor(private modalController: ModalController,
                 private navCtrl: NavController,
                 private orderService: OrderService,
-                private cartSerivce:CartService,
+                private cartService: CartService,
                 private userService: UserService,
-                private warehouseRetService:WarehouseRetService
-    ) {}
+                private warehouseRetService: WarehouseRetService
+    ) {
+    }
 
     ngOnInit() {
         // on subscribe à toute nouvelles données du cart
-        this.cartSerivce.cart$.subscribe((data) => {
-            this.panier = data;
-            this.updateTotal();
+        this.cartService.cart$.subscribe((data) => {
+            this.cart = data;
+            this.total = this.cartService.getTotal();
         });
         // on subscribe à tout nouveau changement du status du toogle
         this.warehouseRetService.toggle$.subscribe((status) => {
-            this.remise = status;
-        })
+            this.WHRetrieval = status;
+            this.total = this.cartService.getTotal();
+        });
 
-        this.client = this.userService.getCustomer()
+        this.client = this.userService.getCustomer();
     }
 
-    // met a jour le prix total de la commande, base sur la liste des articles dans le cart
-    private updateTotal() {
-        // Si le toggle est activé on applique la remise
-        this.total = 0;
-        if (!this.remise)
-            this.panier.forEach(value => this.total += (value.article.unitPrice * value.quantity));
-        else
-            this.panier.forEach(value => this.total += ((value.article.unitPrice * value.quantity) * 0.95));
-    }
 
     // cree une modale qui represente le cart
-    async createPanier() {
+    async createCart() {
         const modal = await this.modalController.create({
             component: CartPage,
             cssClass: 'modal-article',
@@ -73,13 +67,18 @@ export class HeaderComponent implements OnInit {
     // solution ci-dessous, permet de fix le ion-toggle, erreur de synchro entre cart & header
     // https://medium.com/@aleksandarmitrev/ionic-toggle-asynchronous-change-challenge-7e7cbdd50cb7
     toggle($event: any) {
-        if (!this.remise) {
-            $event.stopImmediatePropagation();
-            $event.stopPropagation();
-            $event.preventDefault();
-            this.warehouseRetService.setStatus(!this.remise)
-        } else {
-            setTimeout(() => { this.remise= false; });
-        }
+
+        // méthodes pour fix l'erreur de synchro qui pop
+        $event.stopImmediatePropagation();
+        $event.stopPropagation();
+        $event.preventDefault();
+
+        // le setTimeout fait parti des méthodes pour fix l'erreur de synchro.
+        // on set le boolean dans le BehaviorSubject à la valeur inverse
+        // s'il était à true au toggle -> on le met à false
+        // Et inversement s'il était à false au toggle -> on le met à true;
+        setTimeout(() => this.warehouseRetService.setStatus(!this.WHRetrieval));
+
     }
 }
+

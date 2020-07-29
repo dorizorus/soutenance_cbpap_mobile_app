@@ -1,6 +1,4 @@
 import {Component, OnInit} from '@angular/core';
-import {OrderService} from 'src/app/services/order.service';
-import {TotalService} from '../../services/total.service';
 
 import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
@@ -13,6 +11,7 @@ import {EmailComposer} from '@ionic-native/email-composer/ngx';
 import {CartService} from '../../services/cart.service';
 import {WarehouseRetService} from '../../services/warehouse-ret.service';
 import {UserService} from '../../services/user.service';
+import {OrderLine} from '../../models/OrderLine';
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
@@ -26,20 +25,26 @@ export class OrderValidationPage implements OnInit {
     total: number;
 
     pdfObj = null;
-    orderlines;
-    
+    orderlines: OrderLine[];
 
-    constructor(private totalService: TotalService, private plt: Platform, private file: File, private fileOpener: FileOpener, private emailComposer: EmailComposer, private cartService: CartService, private warehouseRetService: WarehouseRetService, private userService: UserService) {
+
+    constructor(private plt: Platform,
+                private file: File,
+                private fileOpener: FileOpener,
+                private emailComposer: EmailComposer,
+                private cartService: CartService,
+                private warehouseRetService: WarehouseRetService,
+                private userService: UserService) {
     }
 
     ngOnInit() {
-        this.total = this.totalService.getTotal();
         this.orderlines = this.cartService.getCart();
         console.log(new Date().getHours() + 'h' + new Date().getMinutes());
+        this.total = this.cartService.getTotal();
     }
 
     isWarehouseRet() {
-      return this.warehouseRetService.getStatus() ? 'OUI' : 'NON';
+        return this.warehouseRetService.getStatus() ? 'OUI' : 'NON';
     }
 
 

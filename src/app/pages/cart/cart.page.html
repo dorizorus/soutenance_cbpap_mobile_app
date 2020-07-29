@@ -27,8 +27,10 @@
             <span class="align">
             {{orderLine.article.unitPrice}} €
             </span>
-            <ion-select (ionChange)="updateCart($event,orderLine)" interface="popover" slot="end"
-                        placeholder="{{orderLine.quantity}}">
+            <ion-select (ionChange)="updateCart($event,orderLine)"
+                        interface="popover" slot="end"
+                        placeholder="{{orderLine.quantity}}"
+                        value="{{orderLine.quantity}}">
                 <ion-item *ngFor="let chiffre of possibleQuantities">
                     <ion-select-option value="{{chiffre}}">
                         {{chiffre}}
@@ -36,7 +38,7 @@
                 </ion-item>
             </ion-select>
             <span slot="end">
-            <ion-button color="danger" (click)="deleteLine(orderLine)">
+            <ion-button color="danger" (click)="deleteLine(orderLine, $event)">
             <ion-icon name="trash-outline"></ion-icon>
             </ion-button>
         </span>

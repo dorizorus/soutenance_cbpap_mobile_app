@@ -10,4 +10,5 @@ export class Article {
   articleImage: ArticlePicture;
   articleDetails: ArticleDetails;
   finalPrice: number;
+
 }

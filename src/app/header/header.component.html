@@ -12,12 +12,12 @@
           <img src="assets/icon/logo.jpg" alt="logo">
         </ion-col>
         <ion-col size="1">
-          <ion-button color="light" (click)="createPanier()">
-            <ion-icon (click)="createPanier()" class="icones" name="cart-outline" size="small"></ion-icon>
+          <ion-button color="light" (click)="createCart()">
+            <ion-icon (click)="createCart()" class="icones" name="cart-outline" size="small"></ion-icon>
           </ion-button>
         </ion-col>
-        <ion-col size="1" (click)="createPanier()">
-          <ion-badge color="success">{{panier.length}}</ion-badge>
+        <ion-col size="1" (click)="createCart()">
+          <ion-badge color="success">{{cart.length}}</ion-badge>
         </ion-col>
         <ion-col size="2">
           <br/>{{total | number : '1.2-2'}}€
@@ -27,10 +27,10 @@
         <ion-col size="5">
           <div><small>{{ client.name }}</small></div>
         </ion-col>
-        <ion-col size="1" *ngIf="!remise">
+        <ion-col size="1" *ngIf="!WHRetrieval">
           <ion-icon class="icones" name="subway-outline" size="small"></ion-icon>
         </ion-col>
-        <ion-col size="6" *ngIf="!remise">
+        <ion-col size="6" *ngIf="!WHRetrieval">
           <div *ngIf="total-250 >= 0; else pasRemise" class="green">
             <small>LIVRAISON GRATUITE</small>
           </div>
@@ -54,7 +54,7 @@
         <ion-col size="10">
         </ion-col>
         <ion-col size="2">
-          <ion-toggle [ngModel]="remise" (click)="toggle($event)"></ion-toggle>
+          <ion-toggle [ngModel]="WHRetrieval" (click)="toggle($event)"></ion-toggle>
         </ion-col>
       </ion-row>
     </ion-toolbar>

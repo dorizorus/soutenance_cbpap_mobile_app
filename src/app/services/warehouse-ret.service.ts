@@ -12,7 +12,7 @@ export class WarehouseRetService {
     }
 
     setStatus(warehouseRetrieval: boolean) {
-        this.toggle$.next(warehouseRetrieval)
+        this.toggle$.next(warehouseRetrieval);
     }
 
     getStatus() {
