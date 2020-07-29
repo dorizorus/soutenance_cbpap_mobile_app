@@ -35,7 +35,7 @@ export class AddAccPage implements OnInit {
                 customerFiles: ''
 
             };
-        // on ne va pas utiliser de set mais un systeme d'ajout/suppresion de compte. Ici, il est ajouté
+        // on ajoute le compte au pool de comptes et au compte actif
         this.userService.addCustomer(customer);
         this.navCtrler.navigateBack(['/acc-choice']);
   }
