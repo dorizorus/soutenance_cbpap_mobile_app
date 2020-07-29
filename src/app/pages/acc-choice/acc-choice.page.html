@@ -1,25 +1,29 @@
 <ion-header>
   <ion-toolbar>
-    <ion-button slot="start" color="success">
-        <ion-back-button></ion-back-button>
-    </ion-button>
-    <img src="assets/icon/logo.jpg" class="header" alt="logo">
+    <ion-row>
+      <ion-col size="4.5">
+      </ion-col>
+      <ion-col size="auto">
+        <img src="assets/icon/logo.jpg" class="header" alt="logo">
+      </ion-col>
+    </ion-row>
   </ion-toolbar>
 </ion-header> 
 
 <ion-content>
   <ion-list>
-    <ion-list-header>Selection du compte </ion-list-header>
-    <ion-item (click)="goToSettings()">
-      <ion-avatar slot="start"><img src="{{client.customerPicture}}"></ion-avatar>
-      <ion-label>{{client.name}}</ion-label>
-      <ion-label>{{client.city.name}}</ion-label>
+    <ion-list-header class="large"><strong>Selection du compte </strong></ion-list-header>
+    <ion-item *ngFor="let compte of accounts" >
+      <ion-avatar slot="start" (click)="selectAccountAndGoToArticles(compte)"><img src="{{compte.customerPicture}}"></ion-avatar>
+      <ion-label (click)="selectAccountAndGoToArticles(compte)" class="espaceDroite">{{compte.name}}</ion-label>
+      <ion-label (click)="selectAccountAndGoToArticles(compte)">{{compte.city.name}}</ion-label>
+      <ion-button color="success" slot="end" (click)="goToSettings(compte)">Plus..</ion-button>
     </ion-item>
   </ion-list>
 
   <!-- normalement c'est pas la page login mais une page qui y ressemble et qui ajouterais un compte. On aurait donc un tableau de comptes-->
-  <ion-item routerLink="/login">
-    <ion-icon name="add-circle-outline"></ion-icon>
-    <ion-label>Ajoutez un nouveau compte</ion-label>>
-  </ion-item>
+  <ion-item (click)="goToAddAccount()">
+    <ion-icon slot="start" name="add-circle-outline"></ion-icon>
+    <ion-label>Ajouter un nouveau compte</ion-label>>
+    </ion-item>
 </ion-content>

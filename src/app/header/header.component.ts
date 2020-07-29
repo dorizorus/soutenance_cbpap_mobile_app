@@ -1,7 +1,5 @@
 import {Component, OnInit} from '@angular/core';
 import {ModalController, NavController} from "@ionic/angular";
-import {SettingsPage} from "../pages/settings/settings.page";
-import {OrderService} from '../services/order.service';
 import {CartPage} from '../pages/cart/cart.page';
 import {OrderLine} from "../models/OrderLine";
 import {UserService} from '../services/user.service';
@@ -19,14 +17,14 @@ export class HeaderComponent implements OnInit {
     panier: OrderLine[];
     total: number = 0;
     remise = false;
-    client: Customer;
+    customer : Customer;
 
     constructor(private modalController: ModalController,
                 private navCtrl: NavController,
-                private orderService: OrderService,
                 private cartSerivce:CartService,
                 private userService: UserService,
-                private warehouseRetService:WarehouseRetService
+                private warehouseRetService:WarehouseRetService,
+
     ) {}
 
     ngOnInit() {
@@ -38,9 +36,12 @@ export class HeaderComponent implements OnInit {
         // on subscribe à tout nouveau changement du status du toogle
         this.warehouseRetService.toggle$.subscribe((status) => {
             this.remise = status;
+        });
+        
+        // on subscribe à tout nouveau changement du customer actif
+        this.userService.activeCustomer$.subscribe((data) => {
+            this.customer = data;
         })
-
-        this.client = this.userService.getCustomer()
     }
 
     // met a jour le prix total de la commande, base sur la liste des articles dans le cart

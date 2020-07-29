@@ -3,7 +3,6 @@ import {OrderService} from 'src/app/services/order.service';
 import {OrderLine} from 'src/app/models/OrderLine';
 import {ModalController} from "@ionic/angular";
 import {OrderValidationPage} from "../order-validation/order-validation.page";
-import {ChangeDetectorRef} from '@angular/core';
 import {WarehouseRetService} from "../../services/warehouse-ret.service";
 import {TotalService} from "../../services/total.service";
 import {CartService} from "../../services/cart.service";

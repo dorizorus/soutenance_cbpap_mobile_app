@@ -11,8 +11,6 @@ import {UserService} from 'src/app/services/user.service';
 })
 export class LoginPage implements OnInit {
 
-    client: Customer;
-
     // to do : comparer les données envoyé en front avec le back, ensuite récupérer un token avec les infos pour qu'on puisse afficher
     // les infos dans certaines parties de l'application (genre la partie compte). Actuellement dans l'application, on utilise un service
     // pour transférer les données d'un client sur les différentes page.
@@ -24,15 +22,15 @@ export class LoginPage implements OnInit {
 
 
     ngOnInit() {
-        this.initClient();
+        // TODO rediriger vers liste d'article si 1 compte, vers selection de compte si +
     }
 
 
-    initClient() {
-        let clientFactice = new Customer();
-        clientFactice =
+    async initClient() {
+        // on créer le compte
+        let compte = 
             {
-                id: '2',
+                id: '1',
                 name: "Pizza Chez Moi Sarl",
                 address: "5 rue des pizzaiolo",
                 email: "chezmoi@pizzasarl.com",
@@ -48,11 +46,13 @@ export class LoginPage implements OnInit {
                 customerFiles: ''
 
             };
-        this.userService.setCustomer(clientFactice);
+        // on ne va pas utiliser de set mais un systeme d'ajout/suppresion de compte. Ici, il est ajouté
+        this.userService.addCustomer(compte);
     }
 
-    // permet d'aller aux articles
-    async goToArticle() {
+    // permet d'ajouter le client et d'aller aux articles. Async obligatoire sous peine d'erreur
+    async addCustomerAndgoToArticle() {
+        this.initClient();
         this.navCtrl.navigateForward(['/nav/article']);
     }
 

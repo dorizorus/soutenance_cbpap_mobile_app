@@ -17,7 +17,7 @@ ion-icon{
 }
 
 .nom {
-  margin-top : -10px;
+  margin-top : -5px;
 }
 
 ion-toggle{
@@ -25,9 +25,14 @@ ion-toggle{
   width: 35px;
 }
 
-.logo{
-  text-align: center;
+ion-avatar {
+  max-width: 55px;
+  max-height: 55px;
+  min-width: 55px;
+  min-height: 55px;
 }
+
+
 ion-col{
   padding: 5px;
   margin-bottom: 20px;
@@ -44,5 +49,9 @@ ion-col{
 
 ion-badge{
   margin-left:-2em;
+}
+
+.prix {
+  margin-top: 50px;
 }
 

@@ -16,14 +16,10 @@ export class SettingsPage implements OnInit {
                 private userService: UserService) {
     }
 
-    client: Customer;
+    customer : Customer;
 
     ngOnInit() {
-        this.loadCustomer();
-    }
-
-    async loadCustomer() {
-        this.client = this.userService.getCustomer();
+        this.customer = this.userService.getCustomer();
     }
 
     // Avance vers la page suppression de manière directe, comme une redirection
