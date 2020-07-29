@@ -49,12 +49,14 @@ export class CartPage implements OnInit, OnDestroy {
         this.orderLineList = this.cartService.getOrderLineList();
     }
 
-    // pour fermer la modal de manière explicite
+    // pour fermer la modal de manière explicite par un bouton
+    // sinon si on clique à côté de la modal ça appel modalController.dismiss() tout seul
     onDismiss() {
         this.modalController.dismiss();
     }
 
-    // appelé quand la modal est fermée
+    // appelé quand la modal est fermée par modelController.dismiss()
+    // on supprime les souscriptions aux observables
     ngOnDestroy() {
         this.subscriptionToCart.unsubscribe();
         this.subscriptionToWHRetrieval.unsubscribe();
