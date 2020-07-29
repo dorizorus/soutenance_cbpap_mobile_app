@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {NavController, AlertController} from "@ionic/angular";
+import {NavController, AlertController} from '@ionic/angular';
 
 import {Customer} from 'src/app/models/Customer';
 import {UserService} from 'src/app/services/user.service';
@@ -36,19 +36,19 @@ export class SettingsPage implements OnInit {
 
     async alertConfirm() {
         const alert = await this.alertCtrl.create({
-            header: "Suppression d'un compte",
-            //cssClass: 'maClasseCss'
+            header: 'Suppression d\'un compte',
+            // cssClass: 'maClasseCss'
             message: 'Êtes-vous certain de vouloir supprimer ce compte de cet appareil?',
             buttons: [
                 {
                     text: 'Je refuse',
-                    //cssClass: 'secondary',
+                    // cssClass: 'secondary',
                     role: 'cancel',
                     handler: () => {
                         console.log('Annulation de la suppression');
                     }
                 }, {
-                    text: "J'accepte",
+                    text: 'J\'accepte',
                     handler: () => {
                         this.goToDeleteAccount();
                     }

@@ -60,13 +60,9 @@ export class CartPage implements OnInit, OnDestroy {
         this.subscriptionToWHRetrieval.unsubscribe();
     }
 
-    deleteLine(orderLine: OrderLine, $event: any) {
-        $event.stopImmediatePropagation();
-        $event.stopPropagation();
-        $event.preventDefault();
+    deleteLine(orderLine: OrderLine) {
         const index = this.findOrderLineIndex(orderLine);
         if (index !== -1) {
-            console.log('entré dans le if');
             this.orderLineList[index].quantity = 0;
             setTimeout(() => {
                 this.cartService.setOrderLineList(this.orderLineList);

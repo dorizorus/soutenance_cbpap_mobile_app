@@ -20,7 +20,6 @@ export class ArticlePage implements OnInit {
     totalQuantity: number;
     cart: OrderLine[] = [];
     orderLineList: OrderLine[] = [];
-    listOrderLine: OrderLine[] = [];
 
     constructor(private modalController: ModalController,
                 private cartService: CartService,
