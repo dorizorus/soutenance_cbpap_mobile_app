@@ -8,25 +8,25 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class UserService {
 
-    customer : Customer;
+    customer: Customer;
     activeCustomer: Customer;
-    customerAccounts : Customer[] = [];
+    customerAccounts: Customer[] = [];
     public customerAccounts$: BehaviorSubject<Customer[]> = new BehaviorSubject<Customer[]>([]);
     public activeCustomer$: BehaviorSubject<Customer> = new BehaviorSubject<Customer>(null);
 
     constructor() {
     }
 
-    addCustomer( customer : Customer ) {
+    addCustomer( customer: Customer ) {
         this.customerAccounts.push(customer);
         this.customerAccounts$.next(this.customerAccounts);
         this.setActiveCustomer(customer);
     }
 
-    removeCustomer( customer : Customer) {
+    removeCustomer( customer: Customer) {
         // console.log(this.customerAccounts.forEach(value => value.name));
-        let i = this.customerAccounts.indexOf(customer);
-        this.customerAccounts.splice(i,1);
+        const i = this.customerAccounts.indexOf(customer);
+        this.customerAccounts.splice(i, 1);
         this.customerAccounts$.next(this.customerAccounts);
         this.activeCustomer$.next(this.customerAccounts[0]);
         // .log(this.customerAccounts.forEach(value => value.name));
@@ -36,8 +36,8 @@ export class UserService {
         return this.customerAccounts;
     }
 
-    setActiveCustomer( customer : Customer) {
-        let i = this.customerAccounts.indexOf(customer);
+    setActiveCustomer( customer: Customer) {
+        const i = this.customerAccounts.indexOf(customer);
         this.activeCustomer = this.customerAccounts[i];
         this.activeCustomer$.next(this.activeCustomer);
     }
@@ -46,8 +46,9 @@ export class UserService {
         return this.activeCustomer;
     }
 
-    setCustomer(customer : Customer) {
+    setCustomer(customer: Customer) {
         this.customer = customer;
+        this.activeCustomer$.next(this.customer);
     }
 
     getCustomer() {
@@ -83,7 +84,7 @@ export class UserService {
         return this.customerAccounts[0];
     }
 
-    
+
     getCustomerAccounts(): Customer[] {
         return this.customerAccounts;
     }

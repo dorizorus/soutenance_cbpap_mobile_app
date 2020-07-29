@@ -1,6 +1,5 @@
 import {Component, OnInit} from '@angular/core';
 import {ModalController, NavController} from '@ionic/angular';
-import {SettingsPage} from '../pages/settings/settings.page';
 import {OrderService} from '../services/order.service';
 import {CartPage} from '../pages/cart/cart.page';
 import {OrderLine} from '../models/OrderLine';
@@ -8,7 +7,6 @@ import {UserService} from '../services/user.service';
 import {Customer} from '../models/Customer';
 import {WarehouseRetService} from '../services/warehouse-ret.service';
 import {CartService} from '../services/cart.service';
-import {Subscription} from 'rxjs';
 
 @Component({
     selector: 'app-header',
@@ -44,7 +42,7 @@ export class HeaderComponent implements OnInit {
 
         this.userService.activeCustomer$.subscribe((data) => {
             this.customer = data;
-        })
+        });
         // on subscribe à tout nouveau changement du customer actif
     }
 
