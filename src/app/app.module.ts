@@ -14,6 +14,11 @@ import {HeaderComponent} from "./header/header.component";
 import {OrderValidationPage} from "./pages/order-validation/order-validation.page";
 import {FormsModule} from "@angular/forms";
 
+//imports nécessaires pour générer pdf et créer un mail
+import { File } from '@ionic-native/file/ngx';
+import { FileOpener } from '@ionic-native/file-opener/ngx';
+import { EmailComposer } from '@ionic-native/email-composer/ngx';
+
 @NgModule({
   declarations: [AppComponent, CartPage, SingleOrderPage, HeaderComponent, OrderValidationPage],
   entryComponents: [CartPage, SingleOrderPage, OrderValidationPage],
@@ -21,7 +26,8 @@ import {FormsModule} from "@angular/forms";
   providers: [
     StatusBar,
     SplashScreen,
-    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    File, FileOpener, EmailComposer
   ],
   bootstrap: [AppComponent]
 })
