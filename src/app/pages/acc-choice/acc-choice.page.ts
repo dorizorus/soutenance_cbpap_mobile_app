@@ -29,6 +29,7 @@ export class AccChoicePage implements OnInit {
         this.navCtrl.navigateBack(['/nav/article']);
     }
 
+    // on indique simplement le compte que l'on va récupérer dans la page des options
     goToSettings(compte : Customer) {
         this.userService.setCustomer(compte);
         this.navCtrl.navigateForward(['/acc-choice/settings']);
@@ -36,9 +37,5 @@ export class AccChoicePage implements OnInit {
 
     goToAddAccount() {
         this.navCtrl.navigateForward(['/acc-choice/add-acc']);
-    }
-
-    accountSelected() {
-        console.log("test");
     }
 }

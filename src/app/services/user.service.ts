@@ -17,81 +17,50 @@ export class UserService {
     constructor() {
     }
 
-    addCustomer( customer: Customer ) {
+    // Ajoute un compte au tableau de comptes du téléphone. Le client actif est attribué à ce moment la
+    addCustomer(customer: Customer ) {
         this.customerAccounts.push(customer);
         this.customerAccounts$.next(this.customerAccounts);
         this.setActiveCustomer(customer);
     }
 
-    removeCustomer( customer: Customer) {
+    // Supprimer un compte des comptes sur le téléphone.
+    // On cherche l'index dans le tableau et on le supprime, ensuite on met à jour les subscribes
+    // Etrangement tout est en undefined au niveau des noms ici. A creuser
+    removeCustomer(customer: Customer) {
         // console.log(this.customerAccounts.forEach(value => value.name));
         const i = this.customerAccounts.indexOf(customer);
         this.customerAccounts.splice(i, 1);
         this.customerAccounts$.next(this.customerAccounts);
         this.activeCustomer$.next(this.customerAccounts[0]);
-        // .log(this.customerAccounts.forEach(value => value.name));
     }
 
+    // permet de récupérer la liste de comptes
     getAccounts() {
         return this.customerAccounts;
     }
 
-    setActiveCustomer( customer: Customer) {
+    // permet de définir quel est le compte actif puis l'envoie au subscribe
+    setActiveCustomer(customer: Customer) {
         const i = this.customerAccounts.indexOf(customer);
         this.activeCustomer = this.customerAccounts[i];
         this.activeCustomer$.next(this.activeCustomer);
     }
 
+    // récupère le compte actif
     getActiveCustomer() {
         return this.activeCustomer;
     }
 
+    // ici on fait simplement transiter un compte (pas forcément actif, utilisé dans settings)
     setCustomer(customer: Customer) {
         this.customer = customer;
         this.activeCustomer$.next(this.customer);
     }
 
+    // on récupère un compte (utilisé dans del-acc)
     getCustomer() {
         return this.customer;
     }
-
-    /* // Ajoute un compte des comptes sur le téléphone. La position 0 est le client actif
-    addCustomerAccount(compte : Customer) {
-        this.customerAccounts.push(compte);
-        console.log("Le nom du client ajouté est " + this.customerAccounts[0].name);
-    }
-
-    // Supprimer un compte des comptes sur le téléphone
-    removeCustomerAccount(compte : Customer) {
-        let index = this.customerAccounts.indexOf(compte);
-        this.customerAccounts.splice(index);
-    }
-
-    setActiveCustomer(client: Customer) {
-        let actif = this.customerAccounts.indexOf(client);
-
-        if (actif >= this.customerAccounts.length) {
-            var t = t - this.customerAccounts.length + 1;
-            while (t--) {
-                t.push(undefined);
-            }
-        }
-        this.customerAccounts.splice(actif, 0, this.customerAccounts.splice(this.customerAccounts.indexOf(this.customerAccounts[0]), 1)[0]);
-        console.log("L'utilisateur en position 0 " + this.customerAccounts[0].name + ". L'utilisateur actif est " + this.customer.name)
-    }
-
-    getActiveCustomer(): Customer {
-        return this.customerAccounts[0];
-    }
-
-
-    getCustomerAccounts(): Customer[] {
-        return this.customerAccounts;
-    }
-
-    // cette fonction est reservé à la partie admin afin d'attribuer les comptes du back au front
-    setCustomerAccounts( comptes : Customer[]) {
-        this.customerAccounts = comptes;
-    } */
 
 }

@@ -33,6 +33,8 @@ export class DeleteAccPage implements OnInit {
         return await modal.present();
     }
 
+    // TODO Censé supprimer le compte et rediriger sur le choix de selec (dans le cas de plusieurs comptes)
+    // ou revenir sur la page de login, sauf que pour lui le tableau de compte est "undefined". Explorer pourquoi
     deleteAcc() {
         console.log("A l'entrée je vaut " + this.customerAccounts.forEach(value => value.name));
         this.userService.removeCustomer(this.customer);

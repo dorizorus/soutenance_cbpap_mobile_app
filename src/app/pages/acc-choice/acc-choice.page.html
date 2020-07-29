@@ -10,6 +10,10 @@
   </ion-toolbar>
 </ion-header> 
 
+
+<!-- Un petit soucis actuellement c'est qu'il faut cliquer sur le texte ou l'avatar pour qu'on puisse
+selectionner un compte. Si on englobe dans l'item, la méthode de selection se lance en même temps
+que la méthode pour aller vers les options du compte. Mineur mais peut gêner l'utilisateur-->
 <ion-content>
   <ion-list>
     <ion-list-header class="large"><strong>Selection du compte </strong></ion-list-header>
@@ -21,7 +25,6 @@
     </ion-item>
   </ion-list>
 
-  <!-- normalement c'est pas la page login mais une page qui y ressemble et qui ajouterais un compte. On aurait donc un tableau de comptes-->
   <ion-item (click)="goToAddAccount()">
     <ion-icon slot="start" name="add-circle-outline"></ion-icon>
     <ion-label>Ajouter un nouveau compte</ion-label>>
