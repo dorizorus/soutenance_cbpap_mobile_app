@@ -26,6 +26,7 @@ export class OrderValidationPage implements OnInit {
 
     pdfObj = null;
     orderlines: OrderLine[];
+    pdfcreated: boolean;
 
 
     constructor(private plt: Platform,
@@ -39,29 +40,32 @@ export class OrderValidationPage implements OnInit {
 
     ngOnInit() {
         this.orderlines = this.cartService.getCart();
-        console.log(new Date().getHours() + 'h' + new Date().getMinutes());
         this.total = this.cartService.getTotal();
     }
 
+    // permet d'indiquer si y a un retrait entrepôt ou non en fonction du statut du toogle du retrait entrepôt
     isWarehouseRet() {
         return this.warehouseRetService.getStatus() ? 'OUI' : 'NON';
     }
 
-
+    // construction du header du tableau du pdf = titres des colonnes du tableau
     header = [
-        {text: 'Reference', style: 'tableHeader', alignment: 'center'},
+        {text: 'Reference article', style: 'tableHeader', alignment: 'center'},
         {text: 'Quantité', style: 'tableHeader', alignment: 'center'},
         {text: 'Prix', style: 'tableHeader', alignment: 'center'}
     ];
 
-
+    // on initialise les lignes du tableau avec le header
     myBody = [this.header];
 
-
+    // construction des lignes du tableau : pour chaque orderline récupérée du panier
+    // on ajoute cette orderline dans une ligne du tableau avec les éléments dont on a besoin :
+    // ici reference de l'article, quantité et prix final
+    // l'array myBody est donc incrémenté de nouvelles données
     constructBody() {
         for (const orderline of this.orderlines) {
             // @ts-ignore
-            this.myBody.push([`${orderline.article.reference}`, `${orderline.quantity}`, `${orderline.article.finalPrice * orderline.quantity  + '€'}`]);
+            this.myBody.push([`${orderline.article.reference}`, `${orderline.quantity}`, `${orderline.article.finalPrice * orderline.quantity + '€'}`]);
         }
         return this.myBody;
     }
@@ -71,12 +75,21 @@ export class OrderValidationPage implements OnInit {
             content: [
                 {text: 'CBPAPIERS', style: 'header'},
                 // impression de la date au format dd/mm/yyyy hh'h'mm
-                {text: new Date().getDate() + '/' + ('0' + (new Date().getMonth() + 1)).slice(-2) + '/' + new Date().getFullYear() + ' ' + new Date().getHours() + 'h' + new Date().getMinutes(), alignment: 'right'},
-                {text: 'Commande : ' , style: 'subheader'},
+                {
+                    text: new Date().getDate() + '/'
+                        + ('0' + (new Date().getMonth() + 1)).slice(-2) + '/'
+                        + new Date().getFullYear() + ' '
+                        + new Date().getHours() + 'h'
+                        + new Date().getMinutes(),
+                    alignment: 'right'
+                },
+                {text: 'Commande : ', style: 'subheader'},
                 {text: 'Ref client : ' + this.userService.getCustomer().id},
                 {text: this.userService.getCustomer().name},
                 {text: this.userService.getCustomer().address},
 
+                // c'est ici qu'on construit le tableau dans le pdf :
+                // on indique le nombre de colonnes et on injecte l'array myBody construit dans la méthode constructBody()
                 {
                     style: 'tableExample',
                     table: {
@@ -111,8 +124,14 @@ export class OrderValidationPage implements OnInit {
             }
         };
         this.pdfObj = pdfMake.createPdf(docDefinition);
+        this.downloadPdf();
+
+        // le pdf a été créé donc je passe mon boolean à true pour que le bouton envoimail soit activé
+        this.pdfcreated = true;
 
     }
+
+    // permet d'enregistrer le pdf dans le data Directory de l'application
 
     downloadPdf() {
         if (this.plt.is('cordova')) {
@@ -122,8 +141,8 @@ export class OrderValidationPage implements OnInit {
 
                 // Save the PDF to the data Directory of our App
                 this.file.writeFile(this.file.dataDirectory, 'myletter.pdf', blob, {replace: true}).then(fileEntry => {
-                    //   // Open the PDf with the correct OS tools : à enelever !  je laisse juste pour les tests sur pc
-                    this.fileOpener.open(this.file.dataDirectory + 'myletter.pdf', 'application/pdf');
+                    //  à enlever !  je laisse juste pour les tests sur pc
+                    // this.fileOpener.open(this.file.dataDirectory + 'myletter.pdf', 'application/pdf');
                 });
             });
         } else {
@@ -140,9 +159,8 @@ export class OrderValidationPage implements OnInit {
             cc: 'justine.gracia@gmail.com',
             attachments: [
                 this.file.dataDirectory + 'myletter.pdf'
-                // 'file:myletter.pdf'
             ],
-            subject: 'Commande Number XXXX , REFCLIENT XXXX',
+            subject: ' REFCLIENT : ' + this.userService.getCustomer().id,
             body: 'How are you?',
             isHtml: true
         };
