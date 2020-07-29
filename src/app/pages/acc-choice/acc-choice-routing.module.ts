@@ -12,6 +12,10 @@ const routes: Routes = [
   {
     path: 'settings',
     loadChildren: () => import('../settings/settings.module').then( m => m.SettingsPageModule)
+  },
+  {
+    path: 'add-acc',
+    loadChildren: () => import('../add-acc/add-acc.module').then( m => m.AddAccPageModule)
   }
 ];
 

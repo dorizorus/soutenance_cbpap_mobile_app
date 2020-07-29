@@ -10,17 +10,35 @@ import {Customer} from 'src/app/models/Customer';
 })
 export class AccChoicePage implements OnInit {
 
-    client: Customer;
+    accounts : Customer[];
+    customer : Customer;
 
     constructor(private navCtrl: NavController,
                 private userService: UserService) {
     }
 
     ngOnInit() {
-        this.client = this.userService.getCustomer()
+        // susbscribe à tout changement dans la liste de comptes
+        this.userService.customerAccounts$.subscribe(data => {
+            this.accounts = data;
+        })
     }
 
-    goToSettings() {
+    selectAccountAndGoToArticles(customer : Customer) {
+        this.userService.setActiveCustomer(customer);
+        this.navCtrl.navigateBack(['/nav/article']);
+    }
+
+    goToSettings(compte : Customer) {
+        this.userService.setCustomer(compte);
         this.navCtrl.navigateForward(['/acc-choice/settings']);
+    }
+
+    goToAddAccount() {
+        this.navCtrl.navigateForward(['/acc-choice/add-acc']);
+    }
+
+    accountSelected() {
+        console.log("test");
     }
 }

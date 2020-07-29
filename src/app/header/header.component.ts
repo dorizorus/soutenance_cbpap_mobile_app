@@ -20,7 +20,7 @@ export class HeaderComponent implements OnInit {
     cart: OrderLine[];
     total = 0;
     WHRetrieval = false;
-    client: Customer;
+    customer : Customer;
 
     constructor(private modalController: ModalController,
                 private navCtrl: NavController,
@@ -28,8 +28,7 @@ export class HeaderComponent implements OnInit {
                 private cartService: CartService,
                 private userService: UserService,
                 private warehouseRetService: WarehouseRetService
-    ) {
-    }
+    ) {}
 
     ngOnInit() {
         // on subscribe à toute nouvelles données du cart
@@ -43,7 +42,10 @@ export class HeaderComponent implements OnInit {
             this.total = this.cartService.getTotal();
         });
 
-        this.client = this.userService.getCustomer();
+        this.userService.activeCustomer$.subscribe((data) => {
+            this.customer = data;
+        })
+        // on subscribe à tout nouveau changement du customer actif
     }
 
 

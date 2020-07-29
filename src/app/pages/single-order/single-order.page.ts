@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {Order} from "../../models/Order";
 import {OrderService} from "../../services/order.service";
-import {AlertController, NavController} from "@ionic/angular";
+import {AlertController, NavController, ToastController} from "@ionic/angular";
 import { cloneDeep } from 'lodash';
 import {CartService} from "../../services/cart.service";
 
@@ -18,7 +18,8 @@ export class SingleOrderPage implements OnInit {
     constructor(private orderService: OrderService,
                 private cartService:CartService,
                 private alertController: AlertController,
-                private navController: NavController) {}
+                private navController: NavController,
+                private toastController : ToastController) {}
 
     ngOnInit(): void {
         this.order = this.orderService.getOrder();
@@ -63,10 +64,24 @@ export class SingleOrderPage implements OnInit {
 
     // met a jour le cart dans le service
     updateCart() {
+        // création du toast
+        this.toastClick();
         // fait un deep clone des lignes de la order
         const newCart = cloneDeep(this.order.orderLines);
         // on met à jour le panier avec le clone
         this.cartService.setCart(newCart);
         this.navController.navigateBack(['/nav/article']);
     }
+
+    // génère un toast pour indiquer le transfert de panier
+    async toastClick() {
+        const toast = await this.toastController.create({
+          color: 'green',
+          position: 'top',
+          duration: 3000,
+          message: 'Commande bien transférée!'
+        });
+  
+        await toast.present();
+      }
 }

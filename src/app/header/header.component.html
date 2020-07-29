@@ -8,24 +8,27 @@
             alt="avatar" (click)="goToSettings()">
           </ion-avatar>
         </ion-col>
-        <ion-col class="logo" size="4">
+        <ion-col class="logo" size="3">
           <img src="assets/icon/logo.jpg" alt="logo">
         </ion-col>
-        <ion-col size="1">
+          <ion-button color="light" (click)="createCart()">
+            <ion-icon (click)="createCart()" class="icones" name="cart-outline" size="small"></ion-icon>
+        <ion-col size="2">
           <ion-button color="light" (click)="createCart()">
             <ion-icon (click)="createCart()" class="icones" name="cart-outline" size="small"></ion-icon>
           </ion-button>
         </ion-col>
-        <ion-col size="1" (click)="createCart()">
+        <ion-col size="0.5" (click)="createCart()">
           <ion-badge color="success">{{cart.length}}</ion-badge>
         </ion-col>
-        <ion-col size="2">
-          <br/>{{total | number : '1.2-2'}}€
+        <ion-col size="auto">
+          <br/>
+          <span class="green" [ngStyle]="{'font-size': total > 1000 ? 'small' : 'medium'}">{{total | number : '1.2-2'}}€</span>
         </ion-col>
       </ion-row>
       <ion-row class="nom">
         <ion-col size="5">
-          <div><small>{{ client.name }}</small></div>
+          <div><small><strong>{{ customer.name }}</strong></small></div>
         </ion-col>
         <ion-col size="1" *ngIf="!WHRetrieval">
           <ion-icon class="icones" name="subway-outline" size="small"></ion-icon>
@@ -35,7 +38,7 @@
             <small>LIVRAISON GRATUITE</small>
           </div>
           <ng-template #pasRemise>
-            <small> <span class="green">{{250 - total }} </span> € avant la livraison</small>
+            <small> <span class="green">{{250 - total }} </span> € avant la livraison gratuite</small>
           </ng-template>
         </ion-col>
       </ion-row>

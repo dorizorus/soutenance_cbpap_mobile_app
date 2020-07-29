@@ -39,7 +39,7 @@ export class AdministrationPage implements OnInit {
     initClient() {
         this.comptes = [
             {
-                id: '2',
+                id: '1',
                 name: "Pizza Chez Moi Sarl",
                 address: "5 rue des pizzaiolo",
                 email: "chezmoi@pizzasarl.com",
@@ -71,7 +71,7 @@ export class AdministrationPage implements OnInit {
                     }
             },
             {
-                id: '2',
+                id: '3',
                 name: "Resto chez vous",
                 address: "5 rue des pizzaiolo",
                 email: "chezvous@fdqd.com",
@@ -87,7 +87,7 @@ export class AdministrationPage implements OnInit {
                     }
             },
             {
-                id: '3',
+                id: '4',
                 name: "Pasta labasco",
                 address: "5 rue des pizzaiolo",
                 email: "labasco@gmail.com",
@@ -103,7 +103,7 @@ export class AdministrationPage implements OnInit {
                     }
             },
             {
-                id: '4',
+                id: '5',
                 name: "McDonalds Metz centre",
                 address: "5 rue des pizzaiolo",
                 email: "mcdocentre@gmail.com",
@@ -119,7 +119,8 @@ export class AdministrationPage implements OnInit {
                     }
             }
         ];
-        this.userService.setCustomerAccounts(this.comptes);
+        // todo behaviour
+        // this.userService.setCustomerAccounts(this.comptes);
     }
 
 }

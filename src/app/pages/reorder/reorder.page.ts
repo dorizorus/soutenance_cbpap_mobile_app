@@ -4,6 +4,7 @@ import {Order} from "../../models/Order";
 
 import {cloneDeep} from 'lodash';
 import {CartService} from "../../services/cart.service";
+import { ToastController } from '@ionic/angular';
 
 @Component({
     selector: 'app-recommande',
@@ -16,7 +17,8 @@ export class ReorderPage implements OnInit {
     warehouseRetrieval: boolean = false;
 
     constructor(private orderService: OrderService,
-                private cartService: CartService) {
+                private cartService: CartService,
+                private toastController : ToastController) {
     }
 
     ngOnInit() {
@@ -45,14 +47,27 @@ export class ReorderPage implements OnInit {
 
     // todo faire en sorte d'envoyer pdf par mail
     startOrder() {
-
+        
     }
 
     // met a jour le cart dans le service
     updateCart() {
+
+        this.toastClick();
         // fait un deep clone des lignes de la commande
         const newCart = cloneDeep(this.order.orderLines);
         // on met à jour le panier avec le clone
         this.cartService.setCart(newCart);
     }
+
+    // génère un toast pour indiquer le transfert de panier
+    async toastClick() {
+        const toast = await this.toastController.create({
+          color: 'white',
+          duration: 3000,
+          message: 'Commande bien transférée!'
+        });
+  
+        await toast.present();
+      }
 }

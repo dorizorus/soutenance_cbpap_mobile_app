@@ -1,6 +1,3 @@
-<!-- utilisation d'avantage de balise ion.
-   https://ionicframework.com/docs/layout/css-utilities est utile pour les classes-->
-
 <ion-header>
   <ion-toolbar>
     <ion-button slot="start" color="success">
@@ -14,7 +11,7 @@
 
   <ion-card color="success">
     <ion-card-content>
-      Insérez le login et le mot de passe du compte à supprimer de l'appareil
+      Insérez le login et le mot de passe pour ajouter le compte à l'appareil
     </ion-card-content>
   </ion-card>
   
@@ -31,7 +28,7 @@
     </ion-list>  
       
     <div class='ion-padding'>
-      <ion-button expand="block" class="ion-no-margin" type="submit" (click)="deleteAcc()">Supprimer compte</ion-button>
+      <ion-button expand="block" class="ion-no-margin" type="submit" (click)="addAccountAndRedirect()">Ajouter compte</ion-button>
     </div>
   </form>
 
