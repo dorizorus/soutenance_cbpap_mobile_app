@@ -30,7 +30,7 @@ export class OrderValidationPage implements OnInit {
 
     // Erreur de dépendance circulaire dans la classe, si on enleve file, fileopener et emailc, l'erreur disparait
     constructor(private plt: Platform,
-        private file: File, 
+                private file: File, 
         private fileOpener: FileOpener,
         private emailComposer: EmailComposer,
         private cartService: CartService,
@@ -84,9 +84,9 @@ export class OrderValidationPage implements OnInit {
                     alignment: 'right'
                 },
                 {text: 'Commande : ', style: 'subheader'},
-                {text: 'Ref client : ' + this.userService.getCustomer().id},
-                {text: this.userService.getCustomer().name},
-                {text: this.userService.getCustomer().address},
+                {text: 'Ref client : ' + this.userService.getActiveCustomer().id},
+                {text: this.userService.getActiveCustomer().name},
+                {text: this.userService.getActiveCustomer().address},
 
                 // c'est ici qu'on construit le tableau dans le pdf :
                 // on indique le nombre de colonnes et on injecte l'array myBody construit dans la méthode constructBody()
@@ -160,7 +160,7 @@ export class OrderValidationPage implements OnInit {
             attachments: [
                 this.file.dataDirectory + 'myletter.pdf'
             ],
-            subject: ' REFCLIENT : ' + this.userService.getCustomer().id,
+            subject: ' REFCLIENT : ' + this.userService.getActiveCustomer().id,
             body: 'How are you?',
             isHtml: true
         };

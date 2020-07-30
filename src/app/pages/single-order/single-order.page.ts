@@ -1,9 +1,19 @@
 import {Component, OnInit} from '@angular/core';
 import {Order} from "../../models/Order";
 import {OrderService} from "../../services/order.service";
-import {AlertController, NavController, ToastController} from "@ionic/angular";
+import {AlertController, NavController, Platform, ToastController} from '@ionic/angular';
 import { cloneDeep } from 'lodash';
 import {CartService} from "../../services/cart.service";
+
+import {File} from '@ionic-native/file/ngx';
+import {FileOpener} from '@ionic-native/file-opener/ngx';
+import {EmailComposer} from '@ionic-native/email-composer/ngx'
+import {UserService} from '../../services/user.service';
+
+import pdfMake from 'pdfmake/build/pdfmake';
+import pdfFonts from 'pdfmake/build/vfs_fonts';
+
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 @Component({
     selector: 'app-single-order',
@@ -15,11 +25,18 @@ export class SingleOrderPage implements OnInit {
     total: number = 0;
     canEdit: boolean;
 
+    pdfObj = null;
+
     constructor(private orderService: OrderService,
-                private cartService:CartService,
+                private cartService: CartService,
                 private alertController: AlertController,
                 private navController: NavController,
-                private toastController : ToastController) {}
+                private toastController : ToastController,
+                private plt: Platform,
+                private file: File,
+                private fileOpener: FileOpener,
+                private emailComposer: EmailComposer,
+                private userService: UserService) {}
 
     ngOnInit(): void {
         this.order = this.orderService.getOrder();
@@ -32,12 +49,13 @@ export class SingleOrderPage implements OnInit {
         if (limite.getTime() > new Date().getTime()) {
             this.canEdit = true;
         }
+
     }
 
     async alertConfirm() {
         const alert = await this.alertController.create({
-            header: "Annulation d'une order",
-            message: 'Êtes-vous certain de vouloir annuler cette order ?',
+            header: 'Annulation d\'une commande',
+            message: 'Êtes-vous certain de vouloir annuler cette commande ?',
             buttons: [
                 {
                     text: 'Non',
@@ -58,7 +76,10 @@ export class SingleOrderPage implements OnInit {
     }
 
     private sendCancel() {
-        // todo ici envoyer pdf annulation order & supprimer order dans le app preference
+        // todo : supprimer order dans le app preference
+        // todo : on ne doit pas supprimer la commande annulée de l'historique des commandes ou plutôt ajouter un petit indicateur annulée
+        this.createPdf();
+        this.sendMail();
         this.navController.navigateBack(['/nav/article']);
     }
 
@@ -84,4 +105,83 @@ export class SingleOrderPage implements OnInit {
   
         await toast.present();
       }
+
+      createPdf(){
+          let docDefinition = {
+              content: [
+                  {text: 'CBPAPIERS', style: 'header'},
+                  // impression de la date au format dd/mm/yyyy hh'h'mm
+                  {
+                      text: new Date().getDate() + '/'
+                          + ('0' + (new Date().getMonth() + 1)).slice(-2) + '/'
+                          + new Date().getFullYear() + ' '
+                          // tslint:disable-next-line:no-unused-expression
+                          + new Date().getHours() + 'h'
+                          + new Date().getMinutes(),
+                      alignment: 'right'
+                  },
+                  {text: 'Commande du : ' + this.order.orderDate.getDate() + '/'
+                          + ('0' + (new Date().getMonth() + 1)).slice(-2) + '/'
+                          + new Date().getFullYear() + ' '
+                          + new Date().getHours() + 'h'
+                          + new Date().getMinutes(), style: 'subheader'},
+                  {text: 'Ref client : ' + this.userService.getActiveCustomer().id},
+                  {text: this.userService.getActiveCustomer().name},
+                  {text: this.userService.getActiveCustomer().address},
+                  {text: 'Commande à annuler ! ! ! ! ', style: 'subheader'},
+              ],
+              styles: {
+                  subheader: {
+                      fontSize: 16,
+                      bold: true,
+                      margin: [0, 10, 0, 5]
+                  },
+                  tableExample: {
+                      margin: [0, 5, 0, 15]
+                  },
+                  tableHeader: {
+                      bold: true,
+                      fontSize: 13,
+                      color: 'black'
+                  }
+              },
+              defaultStyle: {
+                  alignment: 'justify'
+              }
+          };
+          this.pdfObj = pdfMake.createPdf(docDefinition);
+          this.downloadPdf();
+      }
+
+      downloadPdf(){
+          if (this.plt.is('cordova')) {
+              this.pdfObj.getBuffer((buffer) => {
+                  // tslint:disable-next-line:prefer-const
+                  let blob = new Blob([buffer], {type: 'application/pdf'});
+
+                  // Save the PDF to the data Directory of our App
+                  this.file.writeFile(this.file.dataDirectory, 'annulation.pdf', blob, {replace: true}).then(fileEntry => {
+                  });
+              });
+          } else {
+              // On a browser simply use download!
+              this.pdfObj.download();
+          }
+      }
+
+      sendMail(){
+          const email = {
+              // to: 'contact@cbpapiers.com',
+              to: 'adrien.fek@gmail.com',
+              cc: 'justine.gracia@gmail.com',
+              attachments: [
+                  this.file.dataDirectory + 'annulation.pdf'
+              ],
+              subject: ' REFCLIENT : ' + this.userService.getActiveCustomer().id + 'ANNULATION COMMANDE ' ,
+              body: 'ATTENTION ANNULATION ?',
+              isHtml: true
+          };
+          this.emailComposer.open(email);
+      }
+
 }
