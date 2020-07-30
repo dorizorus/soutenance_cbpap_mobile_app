@@ -20,6 +20,7 @@ export class ArticlePage implements OnInit {
     totalQuantity: number;
     cart: OrderLine[] = [];
     orderLineList: OrderLine[] = [];
+    orderLineBackup: OrderLine[] = [];
 
     constructor(private modalController: ModalController,
                 private cartService: CartService,
@@ -40,6 +41,10 @@ export class ArticlePage implements OnInit {
         this.cartService.orderLineList$.subscribe(
             (liste) => this.orderLineList = liste
         );
+
+        // à la création de la page on fait une copie de la liste.
+        // cf. les m&éthodes "getOrderLines()" et "getArticleSearched(ev: any)
+        this.orderLineBackup = this.orderLineList;
     }
 
     // Dés qu'une quantité est selectionné pour un produit, la méthode la transmet au service
@@ -309,10 +314,16 @@ export class ArticlePage implements OnInit {
         this.cartService.setOrderLineList(this.orderLineList);
     }
 
+    // retourne un backup d'orderLineList générée en initialisation de page.
+    // l'intérêt est d'avoir une liste clean en backup qu'on envoit à la fonction filtre
+    getOrderLines() {
+        return this.orderLineBackup;
+    }
+
     // méthode pour la searchbar de ionic.
     getArticleSearched(ev: any) {
         //
-        // // on réinitialise la liste d'article a affiché en refaisant appel à la liste originelle
+        // on réinitialise la liste d'article a affiché en refaisant appel à la liste originelle
         // this.initializeArticles();
         //
         // // set la valeur de l'input de la searchbar dans "val". On indique que c'est un input html
@@ -327,19 +338,30 @@ export class ArticlePage implements OnInit {
         // }
 
         // on réinitialise la liste d'article a affiché en refaisant appel à la liste originelle
-        this.initializeArticles();
-        this.initOrderLines(this.articleList);
+        // this.initializeArticles();
 
+        // *****************************************
+
+        // ici on récupère notre backup qu'on pourra manipuler dans un objet différent.
+        let orderLines = this.getOrderLines();
         // set la valeur de l'input de la searchbar dans "val". On indique que c'est un input html
         const val = (ev.target as HTMLInputElement).value;
 
         // si rien n'est mis on affiche tout, sinon on filtre avec ce qui a été inséré
         if (val && val.trim() !== '') {
-            this.orderLineList = this.orderLineList.filter((orderLine) => {
-                return (orderLine.article.reference.toLowerCase().indexOf(val.toLowerCase()) > -1 ||
+
+            // on manipule et filtre l'objet
+            orderLines = orderLines.filter((orderLine) => {
+               return (orderLine.article.reference.toLowerCase().indexOf(val.toLowerCase()) > -1 ||
                     orderLine.article.label.toLowerCase().indexOf(val.toLowerCase()) > -1);
             });
         }
+
+        // on l'envoie à l'observable pour que la page se mette à jour
+        // la raison pour laquelle la quantité ne revient pas à 0 est probablement dûe
+        // au fait que le select est initialité à la création de la page
+        // et modifié seulement si ionChange est appelé dans le template
+        this.cartService.setOrderLineList(orderLines);
     }
 
     // recupere la quantite d'un article dans la liste du cart
