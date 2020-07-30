@@ -23,6 +23,7 @@ export class CartPage implements OnInit, OnDestroy {
     subscriptionToCart: Subscription;
     subscriptionToWHRetrieval: Subscription;
     orderLineList: OrderLine[];
+    shippingPrice : number = 20;
 
     constructor(private orderService: OrderService,
                 private modalController: ModalController,

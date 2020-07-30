@@ -1,7 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ModalController, NavController} from '@ionic/angular';
 import {ContactPageModule} from '../contact/contact.module';
-import {Customer} from 'src/app/models/Customer';
 import {UserService} from 'src/app/services/user.service';
 
 @Component({
@@ -51,7 +50,7 @@ export class LoginPage implements OnInit {
     }
 
     // permet d'ajouter le client et d'aller aux articles. Async obligatoire sous peine d'erreur
-    async addCustomerAndgoToArticle() {
+    async addCustomerAndGoToArticle() {
         this.initClient();
         this.navCtrl.navigateForward(['/nav/article']);
     }

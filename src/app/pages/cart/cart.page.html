@@ -54,18 +54,33 @@
                 <small>LIVRAISON GRATUITE</small>
             </div>
             <ng-template #noDiscount>
-                <span class="green">{{250 - total | number:'1.2-2' }} </span><small> € avant la livraison</small>
+                <span class="green">{{250 - total | number:'1.2-2' }} </span><small> € avant la livraison gratuite</small>
+                <br/>
+                <span>Livraison : <span class="red">{{shippingPrice}} €</span></span>
             </ng-template>
         </div>
         <div>
             <ion-icon class="icones" name="home-outline" size="small"></ion-icon>
-            <span class="green">-5%</span><small> retrait entrepôt</small>
+            <span class="green">-5%</span><span> avec le retrait entrepôt</span>
             <ion-toggle (ionChange)="toggled()" [checked]="warehouseRetrieval" class="reductionHauteur"
                         color="success"></ion-toggle>
         </div>
         <div>
+            <br/>
             <span><strong>Total HT : </strong></span>
-            <span>{{total}} €</span>
+            <span *ngIf="!warehouseRetrieval; else whDiscount">
+                <span *ngIf="total-250 >= 0; else payShipping">
+                    <span class="green">{{total}}€</span>
+                </span>
+                <ng-template #payShipping>
+                    <span class="green">{{total + 20 }}€</span>
+                </ng-template>
+            </span>
+            <span>
+                <ng-template #whDiscount>
+                    <span class="green">{{total | number:'1.2-2'}}€</span>
+                </ng-template>
+            </span>
         </div>
         <ion-button (click)="createValidationOrder()" color="success">
             Commander
