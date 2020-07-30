@@ -2,7 +2,8 @@
   <ion-grid class="ion-no-padding" fixed="sm"> <!-- créer un quadrillage permettant de positionner des colonnes et des lignes -->
     <ion-toolbar>
       <ion-row > <!-- permet d'ajouter une ligne, enfant du grid et mere de ion-col-->
-        <ion-col size="5">
+        <ion-col size="0.5"></ion-col>
+        <ion-col size="4">
           <ion-avatar>
             <img class="image" src="assets/icon/devanturePizzaHut.png" alt="avatar" (click)="goToSettings()">
           </ion-avatar>
@@ -10,7 +11,8 @@
         <ion-col class="logo" size="3" >
           <img src="assets/icon/logo.jpg" alt="logo">
         </ion-col>
-        <ion-col size="4" (click)="createCart()">
+        <ion-col size="0.8"></ion-col>
+        <ion-col size="3.7" (click)="createCart()">
           <ion-button color="light">
             <ion-icon class="icones" name="cart-outline" size="small"></ion-icon>
           </ion-button>
@@ -28,7 +30,7 @@
           <span *ngIf="!WHRetrieval">
             <ion-icon name="subway-outline"></ion-icon>
             <span *ngIf="total-250 >= 0; else pasRemise" class="green">
-              <small>LIVRAISON GRATUITE</small>
+              <small><strong>LIVRAISON GRATUITE</strong></small>
             </span>
             <ng-template #pasRemise>
               <span class="minColonne"><small><span class="green">{{250 - total }}</span>€ avant livraison gratuite</small></span>

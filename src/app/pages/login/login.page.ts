@@ -59,7 +59,7 @@ export class LoginPage implements OnInit {
     }
 
     // permet d'ajouter le client et d'aller aux articles. Async obligatoire sous peine d'erreur
-    async addCustomerAndgoToArticle() {
+    async addCustomerAndGoToArticle() {
         this.initClient();
         this.navCtrl.navigateForward(['/nav/article']);
     }
