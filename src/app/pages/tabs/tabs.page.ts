@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component} from '@angular/core';
 import {ContactPage} from '../contact/contact.page';
 import {AnimationController, ModalController} from '@ionic/angular';
 

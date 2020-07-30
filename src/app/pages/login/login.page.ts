@@ -1,7 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ModalController, NavController} from '@ionic/angular';
 import {ContactPageModule} from '../contact/contact.module';
-import {Customer} from 'src/app/models/Customer';
 import {UserService} from 'src/app/services/user.service';
 import {Router} from "@angular/router";
 
@@ -12,7 +11,7 @@ import {Router} from "@angular/router";
 })
 export class LoginPage implements OnInit {
 
-    // to do : comparer les données envoyé en front avec le back, ensuite récupérer un token avec les infos pour qu'on puisse afficher
+    // todo : comparer les données envoyé en front avec le back, ensuite récupérer un token avec les infos pour qu'on puisse afficher
     // les infos dans certaines parties de l'application (genre la partie compte). Actuellement dans l'application, on utilise un service
     // pour transférer les données d'un client sur les différentes page.
 
