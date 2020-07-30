@@ -30,7 +30,6 @@ export class HeaderComponent implements OnInit {
 
     ngOnInit() {
         this.customer = this.userService.getActiveCustomer();
-        console.log('customer header ' + this.customer)
         // on subscribe à toute nouvelles données du cart
         this.cartService.cart$.subscribe((data) => {
             this.cart = data;
