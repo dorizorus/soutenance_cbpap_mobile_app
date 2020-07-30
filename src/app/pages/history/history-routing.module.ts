@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 import { HistoryPage } from './history.page';
+import {AuthGuard} from "../../security/auth-guard.guard";
 
 const routes: Routes = [
   {
@@ -10,7 +11,8 @@ const routes: Routes = [
   },
   {
     path:'single-order',
-    loadChildren: () => import('../single-order/single-order.module').then(m => m.SingleOrderPageModule)
+    loadChildren: () => import('../single-order/single-order.module').then(m => m.SingleOrderPageModule),
+    canActivate:[AuthGuard]
   }
 ]; 
 

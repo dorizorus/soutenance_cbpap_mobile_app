@@ -78,19 +78,12 @@ export class LoginPage implements OnInit {
     }
 
     logIn() {
-        let accountsList = this.userService.getAllAccounts();
-        let index = 0;
-        let found = false;
-        while(index < accountsList.length && !found){
-            if(accountsList[index].name == this.login && accountsList[index].password == this.password)
-                found = true
-            else
-                index++
-        }
-        if(index == accountsList.length) // pas trouve
-            this.error = 'Mauvais mot de passe / identifiant'
-        else {
-            this.userService.setActiveCustomer(accountsList[index]);
+        let res = this.userService.getUserValidity(this.login,this.password);
+        if(res == false)
+            this.error = "Mauvais identifiant/mot de passe";
+        else{
+            this.userService.setActiveCustomer(res);
+            this.userService.addCustomer(res);
             this.router.navigateByUrl('/nav/article');
         }
     }

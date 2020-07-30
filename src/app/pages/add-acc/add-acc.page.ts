@@ -1,42 +1,36 @@
-import { Component, OnInit } from '@angular/core';
-import { UserService } from 'src/app/services/user.service';
-import { Customer } from 'src/app/models/Customer';
-import { NavController } from '@ionic/angular';
+import {Component, OnInit} from '@angular/core';
+import {UserService} from 'src/app/services/user.service';
+import {Customer} from 'src/app/models/Customer';
+import {NavController} from '@ionic/angular';
+import {Router} from "@angular/router";
 
 @Component({
-  selector: 'app-add-acc',
-  templateUrl: './add-acc.page.html',
-  styleUrls: ['./add-acc.page.scss'],
+    selector: 'app-add-acc',
+    templateUrl: './add-acc.page.html',
+    styleUrls: ['./add-acc.page.scss'],
 })
 export class AddAccPage implements OnInit {
 
-  constructor(private userService : UserService,
-              private navCtrler : NavController) { }
+    login:string;
+    password:string;
+    error:string;
 
-  ngOnInit() {
-  }
+    constructor(private userService: UserService,
+                private router: Router) {
+    }
 
-  addAccountAndRedirect() {
-    let customer : Customer = 
-            {
-                id: '6',
-                name: "Au 3 del arte",
-                address: "5 rue des pizzaiolo",
-                email: "chezmoi@pizzasarl.com",
-                password: "458dsqfdkdsqlfkqsd54",
-                customerPicture: "assets/icon/devanturePizzaHut.png",
-                phoneNumber: "0387254981",
-                city:
-                    {
-                        id: 55,
-                        name: "Augny",
-                        postalCode: 57000
-                    },
-                customerFiles: ''
+    ngOnInit() {
+    }
 
-            };
-        // on ajoute le compte au pool de comptes et au compte actif
-        this.userService.addCustomer(customer);
-        this.navCtrler.navigateBack(['/acc-choice']);
-  }
+    addAccountAndRedirect() {
+        // recupere un msg d'erreur si invalid, sinon un account
+        let res = this.userService.getUserValidity(this.login,this.password);
+        if(res == false)
+            this.error = "Mauvais mot de passe / identifiant";
+        else{
+            this.userService.addCustomer(res);
+            this.userService.setActiveCustomer(res);
+            this.router.navigateByUrl('/acc-choice');
+        }
+    }
 }

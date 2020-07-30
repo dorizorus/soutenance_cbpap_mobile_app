@@ -69,6 +69,25 @@ export class UserService {
         return this.mockAccount();
     }
 
+    // cherche dans la liste des comptes & verifie login / password corrects
+    getUserValidity(login:string,password:string){
+        let accountsList = this.getAllAccounts();
+        let index = 0;
+        let found = false;
+        while(index < accountsList.length && !found){
+            if(accountsList[index].name == login && accountsList[index].password == password)
+                found = true
+            else
+                index++
+        }
+        if(index == accountsList.length) // pas trouve
+            return false;
+        else {
+            this.setActiveCustomer(accountsList[index]);
+            return accountsList[index];
+        }
+    }
+
     private mockAccount() {
         const compte1 =
             {
@@ -121,6 +140,23 @@ export class UserService {
                     },
                 customerFiles: ''
             };
-        return [compte1, compte2, compte3];
+        const compte4 =
+            {
+                id: '1',
+                name: 'Pizza Chez Moi Sarl',
+                address: '5 rue des pizzaiolo',
+                email: 'chezmoi@pizzasarl.com',
+                password: 'test3',
+                customerPicture: 'assets/icon/devanturePizzaHut.png',
+                phoneNumber: '0387254981',
+                city:
+                    {
+                        id: 55,
+                        name: 'Metz',
+                        postalCode: 57000
+                    },
+                customerFiles: ''
+            };
+        return [compte1, compte2, compte3, compte4];
     }
 }

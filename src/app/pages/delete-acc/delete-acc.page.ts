@@ -1,8 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {ModalController, NavController} from '@ionic/angular';
 import {ContactPageModule} from '../contact/contact.module';
-import { UserService } from 'src/app/services/user.service';
-import { Customer } from 'src/app/models/Customer';
+import {UserService} from 'src/app/services/user.service';
+import {Customer} from 'src/app/models/Customer';
+import {Router} from "@angular/router";
 
 @Component({
     selector: 'app-delete-acc',
@@ -11,46 +12,30 @@ import { Customer } from 'src/app/models/Customer';
 })
 export class DeleteAccPage implements OnInit {
 
-    customer : Customer;
-    customerAccounts : Customer[] = [];
+    customer: Customer;
+    error:string;
+    password:string;
 
     constructor(private modalController: ModalController,
-                private navCtrl: NavController,
-                private userService : UserService) {
+                private userService: UserService,
+                private router:Router) {
     }
 
     ngOnInit() {
         this.customer = this.userService.getCustomer();
     }
 
-
-    async createContact() {
-        const modal = await this.modalController.create({
-            component: ContactPageModule,
-            cssClass: 'modal-pop',
-            backdropDismiss: true
-        });
-        return await modal.present();
-    }
-
-    // TODO Censé supprimer le compte et rediriger sur le choix de selec (dans le cas de plusieurs comptes)
-    // ou revenir sur la page de login, sauf que pour lui le tableau de compte est "undefined". Explorer pourquoi
     deleteAcc() {
-        console.log("A l'entrée je vaut " + this.customerAccounts.forEach(value => value.name));
-        this.userService.removeCustomer(this.customer);
-        this.customerAccounts = this.userService.getAccounts();
-        
-        if (this.customerAccounts != []) {
-            console.log("Je suis pas vide");
-            this.navCtrl.navigateRoot(['/acc-choice']);
-        } else {
-            console.log("Je suis vide");
-            this.navCtrl.navigateRoot(['/login']);
-            
+        // recupere un msg d'erreur si invalid, sinon un account
+        let res = this.userService.getUserValidity(this.customer.name,this.password);
+        if(res == false)
+            this.error = "Mauvais mot de passe / identifiant";
+        else{
+            this.userService.removeCustomer(res);
+            if (this.userService.getAccounts().length != 0)
+                this.router.navigateByUrl('/acc-choice');
+            else
+                this.router.navigateByUrl('/login');
         }
-        console.log("A la sortie je vaut " + this.customerAccounts.forEach(value => value.name));
-        
     }
-
-
 }

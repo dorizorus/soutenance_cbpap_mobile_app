@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 import { ArticlePage } from './article.page';
+import {AuthGuard} from "../../security/auth-guard.guard";
 
 const routes: Routes = [
   {
@@ -10,7 +11,8 @@ const routes: Routes = [
   },
   {
     path: 'single-article',
-    loadChildren: () => import('../single-article/single-article.module').then(m => m.SingleArticlePageModule)
+    loadChildren: () => import('../single-article/single-article.module').then(m => m.SingleArticlePageModule),
+    canActivate:[AuthGuard]
   }
 ];
 
