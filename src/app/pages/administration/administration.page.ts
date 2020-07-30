@@ -20,7 +20,6 @@ export class AdministrationPage implements OnInit {
 
 
     getClientSearched(ev: any) {
-
         // on réinitialise la liste d'article a affiché en refaisant appel à la liste originelle
         this.initClient();
 
