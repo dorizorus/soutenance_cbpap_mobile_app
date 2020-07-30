@@ -65,7 +65,7 @@ export class UserService {
     }
 
     getAllAccounts(): Customer[] {
-        // todo recup tous les comptes existants
+        // todo recup tous les comptes existants peut-être un localstorage ?
         return this.mockAccount();
     }
 

@@ -38,23 +38,19 @@
                 </ion-item>
             </ion-select>
             <span slot="end">
-            <ion-button color="danger" (click)="deleteLine(orderLine, $event)">
+            <ion-button color="danger" (click)="deleteLine(orderLine)">
             <ion-icon name="trash-outline"></ion-icon>
             </ion-button>
         </span>
         </ion-item>
     </ion-list>
     <div *ngIf="cart.length != 0; else emptyCart" class="alignement">
-        <div>
-            <span slot="start">Sous-total HT : </span>
-            <span slot="end"> {{total}} €</span>
-        </div>
         <div *ngIf="!warehouseRetrieval">
             <div *ngIf="total-250 >= 0; else noDiscount" class="green">
                 <small>LIVRAISON GRATUITE</small>
             </div>
             <ng-template #noDiscount>
-                <span class="green">{{250 - total | number:'1.2-2' }} </span><small> € avant la livraison</small>
+                <span class="green">{{250 - total | number:'1.2-2' }} </span><small> € avant la livraison gratuite</small>
             </ng-template>
         </div>
         <div>
