@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ModalController, NavController} from '@ionic/angular';
-import {ContactPageModule} from "../contact/contact.module";
+import {ContactPageModule} from '../contact/contact.module';
 import {Customer} from 'src/app/models/Customer';
 import {UserService} from 'src/app/services/user.service';
 
@@ -28,19 +28,19 @@ export class LoginPage implements OnInit {
 
     async initClient() {
         // on créer le compte
-        let compte = 
+        const compte =
             {
                 id: '1',
-                name: "Pizza Chez Moi Sarl",
-                address: "5 rue des pizzaiolo",
-                email: "chezmoi@pizzasarl.com",
-                password: "458dsqfdkdsqlfkqsd54",
-                customerPicture: "assets/icon/devanturePizzaHut.png",
-                phoneNumber: "0387254981",
+                name: 'Pizza Chez Moi Sarl',
+                address: '5 rue des pizzaiolo',
+                email: 'chezmoi@pizzasarl.com',
+                password: '458dsqfdkdsqlfkqsd54',
+                customerPicture: 'assets/icon/devanturePizzaHut.png',
+                phoneNumber: '0387254981',
                 city:
                     {
                         id: 55,
-                        name: "Metz",
+                        name: 'Metz',
                         postalCode: 57000
                     },
                 customerFiles: ''
@@ -57,7 +57,7 @@ export class LoginPage implements OnInit {
     }
 
     async goToAdministration() {
-        this.navCtrl.navigateForward(['administration'])
+        this.navCtrl.navigateForward(['administration']);
     }
 
     // censé faire apparaitre la modal mais ne marche pas non plus. La modal est créer dans tabs.ts

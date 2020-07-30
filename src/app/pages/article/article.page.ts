@@ -28,7 +28,7 @@ export class ArticlePage implements OnInit {
 
         // initialisation de notre liste d'article de base
         this.initializeArticles();
-        this.initClient();
+        // this.initClient();
         this.initOrderLines(this.articleList);
     }
 
