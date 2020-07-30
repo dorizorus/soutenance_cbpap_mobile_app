@@ -28,14 +28,14 @@ export class OrderValidationPage implements OnInit {
     orderlines: OrderLine[];
     pdfcreated: boolean;
 
-
+    // Erreur de dépendance circulaire dans la classe, si on enleve file, fileopener et emailc, l'erreur disparait
     constructor(private plt: Platform,
-                private file: File,
-                private fileOpener: FileOpener,
-                private emailComposer: EmailComposer,
-                private cartService: CartService,
-                private warehouseRetService: WarehouseRetService,
-                private userService: UserService) {
+        private file: File, 
+        private fileOpener: FileOpener,
+        private emailComposer: EmailComposer,
+        private cartService: CartService,
+        private warehouseRetService: WarehouseRetService,
+        private userService: UserService) {
     }
 
     ngOnInit() {

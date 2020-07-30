@@ -3,17 +3,31 @@ ion-title{
 }
 
 ion-icon{
-  zoom: auto;
-  padding:3px;
+  font-size: large;
+  margin-top: 5px;;
+  padding-right: 1px;
+}
+
+ion-avatar {
+  margin-left: 1em;
+}
+
+ion-toggle {
+  width: 3px;
+  margin: -10px;
+
 }
 
 .colonne {
-  margin-top: -18px;
+  margin-top: -14px;
 }
 
 .colonneMax {
   margin-top : -50px;
   margin-bottom: -20px;
+}
+.minColonne {
+  margin-top: 50px;
 }
 
 .nom {
@@ -36,10 +50,6 @@ ion-avatar {
 ion-col{
   padding: 5px;
   margin-bottom: 20px;
-
-}
-
-ion-col{
   margin: 0px;
 }
 
@@ -51,7 +61,4 @@ ion-badge{
   margin-left:-2em;
 }
 
-.prix {
-  margin-top: 50px;
-}
 
