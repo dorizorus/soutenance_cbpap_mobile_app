@@ -45,6 +45,7 @@
         </ion-item>
     </ion-list>
     <div *ngIf="cart.length != 0; else emptyCart" class="alignement">
+        <div> Sous total HT : <span class="green">{{total | number:'1.2-2'}}</span></div>
         <div *ngIf="!warehouseRetrieval">
             <div *ngIf="total-250 >= 0; else noDiscount" class="green">
                 <small>LIVRAISON GRATUITE</small>
@@ -66,10 +67,10 @@
             <span><strong>Total HT : </strong></span>
             <span *ngIf="!warehouseRetrieval; else whDiscount">
                 <span *ngIf="total-250 >= 0; else payShipping">
-                    <span class="green">{{total}}€</span>
+                    <span class="green">{{total | number:'1.2-2'}}€</span>
                 </span>
                 <ng-template #payShipping>
-                    <span class="green">{{total + 20 }}€</span>
+                    <span class="green">{{total + 20 | number:'1.2-2'}}€</span>
                 </ng-template>
             </span>
             <span>

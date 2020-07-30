@@ -31,7 +31,6 @@ export class LoginPage implements OnInit {
             this.router.navigateByUrl('/nav/article')
         else if(this.userService.getAccounts().length > 1)
             this.router.navigateByUrl('/acc-choice')
-        this.initClient();
     }
 
     async initClient() {
