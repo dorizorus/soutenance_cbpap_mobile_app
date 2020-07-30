@@ -1,25 +1,22 @@
-
-<img src="assets/icon/CB_PAPIERS_VECTOR_LOGO-1.png" alt="logo"> 
-
-<ion-content> 
-
+<img src="assets/icon/CB_PAPIERS_VECTOR_LOGO-1.png" alt="logo">
+<ion-content>
   <form onsubmit={this.processForm}>
     <ion-list>
       <ion-item>
-        <ion-input placeholder="Identifiant" required type="text"></ion-input>
+        <ion-input [(ngModel)]="login" name="login" placeholder="Identifiant" required type="text"></ion-input>
       </ion-item>
 
       <ion-item>
-        <ion-input placeholder="Mot de passe" required type="password"></ion-input>
+        <ion-input [(ngModel)]="password" name="password" placeholder="Mot de passe" required type="password"></ion-input>
       </ion-item>
     </ion-list>
 
     <div class='ion-padding'>
-      <ion-button (click)="login()" expand="block" class="ion-no-margin" type="submit">Login</ion-button>
+      <ion-button (click)="logIn()" expand="block" class="ion-no-margin" type="submit">Login</ion-button>
     </div>
   </form>
+  <div class="red"> {{error}}</div>
   <a (click)= "createContact()">Identifiants oublié?</a>
   <ion-button expand="block" color="success" class="bouton" (click)="addCustomerAndgoToArticle()">Login client sans info</ion-button>
   <ion-button expand="block" color="warning" class="bouton" (click)="goToAdministration()">Login admin sans info</ion-button>
-
 </ion-content>

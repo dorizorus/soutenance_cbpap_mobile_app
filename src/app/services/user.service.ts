@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Customer} from '../models/Customer';
-import { BehaviorSubject } from 'rxjs';
+import {BehaviorSubject} from 'rxjs';
 
 
 @Injectable({
@@ -18,7 +18,7 @@ export class UserService {
     }
 
     // Ajoute un compte au tableau de comptes du téléphone. Le client actif est attribué à ce moment la
-    addCustomer(customer: Customer ) {
+    addCustomer(customer: Customer) {
         this.customerAccounts.push(customer);
         this.customerAccounts$.next(this.customerAccounts);
         this.setActiveCustomer(customer);
@@ -27,7 +27,7 @@ export class UserService {
     // Supprimer un compte des comptes sur le téléphone.
     // On cherche l'index dans le tableau et on le supprime, ensuite on met à jour les subscribes
     removeCustomer(customer: Customer) {
-        if(this.activeCustomer === customer) {
+        if (this.activeCustomer === customer) {
             this.activeCustomer = null;
             this.activeCustomer$.next(customer);
         }
@@ -45,7 +45,7 @@ export class UserService {
     setActiveCustomer(customer: Customer) {
         this.activeCustomer = customer;
         this.activeCustomer$.next(this.activeCustomer);
-        localStorage.setItem('user',JSON.stringify(this.activeCustomer))
+        localStorage.setItem('user', JSON.stringify(this.activeCustomer))
     }
 
     // récupère le compte actif
@@ -64,4 +64,63 @@ export class UserService {
         return this.customer;
     }
 
+    getAllAccounts(): Customer[] {
+        // todo recup tous les comptes existants
+        return this.mockAccount();
+    }
+
+    private mockAccount() {
+        const compte1 =
+            {
+                id: '1',
+                name: 'test1',
+                address: '5 rue des pizzaiolo',
+                email: 'chezmoi@pizzasarl.com',
+                password: 'test1',
+                customerPicture: 'assets/icon/devanturePizzaHut.png',
+                phoneNumber: '0387254981',
+                city:
+                    {
+                        id: 55,
+                        name: 'Metz',
+                        postalCode: 57000
+                    },
+                customerFiles: ''
+            };
+        const compte2 =
+            {
+                id: '1',
+                name: 'test2',
+                address: '5 rue des pizzaiolo',
+                email: 'chezmoi@pizzasarl.com',
+                password: 'test2',
+                customerPicture: 'assets/icon/devanturePizzaHut.png',
+                phoneNumber: '0387254981',
+                city:
+                    {
+                        id: 55,
+                        name: 'Metz',
+                        postalCode: 57000
+                    },
+                customerFiles: ''
+            };
+        const compte3 =
+            {
+                id: '1',
+                name: 'test3',
+                address: '5 rue des pizzaiolo',
+                email: 'chezmoi@pizzasarl.com',
+                password: 'test3',
+                customerPicture: 'assets/icon/devanturePizzaHut.png',
+                phoneNumber: '0387254981',
+                city:
+                    {
+                        id: 55,
+                        name: 'Metz',
+                        postalCode: 57000
+                    },
+                customerFiles: ''
+            };
+        return [compte1, compte2, compte3];
+    }
 }

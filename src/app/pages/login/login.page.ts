@@ -16,7 +16,9 @@ export class LoginPage implements OnInit {
     // les infos dans certaines parties de l'application (genre la partie compte). Actuellement dans l'application, on utilise un service
     // pour transférer les données d'un client sur les différentes page.
 
-    listeCompte:Customer[];
+    login:string;
+    password:string;
+    error: string;
 
     constructor(private navCtrl: NavController,
                 private modalController: ModalController,
@@ -30,6 +32,7 @@ export class LoginPage implements OnInit {
             this.router.navigateByUrl('/nav/article')
         else if(this.userService.getAccounts().length > 1)
             this.router.navigateByUrl('/acc-choice')
+        this.initClient();
     }
 
     async initClient() {
@@ -76,26 +79,21 @@ export class LoginPage implements OnInit {
         return await modal.present();
     }
 
-    login() {
-        // todo check infos & recup le customer en entier + setActiveCustomer
-        const compte =
-            {
-                id: '1',
-                name: 'test',
-                address: '5 rue des pizzaiolo',
-                email: 'chezmoi@pizzasarl.com',
-                password: 'test',
-                customerPicture: 'assets/icon/devanturePizzaHut.png',
-                phoneNumber: '0387254981',
-                city:
-                    {
-                        id: 55,
-                        name: 'Metz',
-                        postalCode: 57000
-                    },
-                customerFiles: ''
-            };
-        this.userService.setActiveCustomer(compte);
-        this.router.navigateByUrl('/nav/article');
+    logIn() {
+        let accountsList = this.userService.getAllAccounts();
+        let index = 0;
+        let found = false;
+        while(index < accountsList.length && !found){
+            if(accountsList[index].name == this.login && accountsList[index].password == this.password)
+                found = true
+            else
+                index++
+        }
+        if(index == accountsList.length) // pas trouve
+            this.error = 'Mauvais mot de passe / identifiant'
+        else {
+            this.userService.setActiveCustomer(accountsList[index]);
+            this.router.navigateByUrl('/nav/article');
+        }
     }
 }
