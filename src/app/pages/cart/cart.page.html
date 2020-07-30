@@ -12,8 +12,8 @@
     <ion-label><strong>Mon panier :</strong></ion-label>
 
 
-    <div *ngIf="cart.length != 0">
-        <ion-button (click)="deleteAll()" color="danger">
+    <div *ngIf="cart.length != 0" class="centerRight">
+        <ion-button (click)="deleteAll()" color="danger" >
             Vider le panier
         </ion-button>
     </div>
@@ -45,32 +45,30 @@
         </ion-item>
     </ion-list>
     <div *ngIf="cart.length != 0; else emptyCart" class="alignement">
-        <div> Sous total HT : <span class="green">{{total | number:'1.2-2'}}</span></div>
+        
         <div *ngIf="!warehouseRetrieval">
+            <div> Sous total HT : <span class="green">{{total | number:'1.2-2'}}</span></div>
             <div *ngIf="total-250 >= 0; else noDiscount" class="green">
                 <small>LIVRAISON GRATUITE</small>
             </div>
             <ng-template #noDiscount>
-                <span class="green">{{250 - total | number:'1.2-2' }} </span><small> € avant la livraison gratuite</small>
-                <br/>
-                <span>Livraison : <span class="red">{{shippingPrice}} €</span></span>
+                <div><span class="green">{{250 - total | number:'1.2-2' }} </span><small> € avant la livraison gratuite</small></div>
+                <div>Livraison : <span class="red">{{shippingPrice}} €</span></div>
             </ng-template>
         </div>
         <div>
-            <ion-icon class="icones" name="home-outline" size="small"></ion-icon>
             <span class="green">-5%</span><span> avec le retrait entrepôt</span>
             <ion-toggle (ionChange)="toggled()" [checked]="warehouseRetrieval" class="reductionHauteur"
                         color="success"></ion-toggle>
         </div>
         <div>
-            <br/>
             <span><strong>Total HT : </strong></span>
             <span *ngIf="!warehouseRetrieval; else whDiscount">
                 <span *ngIf="total-250 >= 0; else payShipping">
                     <span class="green">{{total | number:'1.2-2'}}€</span>
                 </span>
                 <ng-template #payShipping>
-                    <span class="green">{{total + 20 | number:'1.2-2'}}€</span>
+                    <span class="green">{{finalTotal | number:'1.2-2'}}€</span>
                 </ng-template>
             </span>
             <span>
@@ -79,6 +77,7 @@
                 </ng-template>
             </span>
         </div>
+        <br/>
         <ion-button (click)="createValidationOrder()" color="success">
             Commander
         </ion-button>

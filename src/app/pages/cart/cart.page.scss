@@ -16,6 +16,12 @@
   margin-bottom: -15px;
 }
 
+.centerRight {
+  text-align: right;
+  align-content: right;
+  align-items: right;
+}
+
 ion-avatar {
   max-width: 30px;
   max-height: 30px;
@@ -24,7 +30,7 @@ ion-avatar {
 }
 
 ion-icon {
-  padding : 4px;
+  margin-right : 4px;
 }
 
 .red {
