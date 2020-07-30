@@ -18,6 +18,7 @@ import {FormsModule} from "@angular/forms";
 import { File } from '@ionic-native/file/ngx';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { EmailComposer } from '@ionic-native/email-composer/ngx';
+import {UserService} from "./services/user.service";
 
 @NgModule({
   declarations: [AppComponent, CartPage, SingleOrderPage, HeaderComponent, OrderValidationPage],
@@ -26,6 +27,7 @@ import { EmailComposer } from '@ionic-native/email-composer/ngx';
   providers: [
     StatusBar,
     SplashScreen,
+      UserService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     File, FileOpener, EmailComposer
   ],

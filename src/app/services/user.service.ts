@@ -26,13 +26,14 @@ export class UserService {
 
     // Supprimer un compte des comptes sur le téléphone.
     // On cherche l'index dans le tableau et on le supprime, ensuite on met à jour les subscribes
-    // Etrangement tout est en undefined au niveau des noms ici. A creuser
     removeCustomer(customer: Customer) {
-        // console.log(this.customerAccounts.forEach(value => value.name));
-        const i = this.customerAccounts.indexOf(customer);
+        if(this.activeCustomer === customer) {
+            this.activeCustomer = null;
+            this.activeCustomer$.next(customer);
+        }
+        const i = this.customerAccounts.indexOf(this.customer);
         this.customerAccounts.splice(i, 1);
         this.customerAccounts$.next(this.customerAccounts);
-        this.activeCustomer$.next(this.customerAccounts[0]);
     }
 
     // permet de récupérer la liste de comptes
@@ -42,9 +43,9 @@ export class UserService {
 
     // permet de définir quel est le compte actif puis l'envoie au subscribe
     setActiveCustomer(customer: Customer) {
-        const i = this.customerAccounts.indexOf(customer);
-        this.activeCustomer = this.customerAccounts[i];
+        this.activeCustomer = customer;
         this.activeCustomer$.next(this.activeCustomer);
+        localStorage.setItem('user',JSON.stringify(this.activeCustomer))
     }
 
     // récupère le compte actif

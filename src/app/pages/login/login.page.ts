@@ -3,6 +3,7 @@ import {ModalController, NavController} from '@ionic/angular';
 import {ContactPageModule} from '../contact/contact.module';
 import {Customer} from 'src/app/models/Customer';
 import {UserService} from 'src/app/services/user.service';
+import {Router} from "@angular/router";
 
 @Component({
     selector: 'app-login',
@@ -15,16 +16,21 @@ export class LoginPage implements OnInit {
     // les infos dans certaines parties de l'application (genre la partie compte). Actuellement dans l'application, on utilise un service
     // pour transférer les données d'un client sur les différentes page.
 
+    listeCompte:Customer[];
+
     constructor(private navCtrl: NavController,
                 private modalController: ModalController,
-                private userService: UserService) {
+                private userService: UserService,
+                private router:Router) {
     }
 
 
     ngOnInit() {
-        // TODO rediriger vers liste d'article si 1 compte, vers selection de compte si +
+        if(this.userService.getAccounts().length == 1)
+            this.router.navigateByUrl('/nav/article')
+        else if(this.userService.getAccounts().length > 1)
+            this.router.navigateByUrl('/acc-choice')
     }
-
 
     async initClient() {
         // on créer le compte
@@ -34,7 +40,7 @@ export class LoginPage implements OnInit {
                 name: 'Pizza Chez Moi Sarl',
                 address: '5 rue des pizzaiolo',
                 email: 'chezmoi@pizzasarl.com',
-                password: '458dsqfdkdsqlfkqsd54',
+                password: 'test',
                 customerPicture: 'assets/icon/devanturePizzaHut.png',
                 phoneNumber: '0387254981',
                 city:
@@ -68,5 +74,28 @@ export class LoginPage implements OnInit {
             backdropDismiss: true
         });
         return await modal.present();
+    }
+
+    login() {
+        // todo check infos & recup le customer en entier + setActiveCustomer
+        const compte =
+            {
+                id: '1',
+                name: 'test',
+                address: '5 rue des pizzaiolo',
+                email: 'chezmoi@pizzasarl.com',
+                password: 'test',
+                customerPicture: 'assets/icon/devanturePizzaHut.png',
+                phoneNumber: '0387254981',
+                city:
+                    {
+                        id: 55,
+                        name: 'Metz',
+                        postalCode: 57000
+                    },
+                customerFiles: ''
+            };
+        this.userService.setActiveCustomer(compte);
+        this.router.navigateByUrl('/nav/article');
     }
 }
