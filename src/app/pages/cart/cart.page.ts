@@ -24,6 +24,7 @@ export class CartPage implements OnInit, OnDestroy {
     subscriptionToWHRetrieval: Subscription;
     orderLineList: OrderLine[];
     shippingPrice : number = 20;
+    finalTotal : number;
 
     constructor(private orderService: OrderService,
                 private modalController: ModalController,
@@ -39,6 +40,7 @@ export class CartPage implements OnInit, OnDestroy {
         this.subscriptionToCart = this.cartService.cart$.subscribe(data => {
                 this.cart = data;
                 this.total = this.cartService.getTotal();
+                this.setFinalTotal();
             }
         );
 
@@ -121,6 +123,13 @@ export class CartPage implements OnInit, OnDestroy {
             backdropDismiss: true
         });
         return await modal.present();
+    }
+
+    // it's the final totaaaal (total avec shipp s'il ya)
+    setFinalTotal() {
+        if (!this.warehouseRetrieval && this.total < 250) {
+            this.finalTotal = this.total + 20;
+        }
     }
 
     updateCart($event: any, line: OrderLine) {
