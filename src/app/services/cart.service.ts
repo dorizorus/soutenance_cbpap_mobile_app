@@ -76,7 +76,7 @@ export class CartService {
         return this.total;
     }
 
-    setFinalTotal( finalTotal : number) {
+    setFinalTotal(finalTotal: number) {
         this.finalTotal = finalTotal;
     }
 

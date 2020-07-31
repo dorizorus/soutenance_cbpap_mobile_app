@@ -116,19 +116,17 @@ export class SingleOrderPage implements OnInit {
                           + ('0' + (new Date().getMonth() + 1)).slice(-2) + '/'
                           + new Date().getFullYear() + ' '
                           // tslint:disable-next-line:no-unused-expression
-                          + new Date().getHours() + 'h'
-                          + new Date().getMinutes(),
+                          + new Date().toLocaleTimeString(),
                       alignment: 'right'
                   },
                   {text: 'Commande du : ' + this.order.orderDate.getDate() + '/'
-                          + ('0' + (new Date().getMonth() + 1)).slice(-2) + '/'
-                          + new Date().getFullYear() + ' '
-                          + new Date().getHours() + 'h'
-                          + new Date().getMinutes(), style: 'subheader'},
+                          + ('0' + (this.order.orderDate.getMonth() + 1)).slice(-2) + '/'
+                          + this.order.orderDate.getFullYear() + ' '
+                          + this.order.orderDate.toLocaleTimeString(), style: 'subheader'},
                   {text: 'Ref client : ' + this.userService.getActiveCustomer().id},
                   {text: this.userService.getActiveCustomer().name},
                   {text: this.userService.getActiveCustomer().address},
-                  {text: 'Commande à annuler ! ! ! ! ', style: 'subheader'},
+                  {text: 'Commande à annuler ! ! ! ', style: 'subheader'},
               ],
               styles: {
                   subheader: {
@@ -177,8 +175,8 @@ export class SingleOrderPage implements OnInit {
               attachments: [
                   this.file.dataDirectory + 'annulation.pdf'
               ],
-              subject: ' REFCLIENT : ' + this.userService.getActiveCustomer().id + 'ANNULATION COMMANDE ' ,
-              body: 'ATTENTION ANNULATION ?',
+          subject: 'ANNULATION COMMANDE ' + ' REFCLIENT : ' + this.userService.getActiveCustomer().id ,
+              body: 'ATTENTION ANNULATION ',
               isHtml: true
           };
           this.emailComposer.open(email);

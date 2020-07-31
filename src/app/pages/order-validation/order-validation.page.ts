@@ -26,7 +26,6 @@ export class OrderValidationPage implements OnInit {
 
     pdfObj = null;
     orderlines: OrderLine[];
-    pdfcreated: boolean;
     statusShipping : boolean;
 
     // Erreur de dépendance circulaire dans la classe, si on enleve file, fileopener et emailc, l'erreur disparait
@@ -48,6 +47,10 @@ export class OrderValidationPage implements OnInit {
     // permet d'indiquer si y a un retrait entrepôt ou non en fonction du statut du toogle du retrait entrepôt
     isWarehouseRet() {
         return this.warehouseRetService.getStatus() ? 'OUI' : 'NON';
+    }
+
+    shipping(){
+        return this.statusShipping ? '20 €' : 'gratuite';
     }
 
     // construction du header du tableau du pdf = titres des colonnes du tableau
@@ -72,7 +75,7 @@ export class OrderValidationPage implements OnInit {
         return this.myBody;
     }
 
-    createPdf() {
+    sendPdf() {
         let docDefinition = {
             content: [
                 {text: 'CBPAPIERS', style: 'header'},
@@ -81,8 +84,7 @@ export class OrderValidationPage implements OnInit {
                     text: new Date().getDate() + '/'
                         + ('0' + (new Date().getMonth() + 1)).slice(-2) + '/'
                         + new Date().getFullYear() + ' '
-                        + new Date().getHours() + 'h'
-                        + new Date().getMinutes(),
+                        + new Date().toLocaleTimeString(),
                     alignment: 'right'
                 },
                 {text: 'Commande : ', style: 'subheader'},
@@ -99,6 +101,7 @@ export class OrderValidationPage implements OnInit {
                         body: this.constructBody()
                     }
                 },
+                {text : 'Livraison : ' + this.shipping(), alignment: 'right'},
                 {
                     text: 'Total HT : ' + this.finalTotal + ' €', alignment: 'right'
                 },
@@ -127,9 +130,7 @@ export class OrderValidationPage implements OnInit {
         };
         this.pdfObj = pdfMake.createPdf(docDefinition);
         this.downloadPdf();
-
-        // le pdf a été créé donc je passe mon boolean à true pour que le bouton envoimail soit activé
-        this.pdfcreated = true;
+        this.sendMail();
 
     }
 
@@ -154,6 +155,7 @@ export class OrderValidationPage implements OnInit {
 
     }
 
+    // permet de formater le mail à envoyer et demande à ouvrir le mail sur le telephone + ajoute le pdf en pièce jointe
     sendMail() {
         const email = {
             // to: 'contact@cbpapiers.com',
