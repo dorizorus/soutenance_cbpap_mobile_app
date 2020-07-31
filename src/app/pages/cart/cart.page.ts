@@ -23,9 +23,9 @@ export class CartPage implements OnInit, OnDestroy {
     subscriptionToCart: Subscription;
     subscriptionToWHRetrieval: Subscription;
     orderLineList: OrderLine[];
-    shippingPrice : number = 20;
-    finalTotal : number;
-    statusShipping : boolean;
+    shippingPrice = 20;
+    finalTotal: number;
+    statusShipping: boolean;
 
     constructor(private orderService: OrderService,
                 private modalController: ModalController,
@@ -49,6 +49,8 @@ export class CartPage implements OnInit, OnDestroy {
         this.subscriptionToWHRetrieval = this.warehouseRetService.toggle$.subscribe((status) => {
             this.warehouseRetrieval = status;
             this.total = this.cartService.getTotal();
+            this.setFinalTotal();
+            this.updateStatusShipping();
         });
 
         this.orderLineList = this.cartService.getOrderLineList();
@@ -134,15 +136,18 @@ export class CartPage implements OnInit, OnDestroy {
         if (!this.warehouseRetrieval && this.total < 250) {
             this.finalTotal = this.total + 20;
         }
+        else {
+            this.finalTotal = this.total;
+        }
     }
 
     updateStatusShipping()  {
-        if (this.warehouseRetrieval)
+        if (this.warehouseRetrieval || this.total >= 250) {
             this.statusShipping = false;
-        else if (this.total >= 250)
-            this.statusShipping = false;
-        else   
+        }
+        else {
             this.statusShipping = true;
+        }
     }
 
     updateCart($event: any, line: OrderLine) {

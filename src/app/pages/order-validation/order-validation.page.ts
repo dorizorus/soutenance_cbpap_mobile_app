@@ -49,6 +49,10 @@ export class OrderValidationPage implements OnInit {
         return this.warehouseRetService.getStatus() ? 'OUI' : 'NON';
     }
 
+    shipping(){
+        return this.statusShipping ? '20 €' : 'gratuite';
+    }
+
     // construction du header du tableau du pdf = titres des colonnes du tableau
     header = [
         {text: 'Reference article', style: 'tableHeader', alignment: 'center'},
@@ -97,7 +101,7 @@ export class OrderValidationPage implements OnInit {
                         body: this.constructBody()
                     }
                 },
-                {text : 'Livraison : ' + this.shipping()},
+                {text : 'Livraison : ' + this.shipping(), alignment: 'right'},
                 {
                     text: 'Total HT : ' + this.finalTotal + ' €', alignment: 'right'
                 },
@@ -151,7 +155,7 @@ export class OrderValidationPage implements OnInit {
 
     }
 
-    //permet de formater le mail à envoyer et demande à ouvrir le mail sur le telephone + ajoute le pdf en pièce jointe
+    // permet de formater le mail à envoyer et demande à ouvrir le mail sur le telephone + ajoute le pdf en pièce jointe
     sendMail() {
         const email = {
             // to: 'contact@cbpapiers.com',
