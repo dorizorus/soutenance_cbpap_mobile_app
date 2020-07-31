@@ -16,7 +16,7 @@ export class CartService {
     public orderLineList$: BehaviorSubject<OrderLine[]> = new BehaviorSubject<OrderLine[]>([]); // liste qui apparait sur la page article
 
     private WHRetrieval: boolean;
-
+    private finalTotal : number;
     private total: number;
 
 
@@ -74,5 +74,13 @@ export class CartService {
 
     getTotal() {
         return this.total;
+    }
+
+    setFinalTotal( finalTotal : number) {
+        this.finalTotal = finalTotal;
+    }
+
+    getFinalTotal() {
+        return this.finalTotal;
     }
 }

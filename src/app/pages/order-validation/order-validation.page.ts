@@ -22,11 +22,12 @@ pdfMake.vfs = pdfFonts.pdfMake.vfs;
 })
 export class OrderValidationPage implements OnInit {
 
-    total: number;
+    finalTotal: number;
 
     pdfObj = null;
     orderlines: OrderLine[];
     pdfcreated: boolean;
+    statusShipping : boolean;
 
     // Erreur de dépendance circulaire dans la classe, si on enleve file, fileopener et emailc, l'erreur disparait
     constructor(private plt: Platform,
@@ -40,7 +41,8 @@ export class OrderValidationPage implements OnInit {
 
     ngOnInit() {
         this.orderlines = this.cartService.getCart();
-        this.total = this.cartService.getTotal();
+        this.finalTotal = this.cartService.getFinalTotal();
+        this.statusShipping = this.warehouseRetService.getStatusShipping();
     }
 
     // permet d'indiquer si y a un retrait entrepôt ou non en fonction du statut du toogle du retrait entrepôt
@@ -98,7 +100,7 @@ export class OrderValidationPage implements OnInit {
                     }
                 },
                 {
-                    text: 'Total HT : ' + this.total + ' €', alignment: 'right'
+                    text: 'Total HT : ' + this.finalTotal + ' €', alignment: 'right'
                 },
                 {
                     text: 'Retrait entrepôt : ' + this.isWarehouseRet(), alignment: 'right'

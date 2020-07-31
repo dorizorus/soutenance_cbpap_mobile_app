@@ -7,6 +7,7 @@ import {BehaviorSubject} from "rxjs";
 export class WarehouseRetService {
 
     public toggle$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+    private statusShipping : boolean;
 
     constructor() {
     }
@@ -17,5 +18,13 @@ export class WarehouseRetService {
 
     getStatus() {
         return this.toggle$.getValue();
+    }
+
+    setStatusShipping( statusShipping : boolean) {
+        this.statusShipping = statusShipping;
+    }
+
+    getStatusShipping() {
+        return this.statusShipping;
     }
 }

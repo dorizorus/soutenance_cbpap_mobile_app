@@ -25,6 +25,7 @@ export class CartPage implements OnInit, OnDestroy {
     orderLineList: OrderLine[];
     shippingPrice : number = 20;
     finalTotal : number;
+    statusShipping : boolean;
 
     constructor(private orderService: OrderService,
                 private modalController: ModalController,
@@ -41,6 +42,7 @@ export class CartPage implements OnInit, OnDestroy {
                 this.cart = data;
                 this.total = this.cartService.getTotal();
                 this.setFinalTotal();
+                this.updateStatusShipping();
             }
         );
 
@@ -116,6 +118,8 @@ export class CartPage implements OnInit, OnDestroy {
     }
 
     async createValidationOrder() {
+        this.cartService.setFinalTotal(this.finalTotal);
+        this.warehouseRetService.setStatusShipping(this.statusShipping);
         this.modalController.dismiss();
         const modal = await this.modalController.create({
             component: OrderValidationPage,
@@ -130,6 +134,15 @@ export class CartPage implements OnInit, OnDestroy {
         if (!this.warehouseRetrieval && this.total < 250) {
             this.finalTotal = this.total + 20;
         }
+    }
+
+    updateStatusShipping()  {
+        if (this.warehouseRetrieval)
+            this.statusShipping = false;
+        else if (this.total >= 250)
+            this.statusShipping = false;
+        else   
+            this.statusShipping = true;
     }
 
     updateCart($event: any, line: OrderLine) {
