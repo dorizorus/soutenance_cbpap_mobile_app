@@ -15,7 +15,8 @@ export class HistoryPage implements OnInit {
     }
 
     ngOnInit() {
-        this.history = this.initOrders();
+        this.history = this.orderService.getOrders();
+        // this.history = this.initOrders();
     }
 
     private initOrders(): Order[] {

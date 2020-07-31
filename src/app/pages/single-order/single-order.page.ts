@@ -80,7 +80,9 @@ export class SingleOrderPage implements OnInit {
         // todo : on ne doit pas supprimer la commande annulée de l'historique des commandes ou plutôt ajouter un petit indicateur annulée
         this.createPdf();
         this.sendMail();
-        this.navController.navigateBack(['/nav/article']);
+        this.orderService.getOrder().isCancelled = true;
+        this.navController.navigateBack(['/nav/history']);
+
     }
 
     // met a jour le cart dans le service
@@ -181,5 +183,7 @@ export class SingleOrderPage implements OnInit {
           };
           this.emailComposer.open(email);
       }
+
+
 
 }

@@ -7,4 +7,5 @@ export class Order {
     customer: Customer;
     orderLines: OrderLine[];
     orderDate: Date;
+    isCancelled?: boolean;
 }

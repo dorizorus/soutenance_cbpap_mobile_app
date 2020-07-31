@@ -6,6 +6,7 @@ import {Order} from "../models/Order";
 })
 export class OrderService {
     private order: Order;
+    private orders: Order[] = [];
 
     constructor() {
     }
@@ -17,5 +18,17 @@ export class OrderService {
 
     getOrder(): Order {
         return this.order;
+    }
+
+    getOrders(): Order[] {
+        return this.orders;
+    }
+
+    setOrders(orders: Order[]){
+        this.orders = orders;
+    }
+
+    addOrder(order) {
+        this.orders.push(order);
     }
 }

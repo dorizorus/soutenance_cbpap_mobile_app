@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 
 import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
-import {Platform} from '@ionic/angular';
+import {ModalController, Platform} from '@ionic/angular';
 
 import {File} from '@ionic-native/file/ngx';
 import {FileOpener} from '@ionic-native/file-opener/ngx';
@@ -12,6 +12,8 @@ import {CartService} from '../../services/cart.service';
 import {WarehouseRetService} from '../../services/warehouse-ret.service';
 import {UserService} from '../../services/user.service';
 import {OrderLine} from '../../models/OrderLine';
+import {OrderService} from '../../services/order.service';
+import {Order} from '../../models/Order';
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
@@ -28,21 +30,33 @@ export class OrderValidationPage implements OnInit {
     orderlines: OrderLine[];
     statusShipping : boolean;
 
+    order =
+        {
+            orderNumber: 'the one',
+            orderDate: new Date(),
+            customer : this.userService.getActiveCustomer(),
+            orderLines: this.cartService.getCart()
+        }
+
     // Erreur de dépendance circulaire dans la classe, si on enleve file, fileopener et emailc, l'erreur disparait
     constructor(private plt: Platform,
-                private file: File, 
-        private fileOpener: FileOpener,
-        private emailComposer: EmailComposer,
-        private cartService: CartService,
-        private warehouseRetService: WarehouseRetService,
-        private userService: UserService) {
+                private file: File,
+                private fileOpener: FileOpener,
+                private emailComposer: EmailComposer,
+                private cartService: CartService,
+                private warehouseRetService: WarehouseRetService,
+                private userService: UserService,
+                private orderService: OrderService,
+                private modalController: ModalController) {
     }
 
     ngOnInit() {
         this.orderlines = this.cartService.getCart();
         this.finalTotal = this.cartService.getFinalTotal();
         this.statusShipping = this.warehouseRetService.getStatusShipping();
+
     }
+
 
     // permet d'indiquer si y a un retrait entrepôt ou non en fonction du statut du toogle du retrait entrepôt
     isWarehouseRet() {
@@ -132,10 +146,13 @@ export class OrderValidationPage implements OnInit {
         this.downloadPdf();
         this.sendMail();
 
+        this.orderService.addOrder(this.order);
+        
+        this.deleteAll();
+
     }
 
     // permet d'enregistrer le pdf dans le data Directory de l'application
-
     downloadPdf() {
         if (this.plt.is('cordova')) {
             this.pdfObj.getBuffer((buffer) => {
@@ -171,5 +188,24 @@ export class OrderValidationPage implements OnInit {
         this.emailComposer.open(email);
 
     }
+
+    //fermeture de la modal après envoi commande
+    onDismiss(){
+        this.modalController.dismiss();
+    }
+
+    //remise à 0 du panier et des quantités d'article sélectionnées après envoi commande
+    deleteAll() {
+        let myCart = this.cartService.getCart();
+        myCart.forEach(
+            (orderLine) => {
+                orderLine.quantity = 0;
+            }
+        );
+
+        this.cartService.setCart(myCart);
+        this.onDismiss();
+    }
+
 }
 
