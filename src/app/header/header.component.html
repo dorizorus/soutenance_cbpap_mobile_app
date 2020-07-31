@@ -20,9 +20,8 @@
           <span class="green" [ngStyle]="{'font-size': total > 1000 ? 'small' : 'medium'}">{{total | number : '1.2-2'}}€</span>
         </ion-col>
       </ion-row>
-      <ion-row>
+      <ion-row class="colonne">
         <ion-col size="auto">
-          <div><small><strong>{{ customer.name }}</strong></small></div>
           <span *ngIf="!WHRetrieval">
             <ion-icon name="subway-outline"></ion-icon>
             <span *ngIf="total-250 >= 0; else pasRemise" class="green">
@@ -34,10 +33,14 @@
           </span>
         </ion-col>
         <ion-col size="auto">
-          <span><ion-toggle color="success" [ngModel]="WHRetrieval" (click)="toggle($event)"></ion-toggle></span>
-          <br/>
           <ion-icon name="home-outline"></ion-icon>
           <span class="green">-5%</span><small> retrait entrepôt</small>
+        </ion-col>
+      </ion-row>
+      <ion-row class="colonneMax">
+        <ion-col size="10"></ion-col>
+        <ion-col size="2">
+          <span><ion-toggle color="success" [ngModel]="WHRetrieval" (click)="toggle($event)"></ion-toggle></span>
         </ion-col>
       </ion-row>
     </ion-toolbar>
