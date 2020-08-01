@@ -1,6 +1,8 @@
 import {Injectable} from '@angular/core';
 import {Customer} from '../models/Customer';
 import {BehaviorSubject} from 'rxjs';
+import {HttpClient} from '@angular/common/http';
+import {F_COMPTET} from '../models/JSON/F_COMPTET';
 
 
 @Injectable({
@@ -14,7 +16,25 @@ export class UserService {
     public customerAccounts$: BehaviorSubject<Customer[]> = new BehaviorSubject<Customer[]>([]);
     public activeCustomer$: BehaviorSubject<Customer> = new BehaviorSubject<Customer>(null);
 
-    constructor() {
+    f_COMPTET: F_COMPTET;
+    activeF_COMPTET: F_COMPTET;
+    public activeF_COMPTET$: BehaviorSubject<F_COMPTET> = new BehaviorSubject<F_COMPTET>(null);
+    f_COMPTETAccounts: F_COMPTET[] = [];
+    public f_COMPTETAccounts$: BehaviorSubject<F_COMPTET[]> = new BehaviorSubject<F_COMPTET[]>([]);
+
+
+    constructor(private http: HttpClient) {
+        this.activeF_COMPTET = {
+            CT_Adresse: "109 AVENUE DE LA REPUBLIQUE",
+            CT_CodePostal: "F-54310",
+            CT_EMail: "",
+            CT_Intitule: "SORA PIZZA",
+            CT_Num: "SORAPIZZA",
+            CT_Pays: "France",
+            CT_Sommeil: 1,
+            CT_Telephone: "03 82 33 84 68",
+            CT_Ville: "HOMECOURT",
+        };
     }
 
     // Ajoute un compte au tableau de comptes du téléphone. Le client actif est attribué à ce moment la
@@ -45,7 +65,7 @@ export class UserService {
     setActiveCustomer(customer: Customer) {
         this.activeCustomer = customer;
         this.activeCustomer$.next(this.activeCustomer);
-        localStorage.setItem('user', JSON.stringify(this.activeCustomer))
+        localStorage.setItem('user', JSON.stringify(this.activeCustomer));
     }
 
     // récupère le compte actif
@@ -64,23 +84,25 @@ export class UserService {
         return this.customer;
     }
 
-    getAllAccounts(): Customer[] {
-        // todo recup tous les comptes existants peut-être un localstorage ?
-        return this.mockAccount();
-    }
+        getAllAccounts(): Customer[] {
+            // todo recup tous les comptes existants peut-être un localstorage ?
+            return this.mockAccount();
+        }
 
     // cherche dans la liste des comptes & verifie login / password corrects
-    getUserValidity(login:string,password:string){
-        let accountsList = this.getAllAccounts();
+    getUserValidity(login: string, password: string) {
+        console.log(login);
+        const accountsList = this.getAllAccounts();
         let index = 0;
         let found = false;
-        while(index < accountsList.length && !found){
-            if(accountsList[index].name == login && accountsList[index].password == password)
-                found = true
+
+        while (index < accountsList.length && !found){
+            if (accountsList[index].name == login && accountsList[index].password == password)
+                found = true;
             else
-                index++
+                index++;
         }
-        if(index == accountsList.length) // pas trouve
+        if (index == accountsList.length) // pas trouve
             return false;
         else {
             this.setActiveCustomer(accountsList[index]);
@@ -158,5 +180,60 @@ export class UserService {
                 customerFiles: ''
             };
         return [compte1, compte2, compte3, compte4];
+    }
+
+    // Ajoute un compte au tableau de comptes du téléphone. Le client actif est attribué à ce moment la
+    addF_COMPTET(f_COMPTET: F_COMPTET) {
+        this.f_COMPTETAccounts.push(f_COMPTET);
+        this.f_COMPTETAccounts$.next(this.f_COMPTETAccounts);
+        this.setActiveF_COMPTET(f_COMPTET);
+    }
+
+    // Supprimer un compte des comptes sur le téléphone.
+    // On cherche l'index dans le tableau et on le supprime, ensuite on met à jour les subscribes
+    removeF_COMPTET(f_COMPTET: F_COMPTET) {
+        if (this.activeF_COMPTET === f_COMPTET) {
+            this.activeF_COMPTET = null;
+            this.activeF_COMPTET$.next(f_COMPTET);
+        }
+        const i = this.f_COMPTETAccounts.indexOf(this.f_COMPTET);
+        this.f_COMPTETAccounts.splice(i, 1);
+        this.f_COMPTETAccounts$.next(this.f_COMPTETAccounts);
+    }
+
+    // permet de récupérer la liste de comptes
+    getF_COMPTETAccounts() {
+        return this.f_COMPTETAccounts;
+    }
+
+    // permet de définir quel est le compte actif puis l'envoie au subscribe
+    setActiveF_COMPTET(f_comptet: F_COMPTET) {
+        this.activeF_COMPTET = f_comptet;
+        this.activeF_COMPTET$.next(this.f_COMPTET);
+        localStorage.setItem('user', JSON.stringify(this.activeCustomer));
+    }
+
+    // récupère le compte actif
+    getActiveF_COMPTET() {
+        return this.activeF_COMPTET;
+    }
+
+    // ici on fait simplement transiter un compte (pas forcément actif, utilisé dans settings)
+    setF_COMPTET(f_comptet: F_COMPTET) {
+        this.f_COMPTET = f_comptet;
+        this.activeF_COMPTET$.next(this.f_COMPTET);
+    }
+
+    // on récupère un compte (utilisé dans del-acc)
+    getF_COMPTET() {
+        return this.f_COMPTET;
+    }
+
+    getAllF_COMPTETs(): Customer[] {
+        // todo recup tous les comptes existants peut-être un localstorage ?
+        return this.mockAccount();
+    }
+    getF_COMPTETValidity() {
+        return this.http.get<F_COMPTET[]>('assets/F_COMPTET.json');
     }
 }

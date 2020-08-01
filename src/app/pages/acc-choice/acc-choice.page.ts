@@ -10,8 +10,8 @@ import {Customer} from 'src/app/models/Customer';
 })
 export class AccChoicePage implements OnInit {
 
-    accounts : Customer[];
-    customer : Customer;
+    accounts: Customer[];
+    customer: Customer;
 
     constructor(private navCtrl: NavController,
                 private userService: UserService) {
@@ -21,16 +21,16 @@ export class AccChoicePage implements OnInit {
         // susbscribe à tout changement dans la liste de comptes
         this.userService.customerAccounts$.subscribe(data => {
             this.accounts = data;
-        })
+        });
     }
 
-    selectAccountAndGoToArticles(customer : Customer) {
+    selectAccountAndGoToArticles(customer: Customer) {
         this.userService.setActiveCustomer(customer);
         this.navCtrl.navigateBack(['/nav/article']);
     }
 
     // on indique simplement le compte que l'on va récupérer dans la page des options
-    goToSettings(compte : Customer) {
+    goToSettings(compte: Customer) {
         this.userService.setCustomer(compte);
         this.navCtrl.navigateForward(['/acc-choice/settings']);
     }

@@ -2,7 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import {ModalController, NavController} from '@ionic/angular';
 import {ContactPageModule} from '../contact/contact.module';
 import {UserService} from 'src/app/services/user.service';
-import {Router} from "@angular/router";
+import {Router} from '@angular/router';
+import {F_COMPTET} from '../../models/JSON/F_COMPTET';
 
 @Component({
     selector: 'app-login',
@@ -15,22 +16,24 @@ export class LoginPage implements OnInit {
     // les infos dans certaines parties de l'application (genre la partie compte). Actuellement dans l'application, on utilise un service
     // pour transférer les données d'un client sur les différentes page.
 
-    login:string;
-    password:string;
+    login: string;
+    password: string;
     error: string;
 
     constructor(private navCtrl: NavController,
                 private modalController: ModalController,
                 private userService: UserService,
-                private router:Router) {
+                private router: Router) {
     }
 
 
     ngOnInit() {
-        if(this.userService.getAccounts().length == 1)
-            this.router.navigateByUrl('/nav/article')
-        else if(this.userService.getAccounts().length > 1)
-            this.router.navigateByUrl('/acc-choice')
+        if (this.userService.getAccounts().length == 1) {
+            this.router.navigateByUrl('/nav/article');
+        }
+        else if (this.userService.getAccounts().length > 1) {
+            this.router.navigateByUrl('/acc-choice');
+ }
     }
 
     async initClient() {
@@ -77,13 +80,47 @@ export class LoginPage implements OnInit {
         return await modal.present();
     }
 
+    logInF_COMPTET() {
+        let f_Comptet2: F_COMPTET = null;
+        this.userService.getF_COMPTETValidity().subscribe(
+            (F_COMPTETs) => {
+                let found = false;
+                let index = 0;
+
+                while (!found && index < F_COMPTETs.length) {
+                    if (F_COMPTETs[index].CT_Num == this.login) {
+                        found = true;
+                        f_Comptet2 = F_COMPTETs[index];
+                    }
+                    else {
+                        index++;
+                    }
+                    console.log(found);
+                    console.log(F_COMPTETs[index]);
+                }
+
+                if (found) {
+                    this.userService.setActiveF_COMPTET(f_Comptet2);
+                    this.userService.addF_COMPTET(f_Comptet2);
+                    this.navCtrl.navigateForward(['/nav/article']);
+                }
+                else {
+                    this.error = 'Mauvais identifiant/mot de passe';
+                }
+            }
+        );
+    }
+
     logIn() {
-        let res = this.userService.getUserValidity(this.login,this.password);
-        if(res == false)
-            this.error = "Mauvais identifiant/mot de passe";
-        else{
+        const res = this.userService.getUserValidity(this.login, this.password);
+        console.log(res);
+        if (res == false) {
+            this.error = 'Mauvais identifiant/mot de passe';
+        }
+        else {
             this.userService.setActiveCustomer(res);
             this.userService.addCustomer(res);
+
             this.router.navigateByUrl('/nav/article');
         }
     }

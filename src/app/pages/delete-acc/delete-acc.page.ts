@@ -13,19 +13,19 @@ import {Router} from "@angular/router";
 export class DeleteAccPage implements OnInit {
 
     customer: Customer;
-    error:string;
-    password:string;
+    error: string;
+    password: string;
 
     constructor(private modalController: ModalController,
                 private userService: UserService,
-                private router:Router) {
+                private router: Router) {
     }
 
     ngOnInit() {
         this.customer = this.userService.getCustomer();
     }
 
-    deleteAcc() {
+   /* deleteAcc() {
         // recupere un msg d'erreur si invalid, sinon un account
         let res = this.userService.getUserValidity(this.customer.name,this.password);
         if(res == false)
@@ -37,5 +37,5 @@ export class DeleteAccPage implements OnInit {
             else
                 this.router.navigateByUrl('/login');
         }
-    }
+    }*/
 }

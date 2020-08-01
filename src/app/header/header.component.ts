@@ -18,7 +18,7 @@ export class HeaderComponent implements OnInit {
     cart: OrderLine[];
     total = 0;
     WHRetrieval = false;
-    customer : Customer;
+    customer: Customer;
 
     constructor(private modalController: ModalController,
                 private navCtrl: NavController,

@@ -3,6 +3,10 @@
 <ion-content class="ion-padding">
   <strong>Historique des commandes : </strong>
   <ion-list>
-    <ion-item detail *ngFor="let commande of history" (click)="onClickOrder(commande)" routerLink="/nav/history/single-order"> <span *ngIf="commande.isCancelled" class="cancel"> ANNULEE &nbsp; </span>  {{commande.orderNumber | uppercase}} </ion-item>
+    <ion-item detail
+              *ngFor="let commande of history"
+              (click)="onClickOrder(commande)"
+              routerLink="/nav/history/single-order">
+      {{commande.orderNumber | uppercase}} </ion-item>
   </ion-list>
 </ion-content>

@@ -7,6 +7,9 @@ import {UserService} from 'src/app/services/user.service';
 import {Customer} from 'src/app/models/Customer';
 import {CartService} from '../../services/cart.service';
 import {ArticleService} from '../../services/article.service';
+import {F_COMPTET} from '../../models/JSON/F_COMPTET';
+import {ArticleAndFrequency} from '../../models/JSON/customs/ArticleAndFrequency';
+import {F_ARTICLE} from '../../models/JSON/F_ARTICLE';
 
 @Component({
     selector: 'app-articles',
@@ -21,6 +24,11 @@ export class ArticlePage implements OnInit {
     cart: OrderLine[] = [];
     orderLineList: OrderLine[] = [];
     orderLineBackup: OrderLine[] = [];
+    activeF_COMPTET: F_COMPTET;
+
+    articlesAndFrequency: ArticleAndFrequency[] = [];
+    f_ARTICLES: F_ARTICLE[] = [];
+    f_articleList: F_ARTICLE[] = [];
 
     constructor(private modalController: ModalController,
                 private cartService: CartService,
@@ -29,8 +37,26 @@ export class ArticlePage implements OnInit {
 
         // initialisation de notre liste d'article de base
         this.initializeArticles();
-        // this.initClient();
+        this.initClient();
         this.initOrderLines(this.articleList);
+        this.activeF_COMPTET = {
+            CT_Adresse: '109 AVENUE DE LA REPUBLIQUE',
+            CT_CodePostal: 'F-54310',
+            CT_EMail: '',
+            CT_Intitule: 'SORA PIZZA',
+            CT_Num: 'SORAPIZZA',
+            CT_Pays: 'France',
+            CT_Sommeil: 1,
+            CT_Telephone: '03 82 33 84 68',
+            CT_Ville: 'HOMECOURT',
+        };
+
+        this.articleService.Articles$.subscribe(
+            (list) => {
+                this.f_articleList = list;
+                this.getF_ARTICLES();
+            }
+        );
     }
 
     ngOnInit(): void {
@@ -45,6 +71,13 @@ export class ArticlePage implements OnInit {
         // à la création de la page on fait une copie de la liste.
         // cf. les m&éthodes "getOrderLines()" et "getArticleSearched(ev: any)
         this.orderLineBackup = this.orderLineList;
+
+        this.userService.activeF_COMPTET$.subscribe(
+            (F_COMPTET) => {
+                // this.activeF_COMPTET = F_COMPTET;
+                this.initializeF_ARTICLE();
+            }
+        );
     }
 
     // Dés qu'une quantité est selectionné pour un produit, la méthode la transmet au service
@@ -352,7 +385,7 @@ export class ArticlePage implements OnInit {
 
             // on manipule et filtre l'objet
             orderLines = orderLines.filter((orderLine) => {
-               return (orderLine.article.reference.toLowerCase().indexOf(val.toLowerCase()) > -1 ||
+                return (orderLine.article.reference.toLowerCase().indexOf(val.toLowerCase()) > -1 ||
                     orderLine.article.label.toLowerCase().indexOf(val.toLowerCase()) > -1);
             });
         }
@@ -427,5 +460,47 @@ export class ArticlePage implements OnInit {
         return -1;
     }
 
-}
+    initializeF_ARTICLE() {
+        console.log(this.activeF_COMPTET);
 
+        this.cartService.getDocLignes().subscribe(
+            (F_DOCLIGNES) => {
+                F_DOCLIGNES.forEach(
+                    (DOCLIGNE) => {
+                        if (DOCLIGNE.CT_Num == this.activeF_COMPTET.CT_Num) {
+                            if (DOCLIGNE.AR_Ref == '') {
+                            } else if (this.articlesAndFrequency == null) {
+                                this.articlesAndFrequency.push({AR_Ref: DOCLIGNE.AR_Ref, frequency: 1});
+                            } else {
+                                let i = 0;
+                                let found = false;
+                                while (!found && i < this.articlesAndFrequency.length) {
+                                    if (this.articlesAndFrequency[i].AR_Ref == DOCLIGNE.AR_Ref) {
+                                        found = true;
+                                        this.articlesAndFrequency[i].frequency++;
+                                    } else {
+                                        i++;
+                                    }
+                                }
+                                if (!found) {
+                                    this.articlesAndFrequency.push({AR_Ref: DOCLIGNE.AR_Ref, frequency: 1});
+                                }
+                                this.articlesAndFrequency.sort((a, b) => (b.frequency - a.frequency));
+                                this.articlesAndFrequency.splice(15, this.articlesAndFrequency.length - 15);
+                            }
+                        }
+                    }
+                );
+            }
+        );
+        console.log(this.articlesAndFrequency);
+        this.articleService.getF_ARTICLES();
+    }
+
+    getF_ARTICLES() {
+        for (const AAF of this.articlesAndFrequency) {
+            console.log(AAF);
+            console.log('in getF_ARTICLES');
+        }
+    }
+}

@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
-import {Order} from "../../models/Order";
-import {OrderService} from "../../services/order.service";
+import {Order} from '../../models/Order';
+import {OrderService} from '../../services/order.service';
 
 @Component({
     selector: 'app-historique',
@@ -20,7 +20,7 @@ export class HistoryPage implements OnInit {
     }
 
     private initOrders(): Order[] {
-        let order1 = {
+        const order1 = {
             orderNumber: 'MOBI1337',
             orderDate: new Date(2018, 8, 22),
             customer: {
@@ -34,7 +34,7 @@ export class HistoryPage implements OnInit {
                 city:
                     {
                         id: 55,
-                        name: "Metz",
+                        name: 'Metz',
                         postalCode: 57000
                     },
                 customerFiles: ''
@@ -68,7 +68,7 @@ export class HistoryPage implements OnInit {
                 }
             ]
         };
-        let order2 = {
+        const order2 = {
             orderNumber: 'mobydick',
             orderDate: new Date(),
             customer: {
@@ -82,7 +82,7 @@ export class HistoryPage implements OnInit {
                 city:
                     {
                         id: 55,
-                        name: "Metz",
+                        name: 'Metz',
                         postalCode: 57000
                     },
                 customerFiles: ''
@@ -116,7 +116,7 @@ export class HistoryPage implements OnInit {
                 }
             ]
         };
-        let order3 = {
+        const order3 = {
             orderNumber: 'test',
             orderDate: new Date(),
             customer: {
@@ -130,7 +130,7 @@ export class HistoryPage implements OnInit {
                 city:
                     {
                         id: 55,
-                        name: "Metz",
+                        name: 'Metz',
                         postalCode: 57000
                     },
                 customerFiles: ''
@@ -163,7 +163,7 @@ export class HistoryPage implements OnInit {
                     }
                 }
             ]
-        }
+        };
         return [order1, order2, order3];
     }
 

@@ -2,6 +2,8 @@ import {Injectable} from '@angular/core';
 import {OrderLine} from '../models/OrderLine';
 import {BehaviorSubject} from 'rxjs';
 import {WarehouseRetService} from './warehouse-ret.service';
+import {HttpClient} from "@angular/common/http";
+import {F_DOCLIGNE} from "../models/JSON/F_DOCLIGNE";
 
 @Injectable({
     providedIn: 'root'
@@ -19,9 +21,8 @@ export class CartService {
     private finalTotal : number;
     private total: number;
 
-
     // transfère le montant total du cart (utilisé dans la modal ValidationCom)
-    constructor(private warehouseRet: WarehouseRetService) {
+    constructor(private warehouseRet: WarehouseRetService, private http: HttpClient) {
 
         this.warehouseRet.toggle$.subscribe((value) => {
             this.WHRetrieval = value;
@@ -82,5 +83,9 @@ export class CartService {
 
     getFinalTotal() {
         return this.finalTotal;
+    }
+
+    getDocLignes() {
+        return this.http.get<F_DOCLIGNE[]>('assets/F_DOCLIGNE.json');
     }
 }
