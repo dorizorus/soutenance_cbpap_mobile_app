@@ -80,7 +80,7 @@ export class ArticlePage implements OnInit {
         this.cartService.setCart(this.cart);
     }
 
-    // permet de retrouver la position d'un article à patir d'une ligne de commande
+    // permet de retrouver la position d'un article à partir d'une ligne de commande
     getArticlePosition(ligne: OrderLine): number {
         let found = false;
         let index = 0;
@@ -315,7 +315,7 @@ export class ArticlePage implements OnInit {
     }
 
     // retourne un backup d'orderLineList générée en initialisation de page.
-    // l'intérêt est d'avoir une liste clean en backup qu'on envoit à la fonction filtre
+    // l'intérêt est d'avoir une liste clean en backup qu'on envoie à la fonction filtre
     getOrderLines() {
         return this.orderLineBackup;
     }
@@ -323,7 +323,7 @@ export class ArticlePage implements OnInit {
     // méthode pour la searchbar de ionic.
     getArticleSearched(ev: any) {
         //
-        // on réinitialise la liste d'article a affiché en refaisant appel à la liste originelle
+        // on réinitialise la liste d'article a afficher en refaisant appel à la liste originelle
         // this.initializeArticles();
         //
         // // set la valeur de l'input de la searchbar dans "val". On indique que c'est un input html
@@ -396,14 +396,14 @@ export class ArticlePage implements OnInit {
         const index = this.getOrderLinePosition(orderLine);
         orderLine.quantity = $event.target.value;
         // S'il n'y a pas de lignes, on ajoute directement. S'il y en a, on remplace la quantité de la line par la nouvelle.
-        if (orderLine.quantity == 0) { // suppression
+        if (orderLine.quantity === 0) { // suppression
             if (this.cart.length !== 0) {
                 if (index !== -1) {
                     this.cart.splice(index, 1);
                 }
             }
         } else { // ajout ou modif
-            if (index === -1) { // pas trouve donc on ajoute
+            if (index === -1) { // pas trouve donc on ajoute : soit panier vide, soit panier ne contient pas l'article correspondant
                 this.cart.push(orderLine);
             } else { // update
                 this.cart[index] = orderLine;
@@ -424,6 +424,7 @@ export class ArticlePage implements OnInit {
         if (found) {
             return index - 1;
         }
+        //retourne -1 quand le panier est vide
         return -1;
     }
 
