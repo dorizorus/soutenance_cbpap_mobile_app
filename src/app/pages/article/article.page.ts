@@ -7,6 +7,7 @@ import {UserService} from 'src/app/services/user.service';
 import {Customer} from 'src/app/models/Customer';
 import {CartService} from '../../services/cart.service';
 import {ArticleService} from '../../services/article.service';
+import {Order} from '../../models/Order';
 
 @Component({
     selector: 'app-articles',
@@ -18,7 +19,7 @@ export class ArticlePage implements OnInit {
     possibleQuantities: number[] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
     articleList: Article[] = [];
     totalQuantity: number;
-    cart: OrderLine[] = [];
+    cart: Order;
     orderLineList: OrderLine[] = [];
     orderLineBackup: OrderLine[] = [];
 
@@ -36,8 +37,11 @@ export class ArticlePage implements OnInit {
     ngOnInit(): void {
         this.cartService.cart$.subscribe(data => {
             this.cart = data;
-            this.totalQuantity = data.length;
+            this.totalQuantity = data.orderLines.length;
+            console.log('cart from article');
+            console.log(this.cart);
         });
+
         this.cartService.orderLineList$.subscribe(
             (liste) => this.orderLineList = liste
         );
@@ -48,7 +52,7 @@ export class ArticlePage implements OnInit {
     }
 
     // Dés qu'une quantité est selectionné pour un produit, la méthode la transmet au service
-    //n'est plus utilisée car on utilise orderLine avec la quantité et non Article
+    // n'est plus utilisée car on utilise orderLine avec la quantité et non Article
     // onChange(ev: any, art: Article) {
     //     const val = ev.target.value;
     //     this.totalQuantity = 0;
@@ -355,7 +359,7 @@ export class ArticlePage implements OnInit {
 
             // on manipule et filtre l'objet
             orderLines = orderLines.filter((orderLine) => {
-               return (orderLine.article.reference.toLowerCase().indexOf(val.toLowerCase()) > -1 ||
+                return (orderLine.article.reference.toLowerCase().indexOf(val.toLowerCase()) > -1 ||
                     orderLine.article.label.toLowerCase().indexOf(val.toLowerCase()) > -1);
             });
         }
@@ -386,11 +390,14 @@ export class ArticlePage implements OnInit {
 
     // quand on clique sur l'article (image ou libelle), on affiche la description de l'article(considéré comme un orderline ici)
     async createOrderLineDetails(orderLine: OrderLine) {
-        this.cartService.setOrderLine(orderLine);
+
         const modal = await this.modalController.create({
             component: SingleArticlePage,
             cssClass: 'modal-article',
-            backdropDismiss: true
+            backdropDismiss: true,
+            componentProps: {
+                orderLine
+            }
         });
         return await modal.present();
 
@@ -404,33 +411,35 @@ export class ArticlePage implements OnInit {
         // S'il n'y a pas de lignes, on ajoute directement. S'il y en a, on remplace la quantité de la line par la nouvelle.
         // si on met 3 ===, ca ne fonctionne pas !
         if (orderLine.quantity == 0) { // suppression
-            if (this.cart.length !== 0) {
+            if (this.cart.orderLines.length !== 0) {
                 if (index !== -1) {
-                    this.cart.splice(index, 1);
+                    this.cart.orderLines.splice(index, 1);
                 }
             }
         } else { // ajout ou modif
             if (index === -1) { // pas trouve donc on ajoute : soit panier vide, soit panier ne contient pas l'article correspondant
-                this.cart.push(orderLine);
+                this.cart.orderLines.push(orderLine);
             } else { // update
-                this.cart[index] = orderLine;
+                this.cart.orderLines[index] = orderLine;
             }
         }
         this.cartService.setCart(this.cart);
     }
 
-    // permet de tester si l'article est déjà présent dans le panier ou non et si il est présent , on récupére la position de l'article dans le panier
+    // permet de tester si l'article est déjà présent dans le panier
+    // ou non et si il est présent , on récupére la position de l'article dans le panier
     getOrderLinePosition(orderLine: OrderLine) {
         let found = false;
         let index = 0;
-        while (!found && index < this.cart.length) {
-            if (this.cart[index] === orderLine) {
+        while (!found && index < this.cart.orderLines.length) {
+            if (this.cart.orderLines[index] === orderLine) {
                 found = true;
+            } else {
+                index++;
             }
-            index++;
         }
         if (found) {
-            return index - 1;
+            return index;
         }
         // retourne -1 quand le panier est vide
         return -1;

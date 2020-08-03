@@ -21,10 +21,10 @@ pdfMake.vfs = pdfFonts.pdfMake.vfs;
     styleUrls: ['./single-order.page.scss'],
 })
 export class SingleOrderPage implements OnInit {
+
     order: Order;
     total = 0;
     canEdit: boolean;
-
     pdfObj = null;
 
     constructor(private orderService: OrderService,
@@ -40,6 +40,7 @@ export class SingleOrderPage implements OnInit {
 
     ngOnInit(): void {
         this.order = this.orderService.getOrder();
+        console.log('single order-page');
         console.log(this.order);
         this.total = 0;
         this.order.orderLines.forEach(value => this.total += (value.article.finalPrice * value.quantity));
@@ -68,6 +69,7 @@ export class SingleOrderPage implements OnInit {
                 }, {
                     text: 'Oui',
                     handler: () => {
+                        console.log(this.order.orderDate.toLocaleTimeString());
                         this.sendCancel();
                     }
                 }
@@ -87,13 +89,26 @@ export class SingleOrderPage implements OnInit {
     }
 
     // met a jour le cart dans le service
-    updateCart() {
+    reorder() {
         // création du toast
         this.toastClick();
         // fait un deep clone des lignes de la order
-        const newCart = cloneDeep(this.order.orderLines);
+        const newCart = cloneDeep(this.order);
+        // on met à jour le panier avec le clone
+        newCart.orderNumber = null;
+        this.cartService.setCart(newCart);
+        console.log('apres avoir appuyé sur edit : mon panier est : ' + this.cartService.getCart().orderNumber);
+        this.navController.navigateBack(['/nav/article']);
+    }
+
+    editOrder() {
+        // création du toast
+        this.toastClick();
+        // fait un deep clone des lignes de la order
+        const newCart = cloneDeep(this.order);
         // on met à jour le panier avec le clone
         this.cartService.setCart(newCart);
+        console.log('apres avoir appuyé sur edit : mon panier est : ' + this.cartService.getCart().orderNumber);
         this.navController.navigateBack(['/nav/article']);
     }
 
@@ -110,21 +125,21 @@ export class SingleOrderPage implements OnInit {
       }
 
       createPdf(){
-          const docDefinition = {
+        console.log('la order à annuler : ' + this.order);
+        console.log('la order à annuler : ' + this.order.orderDate);
+        const docDefinition = {
               content: [
                   {text: 'CBPAPIERS', style: 'header'},
                   // impression de la date au format dd/mm/yyyy hh'h'mm
                   {
-                      text: new Date().getDate() + '/'
-                          + ('0' + (new Date().getMonth() + 1)).slice(-2) + '/'
-                          + new Date().getFullYear() + ' '
-                          // tslint:disable-next-line:no-unused-expression
+                      text: new Date().toLocaleDateString() + ' '
                           + new Date().toLocaleTimeString(),
                       alignment: 'right'
                   },
-                  {text: 'Commande du : ' + this.order.orderDate.getDate() + '/'
-                          + ('0' + (this.order.orderDate.getMonth() + 1)).slice(-2) + '/'
-                          + this.order.orderDate.getFullYear() + ' '
+                  {text: 'Commande du : ' + this.order.orderDate.toLocaleDateString() + ' '
+                          // this.order.orderDate.getDate() + '/'
+                          // + ('0' + (this.order.orderDate.getMonth() + 1)).slice(-2) + '/'
+                          // + this.order.orderDate.getFullYear() + ' '
                           + this.order.orderDate.toLocaleTimeString(), style: 'subheader'},
                   {text: 'Ref client : ' + this.userService.getActiveCustomer().id},
                   {text: this.userService.getActiveCustomer().name},
@@ -150,8 +165,8 @@ export class SingleOrderPage implements OnInit {
                   alignment: 'justify'
               }
           };
-          this.pdfObj = pdfMake.createPdf(docDefinition);
-          this.downloadPdf();
+        this.pdfObj = pdfMake.createPdf(docDefinition);
+        this.downloadPdf();
       }
 
       downloadPdf(){

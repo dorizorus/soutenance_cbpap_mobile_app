@@ -2,42 +2,66 @@ import {Injectable} from '@angular/core';
 import {OrderLine} from '../models/OrderLine';
 import {BehaviorSubject} from 'rxjs';
 import {WarehouseRetService} from './warehouse-ret.service';
+import {Order} from '../models/Order';
 
 @Injectable({
     providedIn: 'root'
 })
 export class CartService {
 
-    private cart: OrderLine[] = [];
-    public cart$: BehaviorSubject<OrderLine[]> = new BehaviorSubject<OrderLine[]>([]);
+    // private cart: OrderLine[] = [];
+    // public cart$: BehaviorSubject<OrderLine[]> = new BehaviorSubject<OrderLine[]>([]);
+    private cart: Order;
+    private readonly initCart: Order;
+    public cart$: BehaviorSubject<Order> = new BehaviorSubject<Order>(null);
 
     private orderLine: OrderLine;
     private orderLineList: OrderLine[] = [];
     public orderLineList$: BehaviorSubject<OrderLine[]> = new BehaviorSubject<OrderLine[]>([]); // liste qui apparait sur la page article
 
     private WHRetrieval: boolean;
-    private finalTotal : number;
+    private finalTotal: number;
     private total: number;
 
 
     // transfère le montant total du cart (utilisé dans la modal ValidationCom)
     constructor(private warehouseRet: WarehouseRetService) {
 
+        this.initCart = {
+            orderNumber: null,
+            orderLines: [],
+            customer: null,
+            orderDate: null
+        };
+
+        this.cart = this.initCart;
+        this.cart$.next(this.initCart);
+
         this.warehouseRet.toggle$.subscribe((value) => {
-            this.WHRetrieval = value;
-            this.updateTotal();
+                this.WHRetrieval = value;
+                this.updateTotal();
             }
         );
     }
 
-
-    setCart(cart: OrderLine[]) {
+    setCart(cart: Order) {
         this.cart = cart;
         this.updateTotal();
         this.cart$.next(this.cart);
     }
 
-    getCart(): OrderLine[] {
+    resetCartOrderLines() {
+        this.cart.orderLines = [];
+        this.updateTotal();
+        this.cart$.next(this.cart);
+    }
+
+    resetCart() {
+        this.cart = this.initCart;
+        this.setCart(this.initCart);
+    }
+
+    getCart(): Order {
         return this.cart;
     }
 
@@ -62,9 +86,9 @@ export class CartService {
         // Si le toggle est activé on applique la WHRetrieval
         this.total = 0;
         if (!this.WHRetrieval) {
-            this.cart.forEach(value => this.total += (value.article.unitPrice * value.quantity));
+            this.cart.orderLines.forEach(value => this.total += (value.article.unitPrice * value.quantity));
         } else {
-            this.cart.forEach(value => this.total += ((value.article.unitPrice * value.quantity) * 0.95));
+            this.cart.orderLines.forEach(value => this.total += ((value.article.unitPrice * value.quantity) * 0.95));
         }
     }
 

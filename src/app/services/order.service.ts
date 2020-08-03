@@ -24,7 +24,7 @@ export class OrderService {
         return this.orders;
     }
 
-    setOrders(orders: Order[]){
+    setOrders(orders: Order[]) {
         this.orders = orders;
     }
 
@@ -32,3 +32,4 @@ export class OrderService {
         this.orders.push(order);
     }
 }
+

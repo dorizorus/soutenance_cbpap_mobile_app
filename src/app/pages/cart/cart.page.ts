@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {OrderService} from 'src/app/services/order.service';
 import {OrderLine} from 'src/app/models/OrderLine';
 import {ModalController} from '@ionic/angular';
@@ -6,6 +6,7 @@ import {OrderValidationPage} from '../order-validation/order-validation.page';
 import {WarehouseRetService} from '../../services/warehouse-ret.service';
 import {CartService} from '../../services/cart.service';
 import {Subscription} from 'rxjs';
+import {Order} from '../../models/Order';
 
 
 @Component({
@@ -14,12 +15,13 @@ import {Subscription} from 'rxjs';
     styleUrls: ['./cart.page.scss'],
 })
 // dans le cas d'un "can't bind" to ngFor", ajouter CartPage à app.module.ts dans declarations & entryComponents
-export class CartPage implements OnInit, OnDestroy {
+// export class CartPage implements OnInit, OnDestroy {
+    export class CartPage implements OnInit {
 
     possibleQuantities: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
-    cart: OrderLine[];
+    @Input() cart: Order;
     total: number;
-    warehouseRetrieval: boolean;
+    @Input() warehouseRetrieval: boolean;
     subscriptionToCart: Subscription;
     subscriptionToWHRetrieval: Subscription;
     orderLineList: OrderLine[];
@@ -30,8 +32,7 @@ export class CartPage implements OnInit, OnDestroy {
     constructor(private orderService: OrderService,
                 private modalController: ModalController,
                 private warehouseRetService: WarehouseRetService,
-                private cartService: CartService,
-                private cd: ChangeDetectorRef) {
+                private cartService: CartService) {
     }
 
     ngOnInit() {
@@ -39,13 +40,12 @@ export class CartPage implements OnInit, OnDestroy {
 
         // on subscribe aux données (ici un tableau de ligne de commande du cart), dès qu'un changement est detecté on les récupère
         this.subscriptionToCart = this.cartService.cart$.subscribe(data => {
-                this.cart = data;
+                // this.cart = data;
                 this.total = this.cartService.getTotal();
                 this.setFinalTotal();
                 this.updateStatusShipping();
             }
         );
-
         this.subscriptionToWHRetrieval = this.warehouseRetService.toggle$.subscribe((status) => {
             this.warehouseRetrieval = status;
             this.total = this.cartService.getTotal();
@@ -56,6 +56,7 @@ export class CartPage implements OnInit, OnDestroy {
         this.orderLineList = this.cartService.getOrderLineList();
     }
 
+
     // pour fermer la modal de manière explicite par un bouton
     // sinon si on clique à côté de la modal ça appel modalController.dismiss() tout seul
     onDismiss() {
@@ -64,10 +65,10 @@ export class CartPage implements OnInit, OnDestroy {
 
     // appelé quand la modal est fermée par modelController.dismiss()
     // on supprime les souscriptions aux observables
-    ngOnDestroy() {
-        this.subscriptionToCart.unsubscribe();
-        this.subscriptionToWHRetrieval.unsubscribe();
-    }
+    // ngOnDestroy() {
+    //     this.subscriptionToCart.unsubscribe();
+    //     this.subscriptionToWHRetrieval.unsubscribe();
+    // }
 
     deleteLine(orderLine: OrderLine) {
         const index = this.findOrderLineIndex(orderLine);
@@ -77,15 +78,15 @@ export class CartPage implements OnInit, OnDestroy {
                 this.cartService.setOrderLineList(this.orderLineList);
             });
         }
-        this.cart.splice(this.cart.indexOf(orderLine), 1);
+        this.cart.orderLines.splice(this.cart.orderLines.indexOf(orderLine), 1);
         this.cartService.setCart(this.cart);
-        if (this.cart.length === 0) {
+        if (this.cart.orderLines.length === 0) {
             this.onDismiss();
         }
     }
 
     deleteAll() {
-        this.cart.forEach(
+        this.cart.orderLines.forEach(
             (orderLine) => {
                 const index = this.findOrderLineIndex(orderLine);
                 if (index !== -1) {
@@ -94,7 +95,7 @@ export class CartPage implements OnInit, OnDestroy {
             }
         );
         this.cartService.setOrderLineList(this.orderLineList);
-        this.cartService.setCart([]);
+        this.cartService.resetCartOrderLines();
         this.onDismiss();
     }
 
@@ -120,8 +121,11 @@ export class CartPage implements OnInit, OnDestroy {
     }
 
     async createValidationOrder() {
+        console.log('order depuis cartpage');
+        console.log(this.cart);
         this.cartService.setFinalTotal(this.finalTotal);
         this.warehouseRetService.setStatusShipping(this.statusShipping);
+        this.cartService.setCart(this.cart);
         this.modalController.dismiss();
         const modal = await this.modalController.create({
             component: OrderValidationPage,
@@ -135,24 +139,22 @@ export class CartPage implements OnInit, OnDestroy {
     setFinalTotal() {
         if (!this.warehouseRetrieval && this.total < 250) {
             this.finalTotal = this.total + 20;
-        }
-        else {
+        } else {
             this.finalTotal = this.total;
         }
     }
 
-    updateStatusShipping()  {
+    updateStatusShipping() {
         if (this.warehouseRetrieval || this.total >= 250) {
             this.statusShipping = false;
-        }
-        else {
+        } else {
             this.statusShipping = true;
         }
     }
 
     updateCart($event: any, line: OrderLine) {
         line.quantity = $event.target.value;
-        // on met à jour le cart dans le service
-        this.cartService.setCart(this.cart);
+        // // on met à jour le cart dans le service
+        // this.cartService.setCart(this.cart);
     }
 }

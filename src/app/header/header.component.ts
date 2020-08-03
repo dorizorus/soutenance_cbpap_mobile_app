@@ -7,6 +7,7 @@ import {UserService} from '../services/user.service';
 import {Customer} from '../models/Customer';
 import {WarehouseRetService} from '../services/warehouse-ret.service';
 import {CartService} from '../services/cart.service';
+import {Order} from '../models/Order';
 
 @Component({
     selector: 'app-header',
@@ -15,10 +16,10 @@ import {CartService} from '../services/cart.service';
 })
 export class HeaderComponent implements OnInit {
 
-    cart: OrderLine[];
+    cart: Order;
     total = 0;
     WHRetrieval = false;
-    customer : Customer;
+    customer: Customer;
 
     constructor(private modalController: ModalController,
                 private navCtrl: NavController,
@@ -30,30 +31,42 @@ export class HeaderComponent implements OnInit {
 
     ngOnInit() {
         this.customer = this.userService.getActiveCustomer();
+
         // on subscribe à toute nouvelles données du cart
         this.cartService.cart$.subscribe((data) => {
             this.cart = data;
             this.total = this.cartService.getTotal();
         });
+
+
+
+        // on subscribe à tout nouveau changement du customer actif
+        this.userService.activeCustomer$.subscribe((data) => {
+            this.customer = data;
+            this.cart.customer = data;
+        });
+
+
+
         // on subscribe à tout nouveau changement du status du toogle
         this.warehouseRetService.toggle$.subscribe((status) => {
             this.WHRetrieval = status;
             this.total = this.cartService.getTotal();
         });
 
-        this.userService.activeCustomer$.subscribe((data) => {
-            this.customer = data;
-        });
-        // on subscribe à tout nouveau changement du customer actif
     }
 
 
     // cree une modale qui represente le cart
-    async createCart() {
+    async createCart(cart: Order, WHRetrieval: boolean) {
         const modal = await this.modalController.create({
             component: CartPage,
             cssClass: 'modal-article',
-            backdropDismiss: true
+            backdropDismiss: true,
+            componentProps: {
+                cart,
+                WHRetrieval
+            }
         });
         return await modal.present();
     }

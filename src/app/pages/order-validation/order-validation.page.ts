@@ -29,17 +29,8 @@ export class OrderValidationPage implements OnInit {
     finalTotal: number;
 
     pdfObj = null;
-    orderlines: OrderLine[];
     statusShipping: boolean;
-
-    order =
-        {
-            // numéro de commande généré dans le service generateID
-            orderNumber: this.generateIdService.generate(),
-            orderDate: new Date(),
-            customer : this.userService.getActiveCustomer(),
-            orderLines: this.cartService.getCart()
-        };
+    order: Order;
 
     // Erreur de dépendance circulaire dans la classe, si on enleve file, fileopener et emailc, l'erreur disparait
     constructor(private plt: Platform,
@@ -55,7 +46,7 @@ export class OrderValidationPage implements OnInit {
     }
 
     ngOnInit() {
-        this.orderlines = this.cartService.getCart();
+        this.order = this.cartService.getCart();
         this.finalTotal = this.cartService.getFinalTotal();
         this.statusShipping = this.warehouseRetService.getStatusShipping();
     }
@@ -85,11 +76,28 @@ export class OrderValidationPage implements OnInit {
     // ici reference de l'article, quantité et prix final
     // l'array myBody est donc incrémenté de nouvelles données
     constructBody() {
-        for (const orderline of this.orderlines) {
+        for (const orderline of this.order.orderLines) {
             // @ts-ignore
             this.myBody.push([`${orderline.article.reference}`, `${orderline.quantity}`, `${orderline.article.finalPrice * orderline.quantity + '€'}`]);
         }
         return this.myBody;
+    }
+
+    checkEditOrderOrNot(){
+        if (this.order.orderNumber == null){
+            this.order =
+                {
+                    // numéro de commande généré dans le service generateID
+                    orderNumber: this.generateIdService.generate(),
+                    orderDate: new Date(),
+                    customer : this.userService.getActiveCustomer(),
+                    orderLines: this.cartService.getCart().orderLines
+                };
+            this.sendPdf();
+        } else {
+            this.order = this.cartService.getCart();
+            this.sendPdfEdit();
+        }
     }
 
     sendPdf() {
@@ -146,11 +154,78 @@ export class OrderValidationPage implements OnInit {
         this.pdfObj = pdfMake.createPdf(docDefinition);
         this.downloadPdf();
         this.sendMail();
-        const orderline_history = cloneDeep(this.orderlines);
-        this.order.orderLines = orderline_history;
-        this.orderService.addOrder(this.order);
+        
+        const ORDER_HISTORY = cloneDeep(this.order);
+        this.orderService.addOrder(ORDER_HISTORY);
 
-        this.deleteAll(this.orderlines);
+        //on reinitialise les orderlines de panier pour le remettre à 0
+        this.deleteAll(this.order.orderLines);
+        
+    }
+
+    sendPdfEdit() {
+        // // enregistrement de la commande réalisée dans le tableau des commandes de orderService
+        // let docDefinition = {
+        //     content: [
+        //         {text: 'CBPAPIERS', style: 'header'},
+        //         // impression de la date au format dd/mm/yyyy hh'h'mm
+        //         {
+        //             text: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString(),
+        //             alignment: 'right'
+        //         },
+        //         {text: 'ATTENTION Commande : ' + this.cartService.getCart().orderNumber + ' MODIFIEE' , style: 'subheader'},
+        //         {text: 'Ref client : ' + this.userService.getActiveCustomer().id},
+        //         {text: this.userService.getActiveCustomer().name},
+        //         {text: this.userService.getActiveCustomer().address},
+        //
+        //         // c'est ici qu'on construit le tableau dans le pdf :
+        //         // on indique le nombre de colonnes et on injecte l'array myBody construit dans la méthode constructBody()
+        //         {
+        //             style: 'tableExample',
+        //             table: {
+        //                 widths: ['*', '*', '*'],
+        //                 body: this.constructBody()
+        //             }
+        //         },
+        //         {text : 'Livraison : ' + this.shipping(), alignment: 'right'},
+        //         {
+        //             text: 'Total HT : ' + this.finalTotal + ' €', alignment: 'right'
+        //         },
+        //         {
+        //             text: 'Retrait entrepôt : ' + this.isWarehouseRet(), alignment: 'right'
+        //         }
+        //     ],
+        //     styles: {
+        //         subheader: {
+        //             fontSize: 16,
+        //             bold: true,
+        //             margin: [0, 10, 0, 5]
+        //         },
+        //         tableExample: {
+        //             margin: [0, 5, 0, 15]
+        //         },
+        //         tableHeader: {
+        //             bold: true,
+        //             fontSize: 13,
+        //             color: 'black'
+        //         }
+        //     },
+        //     defaultStyle: {
+        //         alignment: 'justify'
+        //     }
+        // };
+        //
+        // this.pdfObj = pdfMake.createPdf(docDefinition);
+        // this.downloadPdf();
+        // this.sendMail();
+        //
+        // const ORDER_HISTORY = cloneDeep(this.order);
+        // this.orderService.editOrder(ORDER_HISTORY);
+        //
+
+        //on reinitialise les orderlines de panier pour le remettre à 0
+        this.deleteAll(this.order.orderLines);
+
     }
 
     // permet d'enregistrer le pdf dans le data Directory de l'application
@@ -205,7 +280,7 @@ export class OrderValidationPage implements OnInit {
             }
         );
 
-        this.cartService.setCart(orderlines);
+        this.cartService.resetCart();
         this.onDismiss();
     }
 
