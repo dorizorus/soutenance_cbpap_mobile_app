@@ -14,6 +14,7 @@ import {UserService} from '../../services/user.service';
 import {OrderLine} from '../../models/OrderLine';
 import {OrderService} from '../../services/order.service';
 import {Order} from '../../models/Order';
+import { cloneDeep } from 'lodash';
 import {GenerateIDService} from '../../services/generate-id.service';
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
@@ -29,16 +30,16 @@ export class OrderValidationPage implements OnInit {
 
     pdfObj = null;
     orderlines: OrderLine[];
-    statusShipping : boolean;
+    statusShipping: boolean;
 
     order =
         {
-            //numéro de commande généré dans le service generateID
+            // numéro de commande généré dans le service generateID
             orderNumber: this.generateIdService.generate(),
             orderDate: new Date(),
             customer : this.userService.getActiveCustomer(),
             orderLines: this.cartService.getCart()
-        }
+        };
 
     // Erreur de dépendance circulaire dans la classe, si on enleve file, fileopener et emailc, l'erreur disparait
     constructor(private plt: Platform,
@@ -92,8 +93,7 @@ export class OrderValidationPage implements OnInit {
     }
 
     sendPdf() {
-        //enregistrement de la commande réalisée dans le tableau des commandes de orderService
-        this.orderService.addOrder(this.order);
+        // enregistrement de la commande réalisée dans le tableau des commandes de orderService
         let docDefinition = {
             content: [
                 {text: 'CBPAPIERS', style: 'header'},
@@ -146,8 +146,11 @@ export class OrderValidationPage implements OnInit {
         this.pdfObj = pdfMake.createPdf(docDefinition);
         this.downloadPdf();
         this.sendMail();
-        this.deleteAll();
+        const orderline_history = cloneDeep(this.orderlines);
+        this.order.orderLines = orderline_history;
+        this.orderService.addOrder(this.order);
 
+        this.deleteAll(this.orderlines);
     }
 
     // permet d'enregistrer le pdf dans le data Directory de l'application
@@ -187,22 +190,22 @@ export class OrderValidationPage implements OnInit {
 
     }
 
-    //fermeture de la modal après envoi commande
+    // fermeture de la modal après envoi commande
     onDismiss(){
         this.modalController.dismiss();
     }
 
-    //remise à 0 du panier et des quantités d'article sélectionnées après envoi commande
-    deleteAll() {
+    // remise à 0 du panier et des quantités d'article sélectionnées après envoi commande
+    deleteAll(orderlines: OrderLine[]) {
         // faut fix ca ! ! ! ca efface tout sinon
-        // let myCart = this.cartService.getCart();
-        // myCart.forEach(
-        //     (orderLine) => {
-        //         orderLine.quantity = 0;
-        //     }
-        // );
 
-        // this.cartService.setCart(myCart);
+        orderlines.forEach(
+            (orderLine) => {
+                orderLine.quantity = 0;
+            }
+        );
+
+        this.cartService.setCart(orderlines);
         this.onDismiss();
     }
 
