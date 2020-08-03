@@ -22,6 +22,7 @@ export class SingleArticlePage implements OnInit {
                 private modalController: ModalController,
                 private router: Router) {
 
+        //récupération de la ligne de commande
         this.orderLine = this.cartNav.getOrderLine();
     }
 
@@ -35,6 +36,7 @@ export class SingleArticlePage implements OnInit {
         this.modalController.dismiss(this);
     }
 
+    //au clic du bouton réinitialiser, met la quantité de l'article sélectionnée à 0
     onReset(orderLine: OrderLine) {
         orderLine.quantity = 0;
         this.onDismiss();

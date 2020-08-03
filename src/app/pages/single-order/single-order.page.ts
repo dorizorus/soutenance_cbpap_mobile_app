@@ -40,6 +40,7 @@ export class SingleOrderPage implements OnInit {
 
     ngOnInit(): void {
         this.order = this.orderService.getOrder();
+        console.log(this.order);
         this.total = 0;
         this.order.orderLines.forEach(value => this.total += (value.article.finalPrice * value.quantity));
 

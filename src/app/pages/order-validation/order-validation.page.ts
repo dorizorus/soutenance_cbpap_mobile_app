@@ -14,6 +14,7 @@ import {UserService} from '../../services/user.service';
 import {OrderLine} from '../../models/OrderLine';
 import {OrderService} from '../../services/order.service';
 import {Order} from '../../models/Order';
+import {GenerateIDService} from '../../services/generate-id.service';
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
@@ -32,7 +33,8 @@ export class OrderValidationPage implements OnInit {
 
     order =
         {
-            orderNumber: 'the one',
+            //numéro de commande généré dans le service generateID
+            orderNumber: this.generateIdService.generate(),
             orderDate: new Date(),
             customer : this.userService.getActiveCustomer(),
             orderLines: this.cartService.getCart()
@@ -47,14 +49,14 @@ export class OrderValidationPage implements OnInit {
                 private warehouseRetService: WarehouseRetService,
                 private userService: UserService,
                 private orderService: OrderService,
-                private modalController: ModalController) {
+                private modalController: ModalController,
+                private generateIdService: GenerateIDService) {
     }
 
     ngOnInit() {
         this.orderlines = this.cartService.getCart();
         this.finalTotal = this.cartService.getFinalTotal();
         this.statusShipping = this.warehouseRetService.getStatusShipping();
-
     }
 
 
@@ -90,18 +92,17 @@ export class OrderValidationPage implements OnInit {
     }
 
     sendPdf() {
+        //enregistrement de la commande réalisée dans le tableau des commandes de orderService
+        this.orderService.addOrder(this.order);
         let docDefinition = {
             content: [
                 {text: 'CBPAPIERS', style: 'header'},
                 // impression de la date au format dd/mm/yyyy hh'h'mm
                 {
-                    text: new Date().getDate() + '/'
-                        + ('0' + (new Date().getMonth() + 1)).slice(-2) + '/'
-                        + new Date().getFullYear() + ' '
-                        + new Date().toLocaleTimeString(),
+                    text: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString(),
                     alignment: 'right'
                 },
-                {text: 'Commande : ', style: 'subheader'},
+                {text: 'Commande : ' , style: 'subheader'},
                 {text: 'Ref client : ' + this.userService.getActiveCustomer().id},
                 {text: this.userService.getActiveCustomer().name},
                 {text: this.userService.getActiveCustomer().address},
@@ -145,9 +146,6 @@ export class OrderValidationPage implements OnInit {
         this.pdfObj = pdfMake.createPdf(docDefinition);
         this.downloadPdf();
         this.sendMail();
-
-        this.orderService.addOrder(this.order);
-        
         this.deleteAll();
 
     }
@@ -160,7 +158,7 @@ export class OrderValidationPage implements OnInit {
                 let blob = new Blob([buffer], {type: 'application/pdf'});
 
                 // Save the PDF to the data Directory of our App
-                this.file.writeFile(this.file.dataDirectory, 'myletter.pdf', blob, {replace: true}).then(fileEntry => {
+                this.file.writeFile(this.file.dataDirectory, 'commande.pdf', blob, {replace: true}).then(fileEntry => {
                     //  à enlever !  je laisse juste pour les tests sur pc
                     // this.fileOpener.open(this.file.dataDirectory + 'myletter.pdf', 'application/pdf');
                 });
@@ -179,10 +177,10 @@ export class OrderValidationPage implements OnInit {
             to: 'adrien.fek@gmail.com',
             cc: 'justine.gracia@gmail.com',
             attachments: [
-                this.file.dataDirectory + 'myletter.pdf'
+                this.file.dataDirectory + 'commande.pdf'
             ],
             subject: ' REFCLIENT : ' + this.userService.getActiveCustomer().id,
-            body: 'How are you?',
+            body: 'Ci-joint le récapitulatif de la commande',
             isHtml: true
         };
         this.emailComposer.open(email);
@@ -196,14 +194,15 @@ export class OrderValidationPage implements OnInit {
 
     //remise à 0 du panier et des quantités d'article sélectionnées après envoi commande
     deleteAll() {
-        let myCart = this.cartService.getCart();
-        myCart.forEach(
-            (orderLine) => {
-                orderLine.quantity = 0;
-            }
-        );
+        // faut fix ca ! ! ! ca efface tout sinon
+        // let myCart = this.cartService.getCart();
+        // myCart.forEach(
+        //     (orderLine) => {
+        //         orderLine.quantity = 0;
+        //     }
+        // );
 
-        this.cartService.setCart(myCart);
+        // this.cartService.setCart(myCart);
         this.onDismiss();
     }
 
