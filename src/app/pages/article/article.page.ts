@@ -396,7 +396,7 @@ export class ArticlePage implements OnInit {
         const index = this.getOrderLinePosition(orderLine);
         orderLine.quantity = $event.target.value;
         // S'il n'y a pas de lignes, on ajoute directement. S'il y en a, on remplace la quantité de la line par la nouvelle.
-        if (orderLine.quantity === 0) { // suppression
+        if (orderLine.quantity == 0) { // suppression
             if (this.cart.length !== 0) {
                 if (index !== -1) {
                     this.cart.splice(index, 1);
