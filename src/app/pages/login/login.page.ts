@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {ModalController, NavController} from '@ionic/angular';
 import {ContactPageModule} from '../contact/contact.module';
 import {UserService} from 'src/app/services/user.service';
-import {Router} from "@angular/router";
+import {Router, NavigationEnd} from "@angular/router";
 
 @Component({
     selector: 'app-login',
@@ -23,6 +23,14 @@ export class LoginPage implements OnInit {
                 private modalController: ModalController,
                 private userService: UserService,
                 private router:Router) {
+                    // on subscribe a l'evenement lié au routeur, a chaque changement d'url, on lance
+                    // la méthode. Si l'url est similaire a la page de login et si c'est vide, redirige vers la liste
+                    this.router.events.subscribe((e) => {
+                        if (e instanceof NavigationEnd) {
+                            if (e.url == '/login' && this.userService.getAccounts().length > 0)
+                                this.router.navigateByUrl('/nav/article');
+                        }
+                    })
     }
 
 
