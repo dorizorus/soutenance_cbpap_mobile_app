@@ -4,7 +4,6 @@ import {SingleArticlePage} from '../single-article/single-article.page';
 import {Article} from 'src/app/models/Article';
 import {OrderLine} from 'src/app/models/OrderLine';
 import {UserService} from 'src/app/services/user.service';
-import {Customer} from 'src/app/models/Customer';
 import {CartService} from '../../services/cart.service';
 import {ArticleService} from '../../services/article.service';
 import {F_COMPTET} from '../../models/JSON/F_COMPTET';
@@ -20,15 +19,15 @@ export class ArticlePage implements OnInit {
 
     possibleQuantities: number[] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
     articleList: Article[] = [];
-    totalQuantity: number;
+
     cart: OrderLine[] = [];
     orderLineList: OrderLine[] = [];
     orderLineBackup: OrderLine[] = [];
     activeF_COMPTET: F_COMPTET;
 
     articlesAndFrequency: ArticleAndFrequency[] = [];
-    f_ARTICLES: F_ARTICLE[] = [];
     f_articleList: F_ARTICLE[] = [];
+    arrayArRef: [string, number][];
 
     constructor(private modalController: ModalController,
                 private cartService: CartService,
@@ -37,9 +36,7 @@ export class ArticlePage implements OnInit {
     }
 
     ngOnInit(): void {
-        // initialisation de notre liste d'article de base
-        this.initializeArticles();
-        this.initClient();
+        //this.initClient();
         this.initOrderLines(this.articleList);
 
         this.articleService.Articles$.subscribe(
@@ -50,7 +47,6 @@ export class ArticlePage implements OnInit {
         );
         this.cartService.cart$.subscribe(data => {
             this.cart = data;
-            this.totalQuantity = data.length;
         });
         this.cartService.orderLineList$.subscribe(
             (liste) => this.orderLineList = liste
@@ -60,16 +56,15 @@ export class ArticlePage implements OnInit {
         // cf. les m&éthodes "getOrderLines()" et "getArticleSearched(ev: any)
         this.orderLineBackup = this.orderLineList;
 
-        this.activeF_COMPTET = this.userService.getActiveF_COMPTET()
         this.userService.activeF_COMPTET$.subscribe(
             (F_COMPTET) => {
                 this.activeF_COMPTET = F_COMPTET;
-                this.initializeF_ARTICLE();
             }
-        );
+        )
+        this.activeF_COMPTET = this.userService.getActiveF_COMPTET();
+
+        this.initializeTopF_ARTICLE();
     }
-
-
 
     // quand on clique sur l'article, on affiche la description
     async createArticleDetails(articleData: Article) {
@@ -80,199 +75,6 @@ export class ArticlePage implements OnInit {
             backdropDismiss: true
         });
         return await modal.present();
-    }
-
-    // initialisation de la liste d'article créée. On utilisera le back à la place ici
-    initializeArticles() {
-        this.articleList = [{
-            reference: 'AR578',
-            label: 'Carton cache test long texte jtriueothikre',
-            unitPrice: 40.00,
-            finalPrice: 40.00,
-            family: 'Carton',
-            articleImage: {
-                id: 1,
-                image: 'assets/icon/devanturePizzaHut.png'
-            },
-            articleDetails: {
-                id: 2,
-                description: 'Un carton qui vous permet d\'echapper à vos poursuivants, que ce soit un huissier ou un membre de votre famille qui réclame le prêt qu\'il vous a attribué 10 ans auparavant. NE PAS APPROCHER DE LOUPS SAUVAGE, CETTE PROTECTION NE SUFFIRA PAS.'
-            }
-        },
-            {
-                reference: '3EA45F',
-                label: 'Carton mystere',
-                unitPrice: 20.00,
-                finalPrice: 20.00,
-                family: 'Carton',
-                articleImage: {
-                    id: 1,
-                    image: 'assets/icon/devanturePizzaHut.png'
-                },
-                articleDetails: {
-                    id: 2,
-                    description: 'Un carton super grand'
-                }
-            },
-            {
-                reference: '98877RRF',
-                label: 'Carton nature',
-                unitPrice: 15.00,
-                finalPrice: 15.00,
-                family: 'Carton',
-                articleImage: {
-                    id: 1,
-                    image: 'assets/icon/devanturePizzaHut.png'
-                },
-                articleDetails: {
-                    id: 2,
-                    description: 'Un carton basique'
-                }
-            },
-            {
-                reference: 'AAA78ff',
-                label: 'Carton rosé',
-                unitPrice: 12.00,
-                finalPrice: 12.00,
-                family: 'Carton',
-                articleImage: {
-                    id: 1,
-                    image: 'assets/icon/devanturePizzaHut.png'
-                },
-                articleDetails: {
-                    id: 2,
-                    description: 'Un carton qui sent bon la rose'
-                }
-            },
-            {
-                reference: 'AAA78ff',
-                label: 'Carton rosé',
-                unitPrice: 12.00,
-                finalPrice: 12.00,
-                family: 'Carton',
-                articleImage: {
-                    id: 1,
-                    image: 'assets/icon/devanturePizzaHut.png'
-                },
-                articleDetails: {
-                    id: 2,
-                    description: 'Un carton qui sent bon la rose'
-                }
-            },
-            {
-                reference: 'AAA78ff',
-                label: 'Carton rosé',
-                unitPrice: 12.00,
-                finalPrice: 12.00,
-                family: 'Carton',
-                articleImage: {
-                    id: 1,
-                    image: 'assets/icon/devanturePizzaHut.png'
-                },
-                articleDetails: {
-                    id: 2,
-                    description: 'Un carton qui sent bon la rose'
-                }
-            },
-            {
-                reference: 'AAA78ff',
-                label: 'Carton rosé',
-                unitPrice: 12.00,
-                finalPrice: 12.00,
-                family: 'Carton',
-                articleImage: {
-                    id: 1,
-                    image: 'assets/icon/devanturePizzaHut.png'
-                },
-                articleDetails: {
-                    id: 2,
-                    description: 'Un carton qui sent bon la rose'
-                }
-            },
-            {
-                reference: 'AAA78ff',
-                label: 'Carton rosé',
-                unitPrice: 12.00,
-                finalPrice: 12.00,
-                family: 'Carton',
-                articleImage: {
-                    id: 1,
-                    image: 'assets/icon/devanturePizzaHut.png'
-                },
-                articleDetails: {
-                    id: 2,
-                    description: 'Un carton qui sent bon la rose'
-                }
-            },
-            {
-                reference: 'AAA78ff',
-                label: 'Carton rosé',
-                unitPrice: 12.00,
-                finalPrice: 12.00,
-                family: 'Carton',
-                articleImage: {
-                    id: 1,
-                    image: 'assets/icon/devanturePizzaHut.png'
-                },
-                articleDetails: {
-                    id: 2,
-                    description: 'Un carton qui sent bon la rose'
-                }
-            },
-            {
-                reference: 'AAA78ff',
-                label: 'Carton rosé',
-                unitPrice: 12.00,
-                finalPrice: 12.00,
-                family: 'Carton',
-                articleImage: {
-                    id: 1,
-                    image: 'assets/icon/devanturePizzaHut.png'
-                },
-                articleDetails: {
-                    id: 2,
-                    description: 'Un carton qui sent bon la rose'
-                }
-            },
-            {
-                reference: 'AAA78ff',
-                label: 'Carton rosé',
-                unitPrice: 12.00,
-                finalPrice: 12.00,
-                family: 'Carton',
-                articleImage: {
-                    id: 1,
-                    image: 'assets/icon/devanturePizzaHut.png'
-                },
-                articleDetails: {
-                    id: 2,
-                    description: 'Un carton qui sent bon la rose'
-                }
-            }
-        ];
-    }
-
-    initClient() {
-        let clientFactice = new Customer();
-        clientFactice =
-            {
-                id: '2',
-                name: 'Pizza Chez Moi Sarl',
-                address: '5 rue des pizzaiolo',
-                email: 'chezmoi@pizzasarl.com',
-                password: '458dsqfdkdsqlfkqsd54',
-                customerPicture: 'assets/icon/devanturePizzaHut.png',
-                phoneNumber: '0387254981',
-                customerFiles: 'blabla',
-                city:
-                    {
-                        id: 55,
-                        name: 'Metz',
-                        postalCode: 57000
-                    }
-
-            };
-        this.userService.setCustomer(clientFactice);
     }
 
     initOrderLines(articleList: Article[]) {
@@ -370,56 +172,69 @@ export class ArticlePage implements OnInit {
         this.cartService.setCart(this.cart);
     }
 
-    initializeF_ARTICLE() {
-        console.log(this.activeF_COMPTET);
-
+    initializeTopF_ARTICLE() {
         let map = new Map<string, number>();
-        let array2: string[] = [];
-        let array = [];
-        this.cartService.getDocLignes().subscribe(
+        this.arrayArRef = [];
+        this.userService.getDocLignes().subscribe(
             (F_DOCLIGNES) => {
                 F_DOCLIGNES.forEach(
                     (DOCLIGNE) => {
                         if (DOCLIGNE.CT_Num == this.activeF_COMPTET.CT_Num) {
                             if (DOCLIGNE.AR_Ref == '') {
                             } else {
-                                // pourquoi ne pas faire une map pour la fréquence ?
-                                // du type let map = new Map<object, string>(); ça remplace tout le while et probablement bcp plus perf
-                                /*
-                                let i = 0;
-                                let found = false;
-                                while (!found && i < this.articlesAndFrequency.length) {
-                                    if (this.articlesAndFrequency[i].AR_Ref == DOCLIGNE.AR_Ref) {
-                                        found = true;
-                                        this.articlesAndFrequency[i].frequency++;
-                                    } else {
-                                        i++;
-                                    }
-                                }
-                                if (!found) {
-                                    this.articlesAndFrequency.push({AR_Ref: DOCLIGNE.AR_Ref, frequency: 1});
-                                }
-                                this.articlesAndFrequency.sort((a, b) => (b.frequency - a.frequency));
-                                this.articlesAndFrequency.splice(15, this.articlesAndFrequency.length - 15);
-                                 */
                                 DOCLIGNE.AR_Ref = DOCLIGNE.AR_Ref.trim();
                                 if (map.get(DOCLIGNE.AR_Ref) != undefined) {
-                                    map.set(DOCLIGNE.AR_Ref, map.get(DOCLIGNE.AR_Ref)+1);
+                                    map.set(DOCLIGNE.AR_Ref, map.get(DOCLIGNE.AR_Ref) + 1);
                                 } else {
-                                    map.set(DOCLIGNE.AR_Ref,1);
-                                    array2.push(DOCLIGNE.AR_Ref);
+                                    map.set(DOCLIGNE.AR_Ref, 1);
                                 }
-                                array = Array.from(map.entries());
+                                this.arrayArRef = Array.from(map.entries());
                             }
                         }
                     }
                 );
+                console.log("avant " + this.arrayArRef.length);
                 // on transforme le tableau de tableau en objet ArticleAndFrequency
-                array.forEach(data => this.articlesAndFrequency.push({AR_Ref:data[0], frequency: data[1]}));
+                this.arrayArRef.forEach(data => this.articlesAndFrequency.push({AR_Ref: data[0], frequency: data[1]}));
+                console.log("après " + this.arrayArRef.length);
                 // puis on le trie et ne garde que les 15 articles les plus commandés
                 this.articlesAndFrequency.sort((a, b) => (b.frequency - a.frequency));
                 this.articlesAndFrequency.splice(15, this.articlesAndFrequency.length - 15);
+
+                this.arrayArRef = [];
+                for (let articleFreq of this.articlesAndFrequency) {
+                    this.arrayArRef.push([articleFreq.AR_Ref, articleFreq.frequency]);
+                }
+                this.initializeArticles();
             }
         );
+    }
+
+    // recupere le top article à partir des articles
+    private initializeArticles() {
+        console.log(new Date());
+        let tabArticle: F_ARTICLE[] = [];
+        console.log("TABLEAU DES REF : ");
+        for (let article of this.arrayArRef) {
+            console.log(article[0]);
+        }
+        console.log(this.arrayArRef[10][0]);
+        this.userService.getArticles().subscribe(
+            (F_ARTICLE) => {
+                let i = 0;
+                while (i < F_ARTICLE.length && this.arrayArRef.length != 0) {
+                    let found = false;
+                    let j = 0;
+                    while (!found && j < this.arrayArRef.length) {
+                        if (F_ARTICLE[j].AR_Ref == this.arrayArRef[j][0]) {
+                            found = true;
+                            tabArticle.push(tabArticle[j]);
+                        } else {
+                            j++;
+                        }
+                    }
+                    i++;
+                }
+            });
     }
 }

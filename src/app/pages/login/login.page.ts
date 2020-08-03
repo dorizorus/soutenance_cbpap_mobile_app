@@ -38,26 +38,20 @@ export class LoginPage implements OnInit {
 
     async initClient() {
         // on créer le compte
-        const compte =
+        const compte : F_COMPTET =
             {
-                id: '1',
-                name: 'Pizza Chez Moi Sarl',
-                address: '5 rue des pizzaiolo',
-                email: 'chezmoi@pizzasarl.com',
-                password: 'test',
-                customerPicture: 'assets/icon/devanturePizzaHut.png',
-                phoneNumber: '0387254981',
-                city:
-                    {
-                        id: 55,
-                        name: 'Metz',
-                        postalCode: 57000
-                    },
-                customerFiles: ''
-
-            };
+                CT_Num: "SORAPIZZA",
+                CT_Intitule: "SORA PIZZA",
+                CT_Adresse: "109 AVENUE DE LA REPUBLIQUE",
+                CT_CodePostal: "F-54310",
+                CT_Ville: "HOMECOURT",
+                CT_Pays: "France",
+                CT_Sommeil: 1,
+                CT_Telephone: "03 82 33 84 68",
+                CT_EMail: ""
+            }
         // on ne va pas utiliser de set mais un systeme d'ajout/suppresion de compte. Ici, il est ajouté
-        this.userService.addCustomer(compte);
+        this.userService.addF_COMPTET(compte);
     }
 
     // permet d'ajouter le client et d'aller aux articles. Async obligatoire sous peine d'erreur

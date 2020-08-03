@@ -20,9 +20,9 @@ que la méthode pour aller vers les options du compte. Mineur mais peut gêner l
   <ion-list>
     <ion-list-header class="large"><strong>Selection du compte </strong></ion-list-header>
     <ion-item *ngFor="let compte of accounts" >
-      <ion-avatar slot="start" (click)="selectAccountAndGoToArticles(compte)"><img src="{{compte.customerPicture}}"></ion-avatar>
-      <ion-label (click)="selectAccountAndGoToArticles(compte)" class="espaceDroite">{{compte.name}}</ion-label>
-      <ion-label (click)="selectAccountAndGoToArticles(compte)">{{compte.city.name}}</ion-label>
+      <!--<ion-avatar slot="start" (click)="selectAccountAndGoToArticles(compte)"><img src="{{compte.picture.img}}"></ion-avatar> -->
+      <ion-label (click)="selectAccountAndGoToArticles(compte)" class="espaceDroite">{{compte.CT_Intitule}}</ion-label>
+      <ion-label (click)="selectAccountAndGoToArticles(compte)">{{compte.CT_Ville}}</ion-label>
       <ion-button color="success" slot="end" (click)="goToSettings(compte)">Plus..</ion-button>
     </ion-item>
   </ion-list>

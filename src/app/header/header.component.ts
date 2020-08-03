@@ -7,6 +7,7 @@ import {UserService} from '../services/user.service';
 import {Customer} from '../models/Customer';
 import {WarehouseRetService} from '../services/warehouse-ret.service';
 import {CartService} from '../services/cart.service';
+import {F_COMPTET} from "../models/JSON/F_COMPTET";
 
 @Component({
     selector: 'app-header',
@@ -18,7 +19,7 @@ export class HeaderComponent implements OnInit {
     cart: OrderLine[];
     total = 0;
     WHRetrieval = false;
-    customer: Customer;
+    customer: F_COMPTET;
 
     constructor(private modalController: ModalController,
                 private navCtrl: NavController,
@@ -29,7 +30,7 @@ export class HeaderComponent implements OnInit {
     ) {}
 
     ngOnInit() {
-        this.customer = this.userService.getActiveCustomer();
+        this.customer = this.userService.getActiveF_COMPTET();
         // on subscribe à toute nouvelles données du cart
         this.cartService.cart$.subscribe((data) => {
             this.cart = data;
@@ -41,7 +42,7 @@ export class HeaderComponent implements OnInit {
             this.total = this.cartService.getTotal();
         });
 
-        this.userService.activeCustomer$.subscribe((data) => {
+        this.userService.activeF_COMPTET$.subscribe((data) => {
             this.customer = data;
         });
         // on subscribe à tout nouveau changement du customer actif
@@ -68,12 +69,10 @@ export class HeaderComponent implements OnInit {
     // solution ci-dessous, permet de fix le ion-toggle, erreur de synchro entre cart & header
     // https://medium.com/@aleksandarmitrev/ionic-toggle-asynchronous-change-challenge-7e7cbdd50cb7
     toggle($event: any) {
-
         // méthodes pour fix l'erreur de synchro qui pop
         $event.stopImmediatePropagation();
         $event.stopPropagation();
         $event.preventDefault();
-
         // le setTimeout fait parti des méthodes pour fix l'erreur de synchro.
         // on set le boolean dans le BehaviorSubject à la valeur inverse
         // s'il était à true au toggle -> on le met à false

@@ -3,6 +3,9 @@ import {Customer} from '../models/Customer';
 import {BehaviorSubject} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {F_COMPTET} from '../models/JSON/F_COMPTET';
+import {F_DOCLIGNE} from "../models/JSON/F_DOCLIGNE";
+import {F_ARTICLE} from "../models/JSON/F_ARTICLE";
+import {F_ARTCLIENT} from "../models/JSON/F_ARTCLIENT";
 
 
 @Injectable({
@@ -24,17 +27,6 @@ export class UserService {
 
 
     constructor(private http: HttpClient) {
-        this.activeF_COMPTET = {
-            CT_Adresse: "109 AVENUE DE LA REPUBLIQUE",
-            CT_CodePostal: "F-54310",
-            CT_EMail: "",
-            CT_Intitule: "SORA PIZZA",
-            CT_Num: "SORAPIZZA",
-            CT_Pays: "France",
-            CT_Sommeil: 1,
-            CT_Telephone: "03 82 33 84 68",
-            CT_Ville: "HOMECOURT",
-        };
     }
 
     // Ajoute un compte au tableau de comptes du téléphone. Le client actif est attribué à ce moment la
@@ -84,10 +76,10 @@ export class UserService {
         return this.customer;
     }
 
-        getAllAccounts(): Customer[] {
-            // todo recup tous les comptes existants peut-être un localstorage ?
-            return this.mockAccount();
-        }
+    getAllAccounts(): Customer[] {
+        // todo recup tous les comptes existants peut-être un localstorage ?
+        return this.mockAccount();
+    }
 
     // cherche dans la liste des comptes & verifie login / password corrects
     getUserValidity(login: string, password: string) {
@@ -210,7 +202,7 @@ export class UserService {
     setActiveF_COMPTET(f_comptet: F_COMPTET) {
         this.activeF_COMPTET = f_comptet;
         this.activeF_COMPTET$.next(this.f_COMPTET);
-        localStorage.setItem('user', JSON.stringify(this.activeCustomer));
+        localStorage.setItem('user', JSON.stringify(this.activeF_COMPTET));
     }
 
     // récupère le compte actif
@@ -233,7 +225,20 @@ export class UserService {
         // todo recup tous les comptes existants peut-être un localstorage ?
         return this.mockAccount();
     }
+
     getF_COMPTETValidity() {
         return this.http.get<F_COMPTET[]>('assets/F_COMPTET.json');
+    }
+
+    getDocLignes() {
+        return this.http.get<F_DOCLIGNE[]>('assets/F_DOCLIGNE.json');
+    }
+
+    getArticles() {
+        return this.http.get<F_ARTICLE[]>('assets/F_ARTICLE.json');
+    }
+
+    getArtClient(){
+        return this.http.get<F_ARTCLIENT[]>('assets/F_ARTCLIENT.json');
     }
 }

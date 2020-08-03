@@ -84,8 +84,4 @@ export class CartService {
     getFinalTotal() {
         return this.finalTotal;
     }
-
-    getDocLignes() {
-        return this.http.get<F_DOCLIGNE[]>('assets/F_DOCLIGNE.json');
-    }
 }
