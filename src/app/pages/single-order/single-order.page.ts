@@ -1,13 +1,13 @@
 import {Component, OnInit} from '@angular/core';
-import {Order} from "../../models/Order";
-import {OrderService} from "../../services/order.service";
+import {Order} from '../../models/Order';
+import {OrderService} from '../../services/order.service';
 import {AlertController, NavController, Platform, ToastController} from '@ionic/angular';
 import { cloneDeep } from 'lodash';
-import {CartService} from "../../services/cart.service";
+import {CartService} from '../../services/cart.service';
 
 import {File} from '@ionic-native/file/ngx';
 import {FileOpener} from '@ionic-native/file-opener/ngx';
-import {EmailComposer} from '@ionic-native/email-composer/ngx'
+import {EmailComposer} from '@ionic-native/email-composer/ngx';
 import {UserService} from '../../services/user.service';
 
 import pdfMake from 'pdfmake/build/pdfmake';
@@ -22,7 +22,7 @@ pdfMake.vfs = pdfFonts.pdfMake.vfs;
 })
 export class SingleOrderPage implements OnInit {
     order: Order;
-    total: number = 0;
+    total = 0;
     canEdit: boolean;
 
     pdfObj = null;
@@ -31,7 +31,7 @@ export class SingleOrderPage implements OnInit {
                 private cartService: CartService,
                 private alertController: AlertController,
                 private navController: NavController,
-                private toastController : ToastController,
+                private toastController: ToastController,
                 private plt: Platform,
                 private file: File,
                 private fileOpener: FileOpener,
@@ -44,7 +44,7 @@ export class SingleOrderPage implements OnInit {
         this.total = 0;
         this.order.orderLines.forEach(value => this.total += (value.article.finalPrice * value.quantity));
 
-        let limite: Date = this.order.orderDate;
+        const limite: Date = this.order.orderDate;
         limite.setHours(limite.getHours() + 3);
 
         if (limite.getTime() > new Date().getTime()) {
@@ -60,13 +60,13 @@ export class SingleOrderPage implements OnInit {
             buttons: [
                 {
                     text: 'Non',
-                    //cssClass: 'secondary',
+                    // cssClass: 'secondary',
                     role: 'cancel',
                     handler: () => {
                         console.log('Annulation de la suppression');
                     }
                 }, {
-                    text: "Oui",
+                    text: 'Oui',
                     handler: () => {
                         this.sendCancel();
                     }
@@ -105,12 +105,12 @@ export class SingleOrderPage implements OnInit {
           duration: 3000,
           message: 'Commande bien transférée!'
         });
-  
+
         await toast.present();
       }
 
       createPdf(){
-          let docDefinition = {
+          const docDefinition = {
               content: [
                   {text: 'CBPAPIERS', style: 'header'},
                   // impression de la date au format dd/mm/yyyy hh'h'mm

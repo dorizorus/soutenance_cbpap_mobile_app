@@ -28,7 +28,7 @@ export class GenerateIDService {
     this.ids.splice(index, 1);
   }
 
-  //format de génération du numéro de commande : MOBI- suivi de 4 chiffres générées aléatoirement
+  // format de génération du numéro de commande : MOBI- suivi de 4 chiffres générées aléatoirement
   private generator(): string {
     const isString = 'MOBI-' + `${this.S4()}`;
 
