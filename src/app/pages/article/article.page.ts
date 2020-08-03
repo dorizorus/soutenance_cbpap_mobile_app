@@ -48,64 +48,67 @@ export class ArticlePage implements OnInit {
     }
 
     // Dés qu'une quantité est selectionné pour un produit, la méthode la transmet au service
-    onChange(ev: any, art: Article) {
-        const val = ev.target.value;
-        this.totalQuantity = 0;
-
-        // on ajoute une line pour l'afficher dans la commande par la suite
-        const line = {
-            orderNumber: null,
-            article: art,
-            quantity: val
-        };
-        // S'il n'y a pas de lignes, on ajoute directement. S'il y en a, on remplace la quantité de la line par la nouvelle.
-        if (line.quantity === 0) { // suppression
-
-            if (this.cart.length !== 0) {
-                const index = this.getArticlePosition(line);
-                if (index !== -1) {
-                    this.cart.splice(index, 1);
-                }
-            }
-        } else { // ajout ou modif
-            const index: number = this.getArticlePosition(line);
-            if (index === -1) { // pas trouve donc on ajoute
-                console.log('entré dans ajout');
-                this.cart.push(line);
-            } else { // update
-                console.log('entré dans update');
-                this.cart[index] = line;
-            }
-        }
-        this.cartService.setCart(this.cart);
-    }
+    //n'est plus utilisée car on utilise orderLine avec la quantité et non Article
+    // onChange(ev: any, art: Article) {
+    //     const val = ev.target.value;
+    //     this.totalQuantity = 0;
+    //
+    //     // on ajoute une line pour l'afficher dans la commande par la suite
+    //     const line = {
+    //         orderNumber: null,
+    //         article: art,
+    //         quantity: val
+    //     };
+    //     // S'il n'y a pas de lignes, on ajoute directement. S'il y en a, on remplace la quantité de la line par la nouvelle.
+    //     if (line.quantity === 0) { // suppression
+    //
+    //         if (this.cart.length !== 0) {
+    //             const index = this.getArticlePosition(line);
+    //             if (index !== -1) {
+    //                 this.cart.splice(index, 1);
+    //             }
+    //         }
+    //     } else { // ajout ou modif
+    //         const index: number = this.getArticlePosition(line);
+    //         if (index === -1) { // pas trouve donc on ajoute
+    //             console.log('entré dans ajout');
+    //             this.cart.push(line);
+    //         } else { // update
+    //             console.log('entré dans update');
+    //             this.cart[index] = line;
+    //         }
+    //     }
+    //     this.cartService.setCart(this.cart);
+    // }
 
     // permet de retrouver la position d'un article à partir d'une ligne de commande
-    getArticlePosition(ligne: OrderLine): number {
-        let found = false;
-        let index = 0;
-        while (!found && index < this.cart.length) {
-            if (this.cart[index].article === ligne.article) {
-                found = true;
-            }
-            index++;
-        }
-        if (found) {
-            return index - 1;
-        }
-        return -1;
-    }
+    // n'est plus utilisée car on utilise l'objet orderLine plutôt que article
+    // getArticlePosition(ligne: OrderLine): number {
+    //     let found = false;
+    //     let index = 0;
+    //     while (!found && index < this.cart.length) {
+    //         if (this.cart[index].article === ligne.article) {
+    //             found = true;
+    //         }
+    //         index++;
+    //     }
+    //     if (found) {
+    //         return index - 1;
+    //     }
+    //     return -1;
+    // }
 
     // quand on clique sur l'article, on affiche la description
-    async createArticleDetails(articleData: Article) {
-        this.articleService.setArticle(articleData);
-        const modal = await this.modalController.create({
-            component: SingleArticlePage,
-            cssClass: 'modal-article',
-            backdropDismiss: true
-        });
-        return await modal.present();
-    }
+    // n'est plus utilisée car on utilise l'objet orderLine plutôt que article
+    // async createArticleDetails(articleData: Article) {
+    //     this.articleService.setArticle(articleData);
+    //     const modal = await this.modalController.create({
+    //         component: SingleArticlePage,
+    //         cssClass: 'modal-article',
+    //         backdropDismiss: true
+    //     });
+    //     return await modal.present();
+    // }
 
     // initialisation de la liste d'article créée. On utilisera le back à la place ici
     initializeArticles() {
@@ -322,7 +325,7 @@ export class ArticlePage implements OnInit {
 
     // méthode pour la searchbar de ionic.
     getArticleSearched(ev: any) {
-        //
+        // n'est plus utilisé car passage de la manipulation d'article à orderline
         // on réinitialise la liste d'article a afficher en refaisant appel à la liste originelle
         // this.initializeArticles();
         //
@@ -365,22 +368,23 @@ export class ArticlePage implements OnInit {
     }
 
     // recupere la quantite d'un article dans la liste du cart
-    getArticleQuantity(article: Article) {
-        let found = false;
-        let index = 0;
-        while (!found && index < this.cart.length) {
-            if (this.cart[index].article === article) {
-                found = true;
-            }
-            index++;
-        }
-        if (found) {
-            return this.cart[index - 1].quantity;
-        }
-        return 0;
+    // est-ce que ca sert ????
+    // getArticleQuantity(article: Article) {
+    //     let found = false;
+    //     let index = 0;
+    //     while (!found && index < this.cart.length) {
+    //         if (this.cart[index].article === article) {
+    //             found = true;
+    //         }
+    //         index++;
+    //     }
+    //     if (found) {
+    //         return this.cart[index - 1].quantity;
+    //     }
+    //     return 0;
+    // }
 
-    }
-
+    // quand on clique sur l'article (image ou libelle), on affiche la description de l'article(considéré comme un orderline ici)
     async createOrderLineDetails(orderLine: OrderLine) {
         this.cartService.setOrderLine(orderLine);
         const modal = await this.modalController.create({
@@ -392,10 +396,13 @@ export class ArticlePage implements OnInit {
 
     }
 
+    // Dés qu'une quantité est selectionnée pour un article, la méthode met à jour le panier et envoie l'information au cartservice
+    // on interprète le fait que c'est une suppression ou un ajout ou une mise à jour
     onChangeOrderLine($event: any, orderLine: OrderLine) {
         const index = this.getOrderLinePosition(orderLine);
         orderLine.quantity = $event.target.value;
         // S'il n'y a pas de lignes, on ajoute directement. S'il y en a, on remplace la quantité de la line par la nouvelle.
+        // si on met 3 ===, ca ne fonctionne pas !
         if (orderLine.quantity == 0) { // suppression
             if (this.cart.length !== 0) {
                 if (index !== -1) {
@@ -412,6 +419,7 @@ export class ArticlePage implements OnInit {
         this.cartService.setCart(this.cart);
     }
 
+    // permet de tester si l'article est déjà présent dans le panier ou non et si il est présent , on récupére la position de l'article dans le panier
     getOrderLinePosition(orderLine: OrderLine) {
         let found = false;
         let index = 0;
@@ -424,7 +432,7 @@ export class ArticlePage implements OnInit {
         if (found) {
             return index - 1;
         }
-        //retourne -1 quand le panier est vide
+        // retourne -1 quand le panier est vide
         return -1;
     }
 
