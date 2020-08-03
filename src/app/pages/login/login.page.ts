@@ -80,37 +80,35 @@ export class LoginPage implements OnInit {
         return await modal.present();
     }
 
+    // todo deplacer dans le service pour pouvoir reutiliser dans delete-acc
     logInF_COMPTET() {
-        let f_Comptet2: F_COMPTET = null;
+        let F_Comptet: F_COMPTET = null;
         this.userService.getF_COMPTETValidity().subscribe(
             (F_COMPTETs) => {
                 let found = false;
                 let index = 0;
 
                 while (!found && index < F_COMPTETs.length) {
-                    if (F_COMPTETs[index].CT_Num == this.login) {
+                    if (F_COMPTETs[index].CT_Num.toUpperCase() == this.login.toUpperCase()) {
                         found = true;
-                        f_Comptet2 = F_COMPTETs[index];
+                        F_Comptet = F_COMPTETs[index];
                     }
                     else {
                         index++;
                     }
-                    console.log(found);
-                    console.log(F_COMPTETs[index]);
                 }
-
                 if (found) {
-                    this.userService.setActiveF_COMPTET(f_Comptet2);
-                    this.userService.addF_COMPTET(f_Comptet2);
+                    this.userService.setActiveF_COMPTET(F_Comptet);
+                    this.userService.addF_COMPTET(F_Comptet);
                     this.navCtrl.navigateForward(['/nav/article']);
-                }
-                else {
+                } else {
                     this.error = 'Mauvais identifiant/mot de passe';
                 }
             }
         );
     }
 
+    // plus utilise dans cette version
     logIn() {
         const res = this.userService.getUserValidity(this.login, this.password);
         console.log(res);
