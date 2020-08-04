@@ -45,9 +45,9 @@ export class LoginPage implements OnInit {
         else if(this.userService.getAccounts().length > 1)
             this.router.navigateByUrl('/acc-choice');
 
-        this.getUserWeb();
+        //this.getUserWeb();
     }
-
+    /*
     // On subscribe à l'url et on ajoute automatiquement l'user a celui du login
     // C'est vraiment moche de récupérer le mdp et l'id comme ça n'empêche, je me sens sale
     getUserWeb() {
@@ -58,6 +58,7 @@ export class LoginPage implements OnInit {
            } 
         )
     }
+    */
 
     async initClient() {
         // on créer le compte
@@ -126,8 +127,15 @@ export class LoginPage implements OnInit {
         return await modal.present();
     }
 
+    getUserData() {
+        this.userService.getUserByRef(this.login).subscribe(user => {
+
+        })
+    }
+
     // Ce n'est pas un booléen qui est checké mais un objet.
-    logIn() {
+    async logIn() {
+        this.getUserData();
         let res = this.userService.getUserWebValidity(this.login,this.password);
         if(res == null)
             this.error = "Mauvais identifiant/mot de passe";

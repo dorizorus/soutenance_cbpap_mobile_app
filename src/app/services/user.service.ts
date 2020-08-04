@@ -3,6 +3,7 @@ import {Customer} from '../models/Customer';
 import {BehaviorSubject, Observable} from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { UserWeb } from '../models/UserWeb';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
     providedIn: 'root'
@@ -12,6 +13,7 @@ export class UserService {
     customer: Customer;
     userWeb : UserWeb;
     activeCustomer: Customer;
+    login : string = '';
     customerAccounts: Customer[] = [];
     public customerAccounts$: BehaviorSubject<Customer[]> = new BehaviorSubject<Customer[]>([]);
     public activeCustomer$: BehaviorSubject<Customer> = new BehaviorSubject<Customer>(null);
@@ -19,11 +21,11 @@ export class UserService {
     
     constructor(private httpClient : HttpClient) {
     }
-
-    // Observable qui recupère le json d'adrano
+    /* 
+    // Observable qui recupère un json
     readonly userAdraObservable = new Observable ((observer) => {
         this.httpClient.
-        get(this.adresseAdrano).
+        get('http://80.14.6.243:8080/' + '/HF_COMPTET/' + this.login).
         subscribe(
             (user : UserWeb) => {
                 this.userWeb = user;
@@ -31,6 +33,8 @@ export class UserService {
             }
         )
     } )
+    */
+
 
     // Ajoute un compte au tableau de comptes du téléphone. Le client actif est attribué à ce moment la
     addCustomer(customer: Customer) {
@@ -186,5 +190,9 @@ export class UserService {
                 customerFiles: ''
             };
         return [compte1, compte2, compte3, compte4];
+    }
+
+    getUserByRef(login : string) : Observable<UserWeb> {
+        return this.httpClient.get<UserWeb>(environment.baseUrl + '/HF_COMPTET/' + login);
     }
 }
