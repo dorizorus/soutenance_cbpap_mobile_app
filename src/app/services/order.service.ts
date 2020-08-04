@@ -33,14 +33,8 @@ export class OrderService {
     }
 
     editOrder(order) {
-        console.log('order');
-        console.log(order);
-        console.log('orders');
-        console.log(this.orders);
-        const index = this.orders.indexOf(order);
-        console.log('index ');
-        console.log(index);
-        this.orders[index] = order ;
+        const objIndex = this.orders.findIndex((obj => obj.orderNumber == order.orderNumber));
+        this.orders[objIndex] = order;
     }
 }
 
