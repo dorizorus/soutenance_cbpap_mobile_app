@@ -6,9 +6,9 @@ import {OrderLine} from 'src/app/models/OrderLine';
 import {UserService} from 'src/app/services/user.service';
 import {CartService} from '../../services/cart.service';
 import {ArticleService} from '../../services/article.service';
-import {F_COMPTET} from '../../models/JSON/F_COMPTET';
-import {ArticleAndFrequency} from '../../models/JSON/customs/ArticleAndFrequency';
 import {F_ARTICLE} from '../../models/JSON/F_ARTICLE';
+import {ArticleLabelRef} from '../../models/JSON/custom/ArticleLabelRef';
+import {deepclone} from 'lodash';
 
 @Component({
     selector: 'app-articles',
@@ -18,16 +18,11 @@ import {F_ARTICLE} from '../../models/JSON/F_ARTICLE';
 export class ArticlePage implements OnInit {
 
     possibleQuantities: number[] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
-    articleList: Article[] = [];
-
     cart: OrderLine[] = [];
     orderLineList: OrderLine[] = [];
     orderLineBackup: OrderLine[] = [];
-    activeF_COMPTET: F_COMPTET;
 
-    articlesAndFrequency: ArticleAndFrequency[] = [];
     f_articleList: F_ARTICLE[] = [];
-    arrayArRef: [string, number][];
 
     constructor(private modalController: ModalController,
                 private cartService: CartService,
@@ -36,10 +31,7 @@ export class ArticlePage implements OnInit {
     }
 
     ngOnInit(): void {
-        //this.initClient();
-        this.initOrderLines(this.articleList);
-
-        this.articleService.Articles$.subscribe(
+        this.articleService.articles$.subscribe(
             (list) => {
                 this.f_articleList = list;
                 //this.getF_ARTICLES();
@@ -53,28 +45,11 @@ export class ArticlePage implements OnInit {
         );
 
         // à la création de la page on fait une copie de la liste.
-        // cf. les m&éthodes "getOrderLines()" et "getArticleSearched(ev: any)
+        // cf. les méthodes "getOrderLines()" et "getArticleSearched(ev: any)
         this.orderLineBackup = this.orderLineList;
 
-        this.userService.activeF_COMPTET$.subscribe(
-            (F_COMPTET) => {
-                this.activeF_COMPTET = F_COMPTET;
-            }
-        )
-        this.activeF_COMPTET = this.userService.getActiveF_COMPTET();
-
-        this.initializeTopF_ARTICLE();
-    }
-
-    // quand on clique sur l'article, on affiche la description
-    async createArticleDetails(articleData: Article) {
-        this.articleService.setArticle(articleData);
-        const modal = await this.modalController.create({
-            component: SingleArticlePage,
-            cssClass: 'modal-article',
-            backdropDismiss: true
-        });
-        return await modal.present();
+        this.initTopF_ARTICLE();
+        console.log(this.getAllArticleUnitPrice('801332'));
     }
 
     initOrderLines(articleList: Article[]) {
@@ -99,25 +74,6 @@ export class ArticlePage implements OnInit {
 
     // méthode pour la searchbar de ionic.
     getArticleSearched(ev: any) {
-        //
-        // on réinitialise la liste d'article a affiché en refaisant appel à la liste originelle
-        // this.initializeArticles();
-        //
-        // // set la valeur de l'input de la searchbar dans "val". On indique que c'est un input html
-        // const val = (ev.target as HTMLInputElement).value;
-        //
-        // // si rien n'est mis on affiche tout, sinon on filtre avec ce qui a été inséré
-        // if (val && val.trim() !== '') {
-        //     this.articleList = this.articleList.filter((article) => {
-        //         return (article.reference.toLowerCase().indexOf(val.toLowerCase()) > -1 ||
-        //             article.label.toLowerCase().indexOf(val.toLowerCase()) > -1);
-        //     });
-        // }
-
-        // on réinitialise la liste d'article a affiché en refaisant appel à la liste originelle
-        // this.initializeArticles();
-
-        // *****************************************
 
         // ici on récupère notre backup qu'on pourra manipuler dans un objet différent.
         let orderLines = this.getOrderLines();
@@ -135,9 +91,6 @@ export class ArticlePage implements OnInit {
         }
 
         // on l'envoie à l'observable pour que la page se mette à jour
-        // la raison pour laquelle la quantité ne revient pas à 0 est probablement dûe
-        // au fait que le select est initialité à la création de la page
-        // et modifié seulement si ionChange est appelé dans le template
         this.cartService.setOrderLineList(orderLines);
     }
 
@@ -172,69 +125,114 @@ export class ArticlePage implements OnInit {
         this.cartService.setCart(this.cart);
     }
 
-    initializeTopF_ARTICLE() {
+    initTopF_ARTICLE() {
+
         let map = new Map<string, number>();
-        this.arrayArRef = [];
+        let articlesAndFrequency: [string, number][];
+        let ctNum = this.userService.getActiveF_COMPTET().CT_Num;
+        let tabRefLabel: [string, string][] = [];
         this.userService.getDocLignes().subscribe(
             (F_DOCLIGNES) => {
+                let i = 0;
                 F_DOCLIGNES.forEach(
                     (DOCLIGNE) => {
-                        if (DOCLIGNE.CT_Num == this.activeF_COMPTET.CT_Num) {
+                        if (DOCLIGNE.CT_Num == ctNum) {
+                            DOCLIGNE.AR_Ref = DOCLIGNE.AR_Ref.trim();
+                            let stringDocligne = JSON.stringify({ref: DOCLIGNE.AR_Ref, label: DOCLIGNE.DL_Design});
                             if (DOCLIGNE.AR_Ref == '') {
+                            } else if (map.get(stringDocligne) != undefined) {
+                                map.set(stringDocligne, map.get(stringDocligne) + 1);
                             } else {
-                                DOCLIGNE.AR_Ref = DOCLIGNE.AR_Ref.trim();
-                                if (map.get(DOCLIGNE.AR_Ref) != undefined) {
-                                    map.set(DOCLIGNE.AR_Ref, map.get(DOCLIGNE.AR_Ref) + 1);
-                                } else {
-                                    map.set(DOCLIGNE.AR_Ref, 1);
-                                }
-                                this.arrayArRef = Array.from(map.entries());
+                                map.set(stringDocligne, 1);
                             }
+                            i++;
                         }
                     }
                 );
-                console.log("avant " + this.arrayArRef.length);
-                // on transforme le tableau de tableau en objet ArticleAndFrequency
-                this.arrayArRef.forEach(data => this.articlesAndFrequency.push({AR_Ref: data[0], frequency: data[1]}));
-                console.log("après " + this.arrayArRef.length);
+                // je recupere la map et la transforme en tableau
+                articlesAndFrequency = Array.from(map.entries());
                 // puis on le trie et ne garde que les 15 articles les plus commandés
-                this.articlesAndFrequency.sort((a, b) => (b.frequency - a.frequency));
-                this.articlesAndFrequency.splice(15, this.articlesAndFrequency.length - 15);
+                articlesAndFrequency.sort((a, b) => (b[1] - a[1]));
+                articlesAndFrequency.splice(15, articlesAndFrequency.length - 15);
 
-                this.arrayArRef = [];
-                for (let articleFreq of this.articlesAndFrequency) {
-                    this.arrayArRef.push([articleFreq.AR_Ref, articleFreq.frequency]);
-                }
-                this.initializeArticles();
+                articlesAndFrequency.forEach(data => this.orderLineList.push(this.stringTabToOrderLine(JSON.parse(data[0]))));
+                console.log(articlesAndFrequency);
+                this.initAllPrices();
             }
         );
     }
 
-    // recupere le top article à partir des articles
-    private initializeArticles() {
-        console.log(new Date());
-        let tabArticle: F_ARTICLE[] = [];
-        console.log("TABLEAU DES REF : ");
-        for (let article of this.arrayArRef) {
-            console.log(article[0]);
-        }
-        console.log(this.arrayArRef[10][0]);
-        this.userService.getArticles().subscribe(
-            (F_ARTICLE) => {
-                let i = 0;
-                while (i < F_ARTICLE.length && this.arrayArRef.length != 0) {
-                    let found = false;
-                    let j = 0;
-                    while (!found && j < this.arrayArRef.length) {
-                        if (F_ARTICLE[j].AR_Ref == this.arrayArRef[j][0]) {
-                            found = true;
-                            tabArticle.push(tabArticle[j]);
-                        } else {
-                            j++;
+    stringTabToOrderLine(articleAndRef: ArticleLabelRef): OrderLine {
+        console.log();
+        let orderLine: OrderLine = new OrderLine();
+        orderLine.quantity = 0;
+        orderLine.orderNumber = null;
+        orderLine.article = new Article();
+        orderLine.article.label = articleAndRef.label;
+        orderLine.article.reference = articleAndRef.ref;
+        return orderLine;
+    }
+
+    private initAllPrices() {
+        let copyOrderLineList = deepclone(this.orderLineList);
+        let ctNum = this.userService.getActiveF_COMPTET().CT_Num;
+        this.articleService.getF_ARTCLIENT().subscribe(
+            (F_ARTCLIENT) => {
+                F_ARTCLIENT.forEach(discount => {
+                    // si le ctnum correspond, la reduction concerne le client actuel
+                    if (discount.CT_Num == ctNum) {
+                        let found = false;
+                        let i = 0;
+                        // je parcours le tableau afin de savoir si la remise correspond à un article de mon top
+                        while (!found && i < this.orderLineList.length) {
+                            // s'il correspond, je calcule le prix
+                            if (this.orderLineList[i].article.reference == discount.AR_Ref) {
+                                // 4 cas ici
+                                let prixVen = parseInt(discount.AC_PrixVen);
+                                let customerDiscount = parseInt(discount.AC_Remise);
+                                if (prixVen != 0 && customerDiscount != 0) {
+                                    this.orderLineList[i].article.finalPrice = prixVen * (1 - customerDiscount / 100);
+                                } else if (customerDiscount == 0 && prixVen != 0) {
+                                    this.orderLineList[i].article.finalPrice = prixVen;
+                                } else{
+                                    // il faut recuperer le prix unitaire qui n'est pas présent dans le f_artclient
+                                    // todo a voir comment changer getAll articles pour recup tous les prix d'un coup et non pas un seul
+                                    // piste : se servir de copyOrderLineList en enlevant les articles qui ont un prix present dans f_artclient
+                                    // et le passer a la fonction
+
+
+                                    //let unitPrice = this.getAllArticleUnitPrice();
+                                    let unitPrice = 0;
+
+                                    if (customerDiscount != 0 && prixVen == 0){
+                                        this.orderLineList[i].article.finalPrice = unitPrice * (1 - customerDiscount / 100);
+                                    } else {
+                                        this.orderLineList[i].article.finalPrice = unitPrice;
+                                    }
+                                }
+                            }
                         }
                     }
-                    i++;
-                }
+                });
             });
+    };
+
+    private getAllArticleUnitPrice():number {
+        let price: number = 0;
+        let copyOrderLineList = deepclone(this.orderLineList);
+        this.articleService.getF_ARTICLE().subscribe(
+            (F_ARTICLE) => {
+                let i = 0;
+                while (copyOrderLineList.length == 0 && i < F_ARTICLE.length) {
+                    if (F_ARTICLE[i].AR_Ref === this.orderLineList[i].article.reference) {
+                        price = parseFloat(F_ARTICLE[i].AR_PrixVen);
+                        copyOrderLineList.slice(i, copyOrderLineList.length - i)
+                    } else {
+                        i++;
+                    }
+                }
+                return price;
+            }
+        );
     }
 }

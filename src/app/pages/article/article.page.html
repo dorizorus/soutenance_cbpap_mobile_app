@@ -1,34 +1,5 @@
 <app-header></app-header>
 
-<!--<ion-content>-->
-<!--  &lt;!&ndash;Debounce permet d'attendre un certain temps avant le dernier input pour pas faire 458 requêtes-->
-<!--  $event sert à récolter les inputs et a les envoyer dans un objet de type DOM event (https://angular.io/guide/user-input)&ndash;&gt;-->
-<!--  <ion-searchbar showCancelButton="focus" debounce="500" (ionChange)="getArticleSearched($event)"-->
-<!--  animated placeholder="Rechercher.." class="searchbar"></ion-searchbar>-->
-<!--  <ion-list>-->
-<!--    <ion-list-header>-->
-<!--      <ion-label>-->
-<!--      <strong>Mes produits favoris :</strong>-->
-<!--    </ion-label>-->
-<!--    </ion-list-header>-->
-<!--    <ion-item *ngFor="let article of articleList">-->
-<!--      <ion-thumbnail slot="start" (click)="createArticleDetails(article)"><img src="{{article.articleImage.image}}"></ion-thumbnail>-->
-<!--      <span class="small">-->
-<!--        <ion-label>{{article.reference}}</ion-label>-->
-<!--        {{article.label}}-->
-<!--      </span>-->
-<!--      <span slot="end">{{article.unitPrice}} € </span>-->
-<!--      <ion-select [selectedText]="getArticleQuantity(article)" slot="end" interface="popover" placeholder="0" (ionChange)="onChange($event, article)">-->
-<!--        <ion-item *ngFor="let chiffre of possibleQuantities">-->
-<!--          <ion-select-option value="{{chiffre}}">-->
-<!--            {{chiffre}}-->
-<!--          </ion-select-option>-->
-<!--        </ion-item>-->
-<!--      </ion-select>-->
-<!--    </ion-item>-->
-<!--  </ion-list>-->
-<!--</ion-content>-->
-
 <ion-content>
     <!--Debounce permet d'attendre un certain temps avant le dernier input pour pas faire 458 requêtes
     $event sert à récolter les inputs et a les envoyer dans un objet de type DOM event (https://angular.io/guide/user-input)-->
@@ -41,11 +12,19 @@
             </ion-label>
         </ion-list-header>
         <ion-item *ngFor="let orderLine of orderLineList">
-            <ion-thumbnail slot="start" (click)="createOrderLineDetails(orderLine)"><img
-                    src="{{orderLine.article.articleImage.image}}"></ion-thumbnail>
+            <!-- <ion-thumbnail slot="start" (click)="createOrderLineDetails(orderLine)"> -->
+            <ion-thumbnail slot="start">
+                <span *ngIf="orderLine.article.articleImage != undefined && orderLine.article.articleImage.image != undefined; else emptyImage ">
+                    <img src="{{orderLine.article.articleImage.image}}"/>
+                </span>
+                <ng-template #emptyImage>
+                    <img src="./assets/icon/not_found.jpg"/>
+                </ng-template>
+            </ion-thumbnail>
 
             <span class="small">
-                <button (click)="createOrderLineDetails(orderLine)">
+                <!-- <button (click)="createOrderLineDetails(orderLine)"> -->
+                <button>
                  <ion-label>{{orderLine.article.reference}}</ion-label>
                 {{orderLine.article.label}}
                 </button>

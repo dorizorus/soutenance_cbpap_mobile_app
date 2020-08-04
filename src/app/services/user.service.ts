@@ -233,12 +233,4 @@ export class UserService {
     getDocLignes() {
         return this.http.get<F_DOCLIGNE[]>('assets/F_DOCLIGNE.json');
     }
-
-    getArticles() {
-        return this.http.get<F_ARTICLE[]>('assets/F_ARTICLE.json');
-    }
-
-    getArtClient(){
-        return this.http.get<F_ARTCLIENT[]>('assets/F_ARTCLIENT.json');
-    }
 }
