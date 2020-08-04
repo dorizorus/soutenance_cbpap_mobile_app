@@ -30,12 +30,16 @@
 // d'une manière spéciale.
 
 .modal-pop {
-  --max-height : 70%;
+  --max-height : 80%;
   --max-width : 80%;
 }
 
-.modal-article {
+.modal-panier {
   --max-height: 80%;
+}
+
+.modal-article {
+  --max-height: 50%;
 }
 
 .popover-content {

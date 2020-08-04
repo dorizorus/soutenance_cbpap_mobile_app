@@ -61,7 +61,7 @@ export class HeaderComponent implements OnInit {
     async createCart(cart: Order, WHRetrieval: boolean) {
         const modal = await this.modalController.create({
             component: CartPage,
-            cssClass: 'modal-article',
+            cssClass: 'modal-panier',
             backdropDismiss: true,
             componentProps: {
                 cart,
