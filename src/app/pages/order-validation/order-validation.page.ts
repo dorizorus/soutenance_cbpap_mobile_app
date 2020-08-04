@@ -221,7 +221,7 @@ export class OrderValidationPage implements OnInit {
         this.sendMail();
 
         const ORDER_HISTORY = cloneDeep(this.order);
-        // this.orderService.editOrder(ORDER_HISTORY);
+        this.orderService.editOrder(ORDER_HISTORY);
 
 
         //on reinitialise les orderlines de panier pour le remettre à 0
