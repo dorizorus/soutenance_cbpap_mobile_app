@@ -52,6 +52,7 @@ export class CartService {
 
     // vider toutes les orderlines du panier
     resetCartOrderLines() {
+        console.log('je reset le panier');
         this.cart.orderLines = [];
         this.updateTotal();
         this.cart$.next(this.cart);
@@ -68,7 +69,14 @@ export class CartService {
 
     // permet d'initialiser la liste d'articles dans articlePage
     initOrderLinesList(orderLines: OrderLine[]){
+        this.orderLineList = orderLines;
         this.orderLineList$.next(orderLines);
+    }
+
+    updateOrderLineFromList(orderLine: OrderLine) {
+        const index = this.orderLineList.indexOf(orderLine);
+        this.orderLineList[index].quantity = 0;
+        this.orderLineList$.next(this.orderLineList);
     }
 
     // mise à jour des quantités dans la liste des articles
@@ -87,9 +95,10 @@ export class CartService {
         this.orderLineList$.next(this.orderLineList);
     }
 
-    //remise à 0 des quantités dans la liste d'article
+    // remise à 0 des quantités dans la liste d'article
     resetQuantityOfOrderLineList(){
         this.orderLineList.forEach(orderLine => orderLine.quantity = 0);
+        this.orderLineList$.next(this.orderLineList);
     }
 
     getOrderLineList(): OrderLine[] {

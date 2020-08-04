@@ -15,16 +15,15 @@ import {Order} from '../../models/Order';
     styleUrls: ['./cart.page.scss'],
 })
 // dans le cas d'un "can't bind" to ngFor", ajouter CartPage à app.module.ts dans declarations & entryComponents
-// export class CartPage implements OnInit, OnDestroy {
-    export class CartPage implements OnInit {
+export class CartPage implements OnInit, OnDestroy {
 
     possibleQuantities: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
-    @Input() cart: Order;
+    cart: Order;
     total: number;
-    @Input() warehouseRetrieval: boolean;
+    warehouseRetrieval: boolean;
     subscriptionToCart: Subscription;
     subscriptionToWHRetrieval: Subscription;
-    orderLineList: OrderLine[];
+    // orderLineList: OrderLine[];
     shippingPrice = 20;
     finalTotal: number;
     statusShipping: boolean;
@@ -36,11 +35,9 @@ import {Order} from '../../models/Order';
     }
 
     ngOnInit() {
-        // this.warehouseRetrieval = this.warehouseRetService.getStatus(); -> redondant comme on a la subscription
-
         // on subscribe aux données (ici un tableau de ligne de commande du cart), dès qu'un changement est detecté on les récupère
         this.subscriptionToCart = this.cartService.cart$.subscribe(data => {
-                // this.cart = data;
+                this.cart = data;
                 this.total = this.cartService.getTotal();
                 this.setFinalTotal();
                 this.updateStatusShipping();
@@ -53,7 +50,6 @@ import {Order} from '../../models/Order';
             this.updateStatusShipping();
         });
 
-        this.orderLineList = this.cartService.getOrderLineList();
     }
 
 
@@ -65,19 +61,13 @@ import {Order} from '../../models/Order';
 
     // appelé quand la modal est fermée par modelController.dismiss()
     // on supprime les souscriptions aux observables
-    // ngOnDestroy() {
-    //     this.subscriptionToCart.unsubscribe();
-    //     this.subscriptionToWHRetrieval.unsubscribe();
-    // }
+    ngOnDestroy() {
+        this.subscriptionToCart.unsubscribe();
+        this.subscriptionToWHRetrieval.unsubscribe();
+    }
 
     deleteLine(orderLine: OrderLine) {
-        const index = this.findOrderLineIndex(orderLine);
-        if (index !== -1) {
-            this.orderLineList[index].quantity = 0;
-            setTimeout(() => {
-                this.cartService.setOrderLineList(this.orderLineList);
-            });
-        }
+        this.cartService.updateOrderLineFromList(orderLine);
         this.cart.orderLines.splice(this.cart.orderLines.indexOf(orderLine), 1);
         this.cartService.setCart(this.cart);
         if (this.cart.orderLines.length === 0) {
@@ -86,26 +76,11 @@ import {Order} from '../../models/Order';
     }
 
     deleteAll() {
-       this.cartService.resetQuantityOfOrderLineList();
-       this.cartService.resetCartOrderLines();
-       this.onDismiss();
+        this.cartService.resetCartOrderLines();
+        this.cartService.resetQuantityOfOrderLineList();
+        this.onDismiss();
     }
 
-    findOrderLineIndex(orderLine: OrderLine) {
-        let found = false;
-        let index = 0;
-        while (!found && index < this.orderLineList.length) {
-            if (this.orderLineList[index] === orderLine) {
-                found = true;
-            } else {
-                index++;
-            }
-        }
-        if (found) {
-            return index;
-        }
-        return -1;
-    }
 
     // toggle le warehouseRetrieval on-off
     toggled() {
@@ -113,8 +88,6 @@ import {Order} from '../../models/Order';
     }
 
     async createValidationOrder() {
-        console.log('order depuis cartpage');
-        console.log(this.cart);
         this.cartService.setFinalTotal(this.finalTotal);
         this.warehouseRetService.setStatusShipping(this.statusShipping);
         this.cartService.setCart(this.cart);

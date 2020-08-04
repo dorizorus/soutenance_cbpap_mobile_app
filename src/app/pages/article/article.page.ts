@@ -47,7 +47,7 @@ export class ArticlePage implements OnInit {
         );
 
         // à la création de la page on fait une copie de la liste.
-        // cf. les m&éthodes "getOrderLines()" et "getArticleSearched(ev: any)
+        // cf. les methodes "getOrderLines()" et "getArticleSearched(ev: any)
         this.orderLineBackup = this.orderLineList;
     }
 
@@ -371,22 +371,6 @@ export class ArticlePage implements OnInit {
         this.cartService.setOrderLineList(orderLines);
     }
 
-    // recupere la quantite d'un article dans la liste du cart
-    // est-ce que ca sert ????
-    // getArticleQuantity(article: Article) {
-    //     let found = false;
-    //     let index = 0;
-    //     while (!found && index < this.cart.length) {
-    //         if (this.cart[index].article === article) {
-    //             found = true;
-    //         }
-    //         index++;
-    //     }
-    //     if (found) {
-    //         return this.cart[index - 1].quantity;
-    //     }
-    //     return 0;
-    // }
 
     // quand on clique sur l'article (image ou libelle), on affiche la description de l'article(considéré comme un orderline ici)
     async createOrderLineDetails(orderLine: OrderLine) {
@@ -406,43 +390,30 @@ export class ArticlePage implements OnInit {
     // Dés qu'une quantité est selectionnée pour un article, la méthode met à jour le panier et envoie l'information au cartservice
     // on interprète le fait que c'est une suppression ou un ajout ou une mise à jour
     onChangeOrderLine($event: any, orderLine: OrderLine) {
-        const index = this.getOrderLinePosition(orderLine);
-        orderLine.quantity = $event.target.value;
-        // S'il n'y a pas de lignes, on ajoute directement. S'il y en a, on remplace la quantité de la line par la nouvelle.
-        // si on met 3 ===, ca ne fonctionne pas !
-        if (orderLine.quantity == 0) { // suppression
-            if (this.cart.orderLines.length !== 0) {
-                if (index !== -1) {
-                    this.cart.orderLines.splice(index, 1);
-                }
-            }
-        } else { // ajout ou modif
-            if (index === -1) { // pas trouve donc on ajoute : soit panier vide, soit panier ne contient pas l'article correspondant
-                this.cart.orderLines.push(orderLine);
-            } else { // update
-                this.cart.orderLines[index] = orderLine;
-            }
-        }
-        this.cartService.setCart(this.cart);
-    }
+        // récupération de la quantité modifiée
+        const qty = $event.target.value;
+        // récupération de la position de l'article modifié dans le panier
+        const index = this.cart.orderLines.indexOf(orderLine);
+        // 1er if : on checke si il s'agit d'une suppression
+        // l'article est dans le panier : quantité = 0 et on supprime l'article du panier
+        if (qty == 0 && this.cart.orderLines.length !== 0 && index !== -1) {
+            this.cart.orderLines.splice(index, 1);
 
-    // permet de tester si l'article est déjà présent dans le panier
-    // ou non et si il est présent , on récupére la position de l'article dans le panier
-    getOrderLinePosition(orderLine: OrderLine) {
-        let found = false;
-        let index = 0;
-        while (!found && index < this.cart.orderLines.length) {
-            if (this.cart.orderLines[index] === orderLine) {
-                found = true;
-            } else {
-                index++;
-            }
+            // on met à jour la quantité d'article d'un article déjà présent dans le panier (mais pas à supprimer : qté >0)
+        } else if (index !== -1) {
+            orderLine.quantity = qty;
+            this.cart.orderLines[index] = orderLine;
+
+            // dernier cas : dans le cas d'un article qui n'est pas dans le panier (car index= -1 = article non trouvé)
+            // on set la nouvelle quantité et on ajoute le nouvel article au panier
+        } else {
+            orderLine.quantity = qty;
+            this.cart.orderLines.push(orderLine);
         }
-        if (found) {
-            return index;
-        }
-        // retourne -1 quand le panier est vide
-        return -1;
+        // on met à jour le nouveau panier dans le service
+        this.cartService.setCart(this.cart);
+        // on met à jour la liste d'articles avec la nouvelle quantité dans le service
+        this.cartService.setOrderLineList(this.orderLineList);
     }
 
 }
