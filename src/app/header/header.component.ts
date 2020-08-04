@@ -8,6 +8,7 @@ import {Customer} from '../models/Customer';
 import {WarehouseRetService} from '../services/warehouse-ret.service';
 import {CartService} from '../services/cart.service';
 import {Order} from '../models/Order';
+import { cloneDeep } from 'lodash';
 
 @Component({
     selector: 'app-header',
@@ -58,15 +59,11 @@ export class HeaderComponent implements OnInit {
 
 
     // cree une modale qui represente le cart
-    async createCart(cart: Order, WHRetrieval: boolean) {
+    async createCart() {
         const modal = await this.modalController.create({
             component: CartPage,
             cssClass: 'modal-panier',
             backdropDismiss: true,
-            componentProps: {
-                cart,
-                WHRetrieval
-            }
         });
         return await modal.present();
     }

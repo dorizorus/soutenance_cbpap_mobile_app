@@ -163,7 +163,7 @@ export class HistoryPage implements OnInit {
                     }
                 }
             ]
-        }
+        };
         return [order1, order2, order3];
     }
 

@@ -40,8 +40,6 @@ export class SingleOrderPage implements OnInit {
 
     ngOnInit(): void {
         this.order = this.orderService.getOrder();
-        console.log('single order-page');
-        console.log(this.order);
         this.total = 0;
         this.order.orderLines.forEach(value => this.total += (value.article.finalPrice * value.quantity));
 
@@ -64,12 +62,10 @@ export class SingleOrderPage implements OnInit {
                     // cssClass: 'secondary',
                     role: 'cancel',
                     handler: () => {
-                        console.log('Annulation de la suppression');
                     }
                 }, {
                     text: 'Oui',
                     handler: () => {
-                        console.log(this.order.orderDate.toLocaleTimeString());
                         this.sendCancel();
                     }
                 }
@@ -91,24 +87,23 @@ export class SingleOrderPage implements OnInit {
     // met a jour le cart dans le service
     reorder() {
         // création du toast
-        this.toastClick();
+        // this.toastClick();
         // fait un deep clone des lignes de la order
         const newCart = cloneDeep(this.order);
         // on met à jour le panier avec le clone
         newCart.orderNumber = null;
-        this.cartService.setCart(newCart);
         this.cartService.setOrderLineList(newCart.orderLines);
         this.navController.navigateBack(['/nav/article']);
     }
 
     editOrder() {
         // création du toast
-        this.toastClick();
+        // this.toastClick();
         // fait un deep clone des lignes de la order
         const newCart = cloneDeep(this.order);
         // on met à jour le panier avec le clone
-        this.cartService.setCart(newCart);
         this.cartService.setOrderLineList(newCart.orderLines);
+        this.cartService.updateCartInfos(newCart.orderNumber, newCart.orderDate);
         this.navController.navigateBack(['/nav/article']);
     }
 
@@ -125,8 +120,6 @@ export class SingleOrderPage implements OnInit {
       }
 
       createPdf(){
-        console.log('la order à annuler : ' + this.order);
-        console.log('la order à annuler : ' + this.order.orderDate);
         const docDefinition = {
               content: [
                   {text: 'CBPAPIERS', style: 'header'},

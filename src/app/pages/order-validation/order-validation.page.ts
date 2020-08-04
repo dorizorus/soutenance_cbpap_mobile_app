@@ -154,13 +154,12 @@ export class OrderValidationPage implements OnInit {
         this.pdfObj = pdfMake.createPdf(docDefinition);
         this.downloadPdf();
         this.sendMail();
-        
+
         const ORDER_HISTORY = cloneDeep(this.order);
         this.orderService.addOrder(ORDER_HISTORY);
 
-        //on reinitialise les orderlines de panier pour le remettre à 0
+        // on reinitialise les orderlines de panier pour le remettre à 0
         this.deleteAll(this.order.orderLines);
-        
     }
 
     sendPdfEdit() {
@@ -173,6 +172,7 @@ export class OrderValidationPage implements OnInit {
                     text: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString(),
                     alignment: 'right'
                 },
+                // tslint:disable-next-line:max-line-length
                 {text: 'ATTENTION Commande ' + this.cartService.getCart().orderNumber + ' ' + this.cartService.getCart().orderDate.toLocaleDateString() +
                        ' ' + this.cartService.getCart().orderDate.toLocaleTimeString() + ' MODIFIEE' , style: 'subheader'},
                 {text: 'Ref client : ' + this.userService.getActiveCustomer().id},
