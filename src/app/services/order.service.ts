@@ -31,5 +31,16 @@ export class OrderService {
     addOrder(order) {
         this.orders.push(order);
     }
+
+    editOrder(order) {
+        console.log('order');
+        console.log(order);
+        console.log('orders');
+        console.log(this.orders);
+        const index = this.orders.indexOf(order);
+        console.log('index ');
+        console.log(index);
+        this.orders[index] = order ;
+    }
 }
 
