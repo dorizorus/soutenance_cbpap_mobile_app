@@ -14,6 +14,8 @@ import {HeaderComponent} from "./header/header.component";
 import {OrderValidationPage} from "./pages/order-validation/order-validation.page";
 import {FormsModule} from "@angular/forms";
 
+import { HttpClientModule }  from '@angular/common/http';
+
 //imports nécessaires pour générer pdf et créer un mail
 import { File } from '@ionic-native/file/ngx';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
@@ -23,7 +25,7 @@ import {UserService} from "./services/user.service";
 @NgModule({
   declarations: [AppComponent, CartPage, SingleOrderPage, HeaderComponent, OrderValidationPage],
   entryComponents: [CartPage, SingleOrderPage, OrderValidationPage],
-    imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, FormsModule],
+    imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, FormsModule, HttpClientModule],
   providers: [
     StatusBar,
     SplashScreen,

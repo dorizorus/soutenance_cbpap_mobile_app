@@ -3,6 +3,8 @@ import {ModalController, NavController} from '@ionic/angular';
 import {ContactPageModule} from '../contact/contact.module';
 import {UserService} from 'src/app/services/user.service';
 import {Router, NavigationEnd} from "@angular/router";
+import { UserWeb } from 'src/app/models/UserWeb';
+import { Customer } from 'src/app/models/Customer';
 
 @Component({
     selector: 'app-login',
@@ -18,6 +20,7 @@ export class LoginPage implements OnInit {
     login:string;
     password:string;
     error: string;
+    userWeb : UserWeb;
 
     constructor(private navCtrl: NavController,
                 private modalController: ModalController,
@@ -30,15 +33,30 @@ export class LoginPage implements OnInit {
                             if (e.url == '/login' && this.userService.getAccounts().length > 0)
                                 this.router.navigateByUrl('/nav/article');
                         }
-                    })
+                    });
+
+
     }
 
 
     ngOnInit() {
         if(this.userService.getAccounts().length == 1)
-            this.router.navigateByUrl('/nav/article')
+            this.router.navigateByUrl('/nav/article');
         else if(this.userService.getAccounts().length > 1)
-            this.router.navigateByUrl('/acc-choice')
+            this.router.navigateByUrl('/acc-choice');
+
+        this.getUserWeb();
+    }
+
+    // On subscribe à l'url et on ajoute automatiquement l'user a celui du login
+    // C'est vraiment moche de récupérer le mdp et l'id comme ça n'empêche, je me sens sale
+    getUserWeb() {
+        this.userService.userAdraObservable.subscribe(
+           (user : UserWeb) => {
+               this.userWeb = user;
+               console.log("Get effectué de " + this.userWeb.CT_Num + " et mdp " + this.userWeb.MDP);
+           } 
+        )
     }
 
     async initClient() {
@@ -59,10 +77,33 @@ export class LoginPage implements OnInit {
                         postalCode: 57000
                     },
                 customerFiles: ''
-
             };
+        
         // on ne va pas utiliser de set mais un systeme d'ajout/suppresion de compte. Ici, il est ajouté
         this.userService.addCustomer(compte);
+    }
+
+    // Pour pas a devoir refactor le customer, je vais prendre les paramètres de l'userweb et les mettre dans un customer
+    initUserWebToCustomer(user : UserWeb) : Customer {
+        let  customerWeb : Customer =
+            {
+                id: user.CT_Num,
+                name: user.CT_Intitule,
+                address: user.CT_Adresse,
+                email: null,
+                password: user.MDP,
+                customerPicture: 'assets/icon/devanturePizzaHut.png',
+                phoneNumber: null,
+                city:
+                    {
+                        id: 55,
+                        name: user.CT_Ville,
+                        postalCode: 57525
+                    },
+                customerFiles: null
+
+            };
+        return customerWeb;
     }
 
     // permet d'ajouter le client et d'aller aux articles. Async obligatoire sous peine d'erreur
@@ -85,13 +126,16 @@ export class LoginPage implements OnInit {
         return await modal.present();
     }
 
+    // Ce n'est pas un booléen qui est checké mais un objet.
     logIn() {
-        let res = this.userService.getUserValidity(this.login,this.password);
-        if(res == false)
+        let res = this.userService.getUserWebValidity(this.login,this.password);
+        if(res == null)
             this.error = "Mauvais identifiant/mot de passe";
         else{
-            this.userService.setActiveCustomer(res);
-            this.userService.addCustomer(res);
+            console.log(res.CT_Num + " concorde avec les logins et mdp");
+            let user = this.initUserWebToCustomer(this.userWeb);
+            this.userService.setActiveCustomer(user);
+            this.userService.addCustomer(user);
             this.router.navigateByUrl('/nav/article');
         }
     }

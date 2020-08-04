@@ -1,7 +1,8 @@
 import {Injectable} from '@angular/core';
 import {Customer} from '../models/Customer';
-import {BehaviorSubject} from 'rxjs';
-
+import {BehaviorSubject, Observable} from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { UserWeb } from '../models/UserWeb';
 
 @Injectable({
     providedIn: 'root'
@@ -9,13 +10,27 @@ import {BehaviorSubject} from 'rxjs';
 export class UserService {
 
     customer: Customer;
+    userWeb : UserWeb;
     activeCustomer: Customer;
     customerAccounts: Customer[] = [];
     public customerAccounts$: BehaviorSubject<Customer[]> = new BehaviorSubject<Customer[]>([]);
     public activeCustomer$: BehaviorSubject<Customer> = new BehaviorSubject<Customer>(null);
-
-    constructor() {
+    public adresseAdrano : string = 'http://80.14.6.243:8080/HF_COMPTET/ADRANO';
+    
+    constructor(private httpClient : HttpClient) {
     }
+
+    // Observable qui recupère le json d'adrano
+    readonly userAdraObservable = new Observable ((observer) => {
+        this.httpClient.
+        get(this.adresseAdrano).
+        subscribe(
+            (user : UserWeb) => {
+                this.userWeb = user;
+                observer.next(user);
+            }
+        )
+    } )
 
     // Ajoute un compte au tableau de comptes du téléphone. Le client actif est attribué à ce moment la
     addCustomer(customer: Customer) {
@@ -88,6 +103,19 @@ export class UserService {
         }
     }
 
+    // Compare si les logins sont bons et si c'est le cas, renvoie l'utilisateur
+    // On pourrait mettre un booléen mais ça permet de directement récup l'objet comme ça
+    getUserWebValidity(login : string, password : string) {
+        if (this.userWeb.CT_Num == login && this.userWeb.MDP == password) {
+            console.log("trouvé");
+            return this.userWeb;
+        }
+        else
+            console.log("Pas trouvé");
+            return null;
+    }
+
+    // plus utile ?
     private mockAccount() {
         const compte1 =
             {
