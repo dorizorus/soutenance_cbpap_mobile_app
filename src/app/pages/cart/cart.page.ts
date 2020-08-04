@@ -86,17 +86,9 @@ import {Order} from '../../models/Order';
     }
 
     deleteAll() {
-        this.cart.orderLines.forEach(
-            (orderLine) => {
-                const index = this.findOrderLineIndex(orderLine);
-                if (index !== -1) {
-                    this.orderLineList[index].quantity = 0;
-                }
-            }
-        );
-        this.cartService.setOrderLineList(this.orderLineList);
-        this.cartService.resetCartOrderLines();
-        this.onDismiss();
+       this.cartService.resetQuantityOfOrderLineList();
+       this.cartService.resetCartOrderLines();
+       this.onDismiss();
     }
 
     findOrderLineIndex(orderLine: OrderLine) {

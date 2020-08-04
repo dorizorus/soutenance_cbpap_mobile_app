@@ -318,7 +318,7 @@ export class ArticlePage implements OnInit {
                 this.orderLineList.push(orderLine);
             }
         );
-        this.cartService.setOrderLineList(this.orderLineList);
+        this.cartService.initOrderLinesList(this.orderLineList);
     }
 
     // retourne un backup d'orderLineList générée en initialisation de page.

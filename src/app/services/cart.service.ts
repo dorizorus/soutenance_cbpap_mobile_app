@@ -50,6 +50,7 @@ export class CartService {
         this.cart$.next(this.cart);
     }
 
+    // vider toutes les orderlines du panier
     resetCartOrderLines() {
         this.cart.orderLines = [];
         this.updateTotal();
@@ -65,9 +66,30 @@ export class CartService {
         return this.cart;
     }
 
-    setOrderLineList(orderLineList: OrderLine[]) {
-        this.orderLineList = orderLineList;
+    // permet d'initialiser la liste d'articles dans articlePage
+    initOrderLinesList(orderLines: OrderLine[]){
+        this.orderLineList$.next(orderLines);
+    }
+
+    // mise à jour des quantités dans la liste des articles
+    setOrderLineList(orderLinesFromCart: OrderLine[]) {
+        orderLinesFromCart.forEach(orderLine => {
+            let index = 0;
+            let found = false;
+            while (!found && index < this.orderLineList.length) {
+                if (orderLine.article == this.orderLineList[index].article) {
+                    this.orderLineList[index].quantity = orderLine.quantity;
+                    found = true;
+                }
+                index++;
+            }
+        });
         this.orderLineList$.next(this.orderLineList);
+    }
+
+    //remise à 0 des quantités dans la liste d'article
+    resetQuantityOfOrderLineList(){
+        this.orderLineList.forEach(orderLine => orderLine.quantity = 0);
     }
 
     getOrderLineList(): OrderLine[] {

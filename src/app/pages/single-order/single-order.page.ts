@@ -97,7 +97,7 @@ export class SingleOrderPage implements OnInit {
         // on met à jour le panier avec le clone
         newCart.orderNumber = null;
         this.cartService.setCart(newCart);
-        console.log('apres avoir appuyé sur edit : mon panier est : ' + this.cartService.getCart().orderNumber);
+        this.cartService.setOrderLineList(newCart.orderLines);
         this.navController.navigateBack(['/nav/article']);
     }
 
@@ -108,7 +108,7 @@ export class SingleOrderPage implements OnInit {
         const newCart = cloneDeep(this.order);
         // on met à jour le panier avec le clone
         this.cartService.setCart(newCart);
-        console.log('apres avoir appuyé sur edit : mon panier est : ' + this.cartService.getCart().orderNumber);
+        this.cartService.setOrderLineList(newCart.orderLines);
         this.navController.navigateBack(['/nav/article']);
     }
 

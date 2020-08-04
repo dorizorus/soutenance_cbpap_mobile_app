@@ -164,64 +164,65 @@ export class OrderValidationPage implements OnInit {
     }
 
     sendPdfEdit() {
-        // // enregistrement de la commande réalisée dans le tableau des commandes de orderService
-        // let docDefinition = {
-        //     content: [
-        //         {text: 'CBPAPIERS', style: 'header'},
-        //         // impression de la date au format dd/mm/yyyy hh'h'mm
-        //         {
-        //             text: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString(),
-        //             alignment: 'right'
-        //         },
-        //         {text: 'ATTENTION Commande : ' + this.cartService.getCart().orderNumber + ' MODIFIEE' , style: 'subheader'},
-        //         {text: 'Ref client : ' + this.userService.getActiveCustomer().id},
-        //         {text: this.userService.getActiveCustomer().name},
-        //         {text: this.userService.getActiveCustomer().address},
-        //
-        //         // c'est ici qu'on construit le tableau dans le pdf :
-        //         // on indique le nombre de colonnes et on injecte l'array myBody construit dans la méthode constructBody()
-        //         {
-        //             style: 'tableExample',
-        //             table: {
-        //                 widths: ['*', '*', '*'],
-        //                 body: this.constructBody()
-        //             }
-        //         },
-        //         {text : 'Livraison : ' + this.shipping(), alignment: 'right'},
-        //         {
-        //             text: 'Total HT : ' + this.finalTotal + ' €', alignment: 'right'
-        //         },
-        //         {
-        //             text: 'Retrait entrepôt : ' + this.isWarehouseRet(), alignment: 'right'
-        //         }
-        //     ],
-        //     styles: {
-        //         subheader: {
-        //             fontSize: 16,
-        //             bold: true,
-        //             margin: [0, 10, 0, 5]
-        //         },
-        //         tableExample: {
-        //             margin: [0, 5, 0, 15]
-        //         },
-        //         tableHeader: {
-        //             bold: true,
-        //             fontSize: 13,
-        //             color: 'black'
-        //         }
-        //     },
-        //     defaultStyle: {
-        //         alignment: 'justify'
-        //     }
-        // };
-        //
-        // this.pdfObj = pdfMake.createPdf(docDefinition);
-        // this.downloadPdf();
-        // this.sendMail();
-        //
-        // const ORDER_HISTORY = cloneDeep(this.order);
+        // enregistrement de la commande réalisée dans le tableau des commandes de orderService
+        let docDefinition = {
+            content: [
+                {text: 'CBPAPIERS', style: 'header'},
+                // impression de la date au format dd/mm/yyyy hh'h'mm
+                {
+                    text: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString(),
+                    alignment: 'right'
+                },
+                {text: 'ATTENTION Commande ' + this.cartService.getCart().orderNumber + ' ' + this.cartService.getCart().orderDate.toLocaleDateString() +
+                       ' ' + this.cartService.getCart().orderDate.toLocaleTimeString() + ' MODIFIEE' , style: 'subheader'},
+                {text: 'Ref client : ' + this.userService.getActiveCustomer().id},
+                {text: this.userService.getActiveCustomer().name},
+                {text: this.userService.getActiveCustomer().address},
+
+                // c'est ici qu'on construit le tableau dans le pdf :
+                // on indique le nombre de colonnes et on injecte l'array myBody construit dans la méthode constructBody()
+                {
+                    style: 'tableExample',
+                    table: {
+                        widths: ['*', '*', '*'],
+                        body: this.constructBody()
+                    }
+                },
+                {text : 'Livraison : ' + this.shipping(), alignment: 'right'},
+                {
+                    text: 'Total HT : ' + this.finalTotal + ' €', alignment: 'right'
+                },
+                {
+                    text: 'Retrait entrepôt : ' + this.isWarehouseRet(), alignment: 'right'
+                }
+            ],
+            styles: {
+                subheader: {
+                    fontSize: 16,
+                    bold: true,
+                    margin: [0, 10, 0, 5]
+                },
+                tableExample: {
+                    margin: [0, 5, 0, 15]
+                },
+                tableHeader: {
+                    bold: true,
+                    fontSize: 13,
+                    color: 'black'
+                }
+            },
+            defaultStyle: {
+                alignment: 'justify'
+            }
+        };
+
+        this.pdfObj = pdfMake.createPdf(docDefinition);
+        this.downloadPdf();
+        this.sendMail();
+
+        const ORDER_HISTORY = cloneDeep(this.order);
         // this.orderService.editOrder(ORDER_HISTORY);
-        //
+
 
         //on reinitialise les orderlines de panier pour le remettre à 0
         this.deleteAll(this.order.orderLines);
