@@ -67,12 +67,12 @@ export class CartPage implements OnInit, OnDestroy {
     }
 
     deleteLine(orderLine: OrderLine) {
-        this.cartService.updateOrderLineFromList(orderLine);
-        this.cart.orderLines.splice(this.cart.orderLines.indexOf(orderLine), 1);
-        this.cartService.setCart(this.cart);
+        this.cartService.updateOrderLineFromList(orderLine, 0);
+        // this.cart.orderLines.splice(this.cart.orderLines.indexOf(orderLine), 1);
         if (this.cart.orderLines.length === 0) {
             this.onDismiss();
         }
+        this.cartService.setCart(this.cart);
     }
 
     deleteAll() {
@@ -119,7 +119,5 @@ export class CartPage implements OnInit, OnDestroy {
 
     updateCart($event: any, line: OrderLine) {
         line.quantity = $event.target.value;
-        // // on met à jour le cart dans le service
-        // this.cartService.setCart(this.cart);
     }
 }

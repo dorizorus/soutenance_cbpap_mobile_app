@@ -38,12 +38,12 @@ export class ArticlePage implements OnInit {
         this.cartService.cart$.subscribe(data => {
             this.cart = data;
             this.totalQuantity = data.orderLines.length;
-            console.log('cart from article');
-            console.log(this.cart);
         });
 
         this.cartService.orderLineList$.subscribe(
-            (liste) => this.orderLineList = liste
+            (liste) => {
+                this.orderLineList = liste;
+            }
         );
 
         // à la création de la page on fait une copie de la liste.
@@ -390,10 +390,13 @@ export class ArticlePage implements OnInit {
     // Dés qu'une quantité est selectionnée pour un article, la méthode met à jour le panier et envoie l'information au cartservice
     // on interprète le fait que c'est une suppression ou un ajout ou une mise à jour
     onChangeOrderLine($event: any, orderLine: OrderLine) {
+
         // récupération de la quantité modifiée
         const qty = $event.target.value;
+
         // récupération de la position de l'article modifié dans le panier
         const index = this.cart.orderLines.indexOf(orderLine);
+
         // 1er if : on checke si il s'agit d'une suppression
         // l'article est dans le panier : quantité = 0 et on supprime l'article du panier
         if (qty == 0 && this.cart.orderLines.length !== 0 && index !== -1) {
@@ -410,8 +413,10 @@ export class ArticlePage implements OnInit {
             orderLine.quantity = qty;
             this.cart.orderLines.push(orderLine);
         }
+
         // on met à jour le nouveau panier dans le service
         this.cartService.setCart(this.cart);
+
         // on met à jour la liste d'articles avec la nouvelle quantité dans le service
         this.cartService.setOrderLineList(this.orderLineList);
     }

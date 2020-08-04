@@ -16,6 +16,7 @@ export class CartService {
     public cart$: BehaviorSubject<Order> = new BehaviorSubject<Order>(null);
 
     private orderLine: OrderLine;
+
     private orderLineList: OrderLine[] = [];
     public orderLineList$: BehaviorSubject<OrderLine[]> = new BehaviorSubject<OrderLine[]>([]); // liste qui apparait sur la page article
 
@@ -45,14 +46,20 @@ export class CartService {
     }
 
     setCart(cart: Order) {
+
         this.cart = cart;
         this.updateTotal();
         this.cart$.next(this.cart);
     }
 
+    updateCartInfos(orderNumber: string, dateOrder: Date) {
+        this.cart.orderNumber = orderNumber;
+        this.cart.orderDate = dateOrder;
+        this.cart$.next(this.cart);
+    }
+
     // vider toutes les orderlines du panier
     resetCartOrderLines() {
-        console.log('je reset le panier');
         this.cart.orderLines = [];
         this.updateTotal();
         this.cart$.next(this.cart);
@@ -73,9 +80,9 @@ export class CartService {
         this.orderLineList$.next(orderLines);
     }
 
-    updateOrderLineFromList(orderLine: OrderLine) {
+    updateOrderLineFromList(orderLine: OrderLine, qty: number) {
         const index = this.orderLineList.indexOf(orderLine);
-        this.orderLineList[index].quantity = 0;
+        this.orderLineList[index].quantity = qty;
         this.orderLineList$.next(this.orderLineList);
     }
 
@@ -85,7 +92,7 @@ export class CartService {
             let index = 0;
             let found = false;
             while (!found && index < this.orderLineList.length) {
-                if (orderLine.article == this.orderLineList[index].article) {
+                if (orderLine.article.reference == this.orderLineList[index].article.reference) {
                     this.orderLineList[index].quantity = orderLine.quantity;
                     found = true;
                 }
