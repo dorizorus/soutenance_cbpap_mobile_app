@@ -28,7 +28,7 @@
               <small><strong>LIVRAISON GRATUITE</strong></small>
             </span>
             <ng-template #pasRemise>
-              <span class="minColonne"><small><span class="green">{{250 - total }}</span>€ avant livraison gratuite</small></span>
+              <span class="minColonne"><small><span class="green">{{250 - total | number: '1.2-2'}}</span>€ avant livraison gratuite</small></span>
             </ng-template>
           </span>
         </ion-col>

@@ -39,15 +39,15 @@ export class LoginPage implements OnInit {
         // on créer le compte
         const compte: F_COMPTET =
             {
-                CT_Num: 'SORAPIZZA',
-                CT_Intitule: 'SORA PIZZA',
-                CT_Adresse: '109 AVENUE DE LA REPUBLIQUE',
-                CT_CodePostal: 'F-54310',
-                CT_Ville: 'HOMECOURT',
-                CT_Pays: 'France',
-                CT_Sommeil: 1,
-                CT_Telephone: '03 82 33 84 68',
-                CT_EMail: ''
+                CT_Num: "ADRANO",
+                CT_Intitule: "ADRANO PIZZ",
+                CT_Adresse: "9 ZONE COMMERCIALE DU TRIANGLE",
+                CT_CodePostal: "F-57525",
+                CT_Ville: "TALANGE",
+                CT_Pays: "FRANCE",
+                CT_Sommeil: 0,
+                CT_Telephone: "06 01 03 10 07",
+                CT_EMail: "contact@adranopizz.fr"
             };
         // on ne va pas utiliser de set mais un systeme d'ajout/suppresion de compte. Ici, il est ajouté
         this.userService.addF_COMPTET(compte);

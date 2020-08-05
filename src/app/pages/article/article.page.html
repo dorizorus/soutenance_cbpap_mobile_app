@@ -25,12 +25,12 @@
             <span class="small">
                 <!-- <button (click)="createOrderLineDetails(orderLine)"> -->
                 <button>
-                 <ion-label>{{orderLine.article.reference}}</ion-label>
+                    <ion-label><small>{{orderLine.article.reference}}</small></ion-label>
                 {{orderLine.article.label}}
                 </button>
             </span>
 
-            <span slot="end">{{orderLine.article.unitPrice}} €</span>
+            <span slot="end">{{orderLine.article.unitPrice | number:'1.2-2'}} €</span>
             <ion-select
                     slot="end"
                     interface="popover"
