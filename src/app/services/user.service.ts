@@ -4,6 +4,7 @@ import {BehaviorSubject, Observable} from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { UserWeb } from '../models/UserWeb';
 import { environment } from 'src/environments/environment';
+import { Storage } from '@ionic/storage';
 
 @Injectable({
     providedIn: 'root'
@@ -12,6 +13,7 @@ export class UserService {
 
     customer: Customer;
     userWeb : UserWeb;
+    usersWebPool : UserWeb[] = [];
     activeCustomer: Customer;
     login : string = '';
     customerAccounts: Customer[] = [];
@@ -19,21 +21,32 @@ export class UserService {
     public activeCustomer$: BehaviorSubject<Customer> = new BehaviorSubject<Customer>(null);
     public adresseAdrano : string = 'http://80.14.6.243:8080/HF_COMPTET/ADRANO';
     
-    constructor(private httpClient : HttpClient) {
+    constructor(private httpClient : HttpClient,
+                private dataStorage : Storage) {
     }
-    /* 
-    // Observable qui recupère un json
-    readonly userAdraObservable = new Observable ((observer) => {
+    
+    // Observable qui recupère un json du pool d'utilisateurs web. Mais vu
+    // qu'il y en a qu'un ... Dur d'être dynamique x)
+    // TODO remplacer adrano par .. rien afin d'avoir les utilisateurs web
+    readonly usersObservable = new Observable ((observer) => {
         this.httpClient.
-        get('http://80.14.6.243:8080/' + '/HF_COMPTET/' + this.login).
+        get(environment.baseUrl + '/HF_COMPTET/' + 'ADRANO').
         subscribe(
             (user : UserWeb) => {
-                this.userWeb = user;
+                console.log("Début du sub, le num du perso 0 est ")
+                this.usersWebPool.push(user);
                 observer.next(user);
+                console.log(this.usersWebPool[0].CT_Num)
+
+            // Quand on aura un tableau, remplacer le code par ça
+            /* (users : UserWeb[]) => {
+               this.usersWebPool = users
+               observer.next(users);
+            */
             }
         )
     } )
-    */
+    
 
 
     // Ajoute un compte au tableau de comptes du téléphone. Le client actif est attribué à ce moment la
@@ -109,14 +122,21 @@ export class UserService {
 
     // Compare si les logins sont bons et si c'est le cas, renvoie l'utilisateur
     // On pourrait mettre un booléen mais ça permet de directement récup l'objet comme ça
-    getUserWebValidity(login : string, password : string) {
-        if (this.userWeb.CT_Num == login && this.userWeb.MDP == password) {
+    getUserWebValidity(login : string, password : string) : UserWeb {
+        let i = 0;
+        let found = false;
+
+        while (!found && i < this.usersWebPool.length) {
+        if (this.usersWebPool[i].CT_Num == login && this.usersWebPool[i].MDP == password) {
             console.log("trouvé");
-            return this.userWeb;
-        }
-        else
-            console.log("Pas trouvé");
+            found = true;
+            return this.usersWebPool[i];
+            } else {
+                i++;
+            }
+            console.log("Pas trouvé :(");
             return null;
+        }
     }
 
     // plus utile ?
@@ -192,7 +212,27 @@ export class UserService {
         return [compte1, compte2, compte3, compte4];
     }
 
+    // A ne pas supprimer, utile avec l'arrivée du reste du webservice
     getUserByRef(login : string) : Observable<UserWeb> {
         return this.httpClient.get<UserWeb>(environment.baseUrl + '/HF_COMPTET/' + login);
+    }
+
+    setUserStorage(user : Customer) {
+        // systéme de clé / valeur
+        this.dataStorage.set(user.name, user);
+        this.getUserStorage(user.name)
+    }
+
+    getUserStorage(login : string) {
+        // systéme de promesse
+        this.dataStorage.get(login).then((data : Customer) => {
+            let taille : number;
+            this.dataStorage.length().then((val : number) => {
+                taille = val;
+            })
+            console.log("La taille du storage est de" + taille);
+            console.log("J'ai mon user" + data.city + " dans le storage");
+            return data;
+        })
     }
 }

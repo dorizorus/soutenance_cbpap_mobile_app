@@ -21,6 +21,7 @@ export class LoginPage implements OnInit {
     password:string;
     error: string;
     userWeb : UserWeb;
+    usersWeb : UserWeb[] = [];
 
     constructor(private navCtrl: NavController,
                 private modalController: ModalController,
@@ -45,20 +46,26 @@ export class LoginPage implements OnInit {
         else if(this.userService.getAccounts().length > 1)
             this.router.navigateByUrl('/acc-choice');
 
-        //this.getUserWeb();
+        this.getUsersWeb();
     }
-    /*
-    // On subscribe à l'url et on ajoute automatiquement l'user a celui du login
-    // C'est vraiment moche de récupérer le mdp et l'id comme ça n'empêche, je me sens sale
-    getUserWeb() {
-        this.userService.userAdraObservable.subscribe(
+    
+    // On subscribe à l'url et on récupère les comptes éligible a l'application
+    // C'est vraiment moche de récupérer le mdp et l'id comme ça n'empêche
+    // Il y a un soucis quand je manipule un tableau donc je simule un tableau via un push
+    async getUsersWeb() {
+        this.userService.usersObservable.subscribe(
            (user : UserWeb) => {
+               this.usersWeb = [];
+               this.usersWeb.push(user);
                this.userWeb = user;
                console.log("Get effectué de " + this.userWeb.CT_Num + " et mdp " + this.userWeb.MDP);
+               // Quand on aura le tableau, remplacer par
+               // (users : UserWeb[]) => {
+               // this.usersWeb = users;
            } 
         )
     }
-    */
+    
 
     async initClient() {
         // on créer le compte
@@ -127,24 +134,39 @@ export class LoginPage implements OnInit {
         return await modal.present();
     }
 
+    /* Utile plus tard, ne pas supprimer
     getUserData() {
         this.userService.getUserByRef(this.login).subscribe(user => {
 
         })
-    }
+    } */
 
     // Ce n'est pas un booléen qui est checké mais un objet.
     async logIn() {
-        this.getUserData();
-        let res = this.userService.getUserWebValidity(this.login,this.password);
-        if(res == null)
-            this.error = "Mauvais identifiant/mot de passe";
-        else{
-            console.log(res.CT_Num + " concorde avec les logins et mdp");
-            let user = this.initUserWebToCustomer(this.userWeb);
+        let i = 0;
+        let found = false;
+        let res : UserWeb = null;
+
+        while (!found && i < this.usersWeb.length) {
+            if (this.usersWeb[i].CT_Num == this.login) {
+                found = true;
+                res = this.userService.getUserWebValidity(this.login,this.password);
+            }
+            else {
+                i++;
+                res = null;
+            }
+        }
+
+        if(res) {
+            console.log("Concorde avec les logins et mdp");
+            let user = this.initUserWebToCustomer(res);
             this.userService.setActiveCustomer(user);
             this.userService.addCustomer(user);
+            this.userService.setUserStorage(user);
             this.router.navigateByUrl('/nav/article');
+        } else{
+            this.error = "Mauvais identifiant/mot de passe";
         }
     }
 }
