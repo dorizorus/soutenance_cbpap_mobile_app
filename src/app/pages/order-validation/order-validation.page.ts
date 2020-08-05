@@ -224,9 +224,10 @@ export class OrderValidationPage implements OnInit {
         this.orderService.editOrder(ORDER_HISTORY);
 
 
-        //on reinitialise les orderlines de panier pour le remettre à 0
+        // on reinitialise les orderlines de panier pour le remettre à 0
         this.deleteAll(this.order.orderLines);
-
+        // on set le orderNumber à null car sinon lors des prochaines commandes il va encore modifier la dernière
+        this.cartService.getCart().orderNumber = null;
     }
 
     // permet d'enregistrer le pdf dans le data Directory de l'application
