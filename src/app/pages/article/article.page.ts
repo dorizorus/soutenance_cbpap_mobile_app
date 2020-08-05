@@ -156,7 +156,6 @@ export class ArticlePage implements OnInit {
                 articlesAndFrequency.splice(15, articlesAndFrequency.length - 15);
 
                 articlesAndFrequency.forEach(data => this.orderLineList.push(this.stringTabToOrderLine(JSON.parse(data[0]))));
-                console.log(articlesAndFrequency);
                 this.initAllPrices();
             }
         );
@@ -190,21 +189,24 @@ export class ArticlePage implements OnInit {
                                 // 4 cas ici
                                 let prixVen = parseInt(discount.AC_PrixVen);
                                 let customerDiscount = parseInt(discount.AC_Remise);
+                                // j'ai cree une copie d'orderLineList que je vide au fur et a mesure que je trouve les prix
+                                // a la fin il ne reste que les OrderLine qui n'ont pas de prix calcule
                                 if (prixVen != 0 && customerDiscount != 0) {
+                                    let index = copyOrderLineList.indexOf(this.orderLineList[i]);
+                                    copyOrderLineList.slice(index, copyOrderLineList.length - index);
                                     this.orderLineList[i].article.finalPrice = prixVen * (1 - customerDiscount / 100);
                                 } else if (customerDiscount == 0 && prixVen != 0) {
+                                    let index = copyOrderLineList.indexOf(this.orderLineList[i]);
+                                    copyOrderLineList.slice(index, copyOrderLineList.length - index);
                                     this.orderLineList[i].article.finalPrice = prixVen;
-                                } else{
+                                } else {
                                     // il faut recuperer le prix unitaire qui n'est pas présent dans le f_artclient
                                     // todo a voir comment changer getAll articles pour recup tous les prix d'un coup et non pas un seul
                                     // piste : se servir de copyOrderLineList en enlevant les articles qui ont un prix present dans f_artclient
                                     // et le passer a la fonction
+                                    let unitPrice = this.getAllArticleUnitPrice();
 
-
-                                    //let unitPrice = this.getAllArticleUnitPrice();
-                                    let unitPrice = 0;
-
-                                    if (customerDiscount != 0 && prixVen == 0){
+                                    if (customerDiscount != 0 && prixVen == 0) {
                                         this.orderLineList[i].article.finalPrice = unitPrice * (1 - customerDiscount / 100);
                                     } else {
                                         this.orderLineList[i].article.finalPrice = unitPrice;
@@ -217,7 +219,7 @@ export class ArticlePage implements OnInit {
             });
     };
 
-    private getAllArticleUnitPrice():number {
+    private async getAllArticleUnitPrice(): number {
         let price: number = 0;
         let copyOrderLineList = deepclone(this.orderLineList);
         this.articleService.getF_ARTICLE().subscribe(
@@ -226,11 +228,14 @@ export class ArticlePage implements OnInit {
                 while (copyOrderLineList.length == 0 && i < F_ARTICLE.length) {
                     if (F_ARTICLE[i].AR_Ref === this.orderLineList[i].article.reference) {
                         price = parseFloat(F_ARTICLE[i].AR_PrixVen);
-                        copyOrderLineList.slice(i, copyOrderLineList.length - i)
+                        copyOrderLineList.slice(i, copyOrderLineList.length - i);
                     } else {
                         i++;
                     }
                 }
+            }, () => {
+            },
+            () => {
                 return price;
             }
         );
