@@ -5,13 +5,14 @@ import {HttpClient} from '@angular/common/http';
 import {F_COMPTET} from '../models/JSON/F_COMPTET';
 import {F_DOCLIGNE} from '../models/JSON/F_DOCLIGNE';
 
-
 @Injectable({
     providedIn: 'root'
 })
 export class UserService {
 
     customer: Customer;
+    userWeb : UserWeb;
+    usersWebPool : UserWeb[] = [];
     activeCustomer: Customer;
 
     f_COMPTET: F_COMPTET;
@@ -23,6 +24,19 @@ export class UserService {
 
     constructor(private http: HttpClient) {
     }
+    
+    // Observable qui recupère un json du pool d'utilisateurs web. Mais vu
+    // qu'il y en a qu'un ... Dur d'être dynamique x)
+    // TODO remplacer adrano par .. rien afin d'avoir les utilisateurs web
+    readonly usersObservable = new Observable ((observer) => {
+        this.httpClient.
+        get(environment.baseUrl + '/HF_COMPTET/' + 'ADRANO').
+        subscribe(
+            (user : UserWeb) => {
+                console.log("Début du sub, le num du perso 0 est ")
+                this.usersWebPool.push(user);
+                observer.next(user);
+                console.log(this.usersWebPool[0].CT_Num)
 
     // récupère le compte actif
     getActiveCustomer() {
@@ -120,5 +134,29 @@ export class UserService {
                 }
             );
         });
+    }
+
+    // A ne pas supprimer, utile avec l'arrivée du reste du webservice
+    getUserByRef(login : string) : Observable<UserWeb> {
+        return this.httpClient.get<UserWeb>(environment.baseUrl + '/HF_COMPTET/' + login);
+    }
+
+    setUserStorage(user : Customer) {
+        // systéme de clé / valeur
+        this.dataStorage.set(user.name, user);
+        this.getUserStorage(user.name)
+    }
+
+    getUserStorage(login : string) {
+        // systéme de promesse
+        this.dataStorage.get(login).then((data : Customer) => {
+            let taille : number;
+            this.dataStorage.length().then((val : number) => {
+                taille = val;
+            })
+            console.log("La taille du storage est de" + taille);
+            console.log("J'ai mon user" + data.city + " dans le storage");
+            return data;
+        })
     }
 }

@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {ModalController} from '@ionic/angular';
 import {Router} from '@angular/router';
 import {ArticleService} from '../../services/article.service';
@@ -13,7 +13,7 @@ import {OrderLine} from '../../models/OrderLine';
 })
 export class SingleArticlePage implements OnInit {
 
-    orderLine: OrderLine;
+    @Input() orderLine: OrderLine;
     possibleQuantities: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
     isEmpty: boolean;
 
@@ -21,8 +21,6 @@ export class SingleArticlePage implements OnInit {
                 private cartNav: CartService,
                 private modalController: ModalController,
                 private router: Router) {
-
-        this.orderLine = this.cartNav.getOrderLine();
     }
 
     ngOnInit() {
@@ -35,6 +33,7 @@ export class SingleArticlePage implements OnInit {
         this.modalController.dismiss(this);
     }
 
+    // au clic du bouton réinitialiser, met la quantité de l'article sélectionnée à 0
     onReset(orderLine: OrderLine) {
         orderLine.quantity = 0;
         this.onDismiss();

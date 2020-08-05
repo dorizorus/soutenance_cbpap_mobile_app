@@ -7,6 +7,8 @@ import {UserService} from '../services/user.service';
 import {Customer} from '../models/Customer';
 import {WarehouseRetService} from '../services/warehouse-ret.service';
 import {CartService} from '../services/cart.service';
+import {Order} from '../models/Order';
+import { cloneDeep } from 'lodash';
 import {F_COMPTET} from "../models/JSON/F_COMPTET";
 
 @Component({
@@ -16,7 +18,7 @@ import {F_COMPTET} from "../models/JSON/F_COMPTET";
 })
 export class HeaderComponent implements OnInit {
 
-    cart: OrderLine[];
+    cart: Order;
     total = 0;
     WHRetrieval = false;
     customer: F_COMPTET;
@@ -36,6 +38,17 @@ export class HeaderComponent implements OnInit {
             this.cart = data;
             this.total = this.cartService.getTotal();
         });
+
+
+
+        // on subscribe à tout nouveau changement du customer actif
+        this.userService.activeCustomer$.subscribe((data) => {
+            this.customer = data;
+            this.cart.customer = data;
+        });
+
+
+
         // on subscribe à tout nouveau changement du status du toogle
         this.warehouseRetService.toggle$.subscribe((status) => {
             this.WHRetrieval = status;
@@ -53,8 +66,8 @@ export class HeaderComponent implements OnInit {
     async createCart() {
         const modal = await this.modalController.create({
             component: CartPage,
-            cssClass: 'modal-article',
-            backdropDismiss: true
+            cssClass: 'modal-panier',
+            backdropDismiss: true,
         });
         return await modal.present();
     }

@@ -6,11 +6,6 @@ import {OrderLine} from 'src/app/models/OrderLine';
 import {UserService} from 'src/app/services/user.service';
 import {CartService} from '../../services/cart.service';
 import {ArticleService} from '../../services/article.service';
-import {F_ARTICLE} from '../../models/JSON/F_ARTICLE';
-import {ArticleLabelRef} from '../../models/JSON/custom/ArticleLabelRef';
-import {cloneDeep} from 'lodash';
-import {Discount} from "../../models/Discount";
-import {F_ARTCLIENT} from "../../models/JSON/F_ARTCLIENT";
 
 @Component({
     selector: 'app-articles',
@@ -33,17 +28,15 @@ export class ArticlePage implements OnInit {
     }
 
     ngOnInit(): void {
-        this.articleService.articles$.subscribe(
-            (list) => {
-                this.f_articleList = list;
-                //this.getF_ARTICLES();
-            }
-        );
         this.cartService.cart$.subscribe(data => {
             this.cart = data;
+            this.totalQuantity = data.orderLines.length;
         });
+
         this.cartService.orderLineList$.subscribe(
-            (liste) => this.orderLineList = liste
+            (liste) => {
+                this.orderLineList = liste;
+            }
         );
 
         // à la création de la page on fait une copie de la liste.
@@ -54,22 +47,9 @@ export class ArticlePage implements OnInit {
         // console.log(this.getAllArticleUnitPrice('801332'));
     }
 
-    initOrderLines(articleList: Article[]) {
-        articleList.forEach(
-            (article) => {
-                const orderLine = {
-                    orderNumber: null,
-                    quantity: 0,
-                    article
-                };
-                this.orderLineList.push(orderLine);
-            }
-        );
-        this.cartService.setOrderLineList(this.orderLineList);
-    }
 
     // retourne un backup d'orderLineList générée en initialisation de page.
-    // l'intérêt est d'avoir une liste clean en backup qu'on envoit à la fonction filtre
+    // l'intérêt est d'avoir une liste clean en backup qu'on envoie à la fonction filtre
     getOrderLines() {
         return this.orderLineBackup;
     }
@@ -97,35 +77,48 @@ export class ArticlePage implements OnInit {
     }
 
     async createOrderLineDetails(orderLine: OrderLine) {
-        this.cartService.setOrderLine(orderLine);
+
         const modal = await this.modalController.create({
             component: SingleArticlePage,
             cssClass: 'modal-article',
-            backdropDismiss: true
+            backdropDismiss: true,
+            componentProps: {
+                orderLine
+            }
         });
         return await modal.present();
 
     }
 
+    // Dés qu'une quantité est selectionnée pour un article, la méthode met à jour le panier et envoie l'information au cartservice
+    // on interprète le fait que c'est une suppression ou un ajout ou une mise à jour
     onChangeOrderLine($event: any, orderLine: OrderLine) {
-        const index = this.cart.indexOf(orderLine);
-        orderLine.quantity = $event.target.value;
-        // S'il n'y a pas de lignes, on ajoute directement. S'il y en a, on remplace la quantité de la line par la nouvelle.
-        if (orderLine.quantity == 0) { // suppression
-            if (this.cart.length !== 0) {
-                if (index !== -1) {
-                    this.cart.splice(index, 1);
-                }
-            }
-        } else { // ajout ou modif
-            if (index === -1) { // pas trouve donc on ajoute
-                this.cart.push(orderLine);
-            } else { // update
-                this.cart[index] = orderLine;
-            }
+
+        // récupération de la quantité modifiée
+        const qty = $event.target.value;
+
+        // récupération de la position de l'article modifié dans le panier
+        const index = this.cart.orderLines.indexOf(orderLine);
+
+        // 1er if : on checke si il s'agit d'une suppression
+        // l'article est dans le panier : quantité = 0 et on supprime l'article du panier
+        if (qty == 0 && this.cart.orderLines.length !== 0 && index !== -1) {
+            this.cart.orderLines.splice(index, 1);
+
+            // on met à jour la quantité d'article d'un article déjà présent dans le panier (mais pas à supprimer : qté >0)
+        } else if (index !== -1) {
+            orderLine.quantity = qty;
+            this.cart.orderLines[index] = orderLine;
+
+            // dernier cas : dans le cas d'un article qui n'est pas dans le panier (car index= -1 = article non trouvé)
+            // on set la nouvelle quantité et on ajoute le nouvel article au panier
+        } else {
+            orderLine.quantity = qty;
+            this.cart.orderLines.push(orderLine);
         }
+
+        // on met à jour le nouveau panier dans le service
         this.cartService.setCart(this.cart);
-    }
 
     initTopF_ARTICLE() {
 
@@ -172,7 +165,6 @@ export class ArticlePage implements OnInit {
                 this.initAllInfosTest();
             }
         );
-    }
 
     private initAllInfosTest() {
         console.log('in initAllInfosTest()');
@@ -207,26 +199,6 @@ export class ArticlePage implements OnInit {
                         }
                     }
                 }
-                // console.log(copyOrderLineList.length);
-
-
-                /*F_ARTCLIENT.forEach(discount => {
-                    // si le ctnum correspond, la reduction concerne le client actuel
-                    if (discount.CT_Num == ctNum) {
-                        console.log('ctNumFound');
-                        for (let orderLine of copyOrderLineList) {
-                            if (orderLine.article.reference == discount.AR_Ref.trim()) {
-                                // console.log('AR_Ref found')
-                                // les différents cas
-                            } else {
-                                // console.log('AR_Ref not found');
-                            }
-                        }
-                    } else {
-                        // console.log('ctNumNotFound')
-                    }
-
-                });*/
             },
             error => console.error(error),
             () => this.initAllPricesTest());
@@ -271,77 +243,5 @@ export class ArticlePage implements OnInit {
             error => console.error(error),
             () => this.cartService.setOrderLineList(this.orderLineList)
         );
-    }
-
-
-    private initAllPrices() {
-
-        let copyOrderLineList = cloneDeep(this.orderLineList);
-        let ctNum = this.userService.getActiveF_COMPTET().CT_Num;
-        this.articleService.getF_ARTCLIENT().subscribe(
-            (F_ARTCLIENT) => {
-                F_ARTCLIENT.forEach(discount => {
-                    // si le ctnum correspond, la reduction concerne le client actuel
-                    if (discount.CT_Num == ctNum) {
-                        let found = false;
-                        let i = 0;
-                        // je parcours le tableau afin de savoir si la remise correspond à un article de mon top
-                        while (!found && i < this.orderLineList.length) {
-                            // s'il correspond, je calcule le prix
-                            if (this.orderLineList[i].article.reference == discount.AR_Ref) {
-                                // 4 cas ici
-                                let prixVen = parseInt(discount.AC_PrixVen);
-                                let customerDiscount = parseInt(discount.AC_Remise);
-                                // j'ai cree une copie d'orderLineList que je vide au fur et a mesure que je trouve les prix
-                                // a la fin il ne reste que les OrderLine qui n'ont pas de prix calcule
-                                if (prixVen != 0 && customerDiscount != 0) {
-                                    let index = copyOrderLineList.indexOf(this.orderLineList[i]);
-                                    copyOrderLineList.slice(index, copyOrderLineList.length - index);
-                                    this.orderLineList[i].article.finalPrice = prixVen * (1 - customerDiscount / 100);
-                                } else if (customerDiscount == 0 && prixVen != 0) {
-                                    let index = copyOrderLineList.indexOf(this.orderLineList[i]);
-                                    copyOrderLineList.slice(index, copyOrderLineList.length - index);
-                                    this.orderLineList[i].article.finalPrice = prixVen;
-                                } else {
-                                    // il faut recuperer le prix unitaire qui n'est pas présent dans le f_artclient
-                                    // todo a voir comment changer getAll articles pour recup tous les prix d'un coup et non pas un seul
-                                    // piste : se servir de copyOrderLineList en enlevant les articles qui ont un prix present dans f_artclient
-                                    // et le passer a la fonction
-                                    let unitPrice = this.getAllArticleUnitPrice();
-
-                                    if (customerDiscount != 0 && prixVen == 0) {
-                                        this.orderLineList[i].article.finalPrice = unitPrice * (1 - customerDiscount / 100);
-                                    } else {
-                                        this.orderLineList[i].article.finalPrice = unitPrice;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                });
-            });
-    }
-
-    private getAllArticleUnitPrice(): number {
-        let price: number = 0;
-        let copyOrderLineList = cloneDeep(this.orderLineList);
-        this.articleService.getF_ARTICLE().subscribe(
-            (F_ARTICLE) => {
-                let i = 0;
-                while (copyOrderLineList.length == 0 && i < F_ARTICLE.length) {
-                    if (F_ARTICLE[i].AR_Ref === this.orderLineList[i].article.reference) {
-                        price = parseFloat(F_ARTICLE[i].AR_PrixVen);
-                        copyOrderLineList.slice(i, copyOrderLineList.length - i);
-                    } else {
-                        i++;
-                    }
-                }
-            }, () => {
-            },
-            () => {
-                return price;
-            }
-        );
-        return 0;
     }
 }

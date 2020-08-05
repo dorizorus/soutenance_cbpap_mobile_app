@@ -14,6 +14,8 @@ import {UserService} from '../../services/user.service';
 import {OrderLine} from '../../models/OrderLine';
 import {OrderService} from '../../services/order.service';
 import {Order} from '../../models/Order';
+import { cloneDeep } from 'lodash';
+import {GenerateIDService} from '../../services/generate-id.service';
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
@@ -27,18 +29,10 @@ export class OrderValidationPage implements OnInit {
     finalTotal: number;
 
     pdfObj = null;
-    orderlines: OrderLine[];
+    order: Order;
+    
     statusShipping: boolean;
-
-    order =
-        {
-            orderNumber: 'the one',
-            orderDate: new Date(),
-            customer: this.userService.getActiveCustomer(),
-            orderLines: this.cartService.getCart()
-        };
-
-    // Erreur de dépendance circulaire dans la classe, si on enleve file, fileopener et emailc, l'erreur disparait
+    order: Order;
     constructor(private plt: Platform,
                 private file: File,
                 private fileOpener: FileOpener,
@@ -47,11 +41,12 @@ export class OrderValidationPage implements OnInit {
                 private warehouseRetService: WarehouseRetService,
                 private userService: UserService,
                 private orderService: OrderService,
-                private modalController: ModalController) {
+                private modalController: ModalController,
+                private generateIdService: GenerateIDService) {
     }
 
     ngOnInit() {
-        this.orderlines = this.cartService.getCart();
+        this.order = this.cartService.getCart();
         this.finalTotal = this.cartService.getFinalTotal();
         this.statusShipping = this.warehouseRetService.getStatusShipping();
     }
@@ -81,23 +76,38 @@ export class OrderValidationPage implements OnInit {
     // ici reference de l'article, quantité et prix final
     // l'array myBody est donc incrémenté de nouvelles données
     constructBody() {
-        for (const orderline of this.orderlines) {
+        for (const orderline of this.order.orderLines) {
             // @ts-ignore
             this.myBody.push([`${orderline.article.reference}`, `${orderline.quantity}`, `${orderline.article.finalPrice * orderline.quantity + '€'}`]);
         }
         return this.myBody;
     }
 
+    checkEditOrderOrNot(){
+        if (this.order.orderNumber == null){
+            this.order =
+                {
+                    // numéro de commande généré dans le service generateID
+                    orderNumber: this.generateIdService.generate(),
+                    orderDate: new Date(),
+                    customer : this.userService.getActiveCustomer(),
+                    orderLines: this.cartService.getCart().orderLines
+                };
+            this.sendPdf();
+        } else {
+            this.order = this.cartService.getCart();
+            this.sendPdfEdit();
+        }
+    }
+
     sendPdf() {
+        // enregistrement de la commande réalisée dans le tableau des commandes de orderService
         let docDefinition = {
             content: [
                 {text: 'CBPAPIERS', style: 'header'},
                 // impression de la date au format dd/mm/yyyy hh'h'mm
                 {
-                    text: new Date().getDate() + '/'
-                        + ('0' + (new Date().getMonth() + 1)).slice(-2) + '/'
-                        + new Date().getFullYear() + ' '
-                        + new Date().toLocaleTimeString(),
+                    text: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString(),
                     alignment: 'right'
                 },
                 {text: 'Commande : ', style: 'subheader'},
@@ -145,10 +155,80 @@ export class OrderValidationPage implements OnInit {
         this.downloadPdf();
         this.sendMail();
 
-        this.orderService.addOrder(this.order);
+        const ORDER_HISTORY = cloneDeep(this.order);
+        this.orderService.addOrder(ORDER_HISTORY);
 
-        this.deleteAll();
+        // on reinitialise les orderlines de panier pour le remettre à 0
+        this.deleteAll(this.order.orderLines);
+    }
 
+    sendPdfEdit() {
+        // enregistrement de la commande réalisée dans le tableau des commandes de orderService
+        let docDefinition = {
+            content: [
+                {text: 'CBPAPIERS', style: 'header'},
+                // impression de la date au format dd/mm/yyyy hh'h'mm
+                {
+                    text: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString(),
+                    alignment: 'right'
+                },
+                // tslint:disable-next-line:max-line-length
+                {text: 'ATTENTION Commande ' + this.cartService.getCart().orderNumber + ' ' + this.cartService.getCart().orderDate.toLocaleDateString() +
+                       ' ' + this.cartService.getCart().orderDate.toLocaleTimeString() + ' MODIFIEE' , style: 'subheader'},
+                {text: 'Ref client : ' + this.userService.getActiveCustomer().id},
+                {text: this.userService.getActiveCustomer().name},
+                {text: this.userService.getActiveCustomer().address},
+
+                // c'est ici qu'on construit le tableau dans le pdf :
+                // on indique le nombre de colonnes et on injecte l'array myBody construit dans la méthode constructBody()
+                {
+                    style: 'tableExample',
+                    table: {
+                        widths: ['*', '*', '*'],
+                        body: this.constructBody()
+                    }
+                },
+                {text : 'Livraison : ' + this.shipping(), alignment: 'right'},
+                {
+                    text: 'Total HT : ' + this.finalTotal + ' €', alignment: 'right'
+                },
+                {
+                    text: 'Retrait entrepôt : ' + this.isWarehouseRet(), alignment: 'right'
+                }
+            ],
+            styles: {
+                subheader: {
+                    fontSize: 16,
+                    bold: true,
+                    margin: [0, 10, 0, 5]
+                },
+                tableExample: {
+                    margin: [0, 5, 0, 15]
+                },
+                tableHeader: {
+                    bold: true,
+                    fontSize: 13,
+                    color: 'black'
+                }
+            },
+            defaultStyle: {
+                alignment: 'justify'
+            }
+        };
+
+        this.pdfObj = pdfMake.createPdf(docDefinition);
+        this.downloadPdf();
+        this.sendMail();
+
+        // on fait un clone de la commande et on envoie ce clone pour modification de la commande déjà existante avec le même numéro de commande
+        const ORDER_HISTORY = cloneDeep(this.order);
+        this.orderService.editOrder(ORDER_HISTORY);
+
+
+        // on reinitialise les orderlines de panier pour le remettre à 0
+        this.deleteAll(this.order.orderLines);
+        // on set le orderNumber à null car sinon lors des prochaines commandes il va encore modifier la dernière
+        this.cartService.getCart().orderNumber = null;
     }
 
     // permet d'enregistrer le pdf dans le data Directory de l'application
@@ -159,7 +239,7 @@ export class OrderValidationPage implements OnInit {
                 let blob = new Blob([buffer], {type: 'application/pdf'});
 
                 // Save the PDF to the data Directory of our App
-                this.file.writeFile(this.file.dataDirectory, 'myletter.pdf', blob, {replace: true}).then(fileEntry => {
+                this.file.writeFile(this.file.dataDirectory, 'commande.pdf', blob, {replace: true}).then(fileEntry => {
                     //  à enlever !  je laisse juste pour les tests sur pc
                     // this.fileOpener.open(this.file.dataDirectory + 'myletter.pdf', 'application/pdf');
                 });
@@ -178,10 +258,10 @@ export class OrderValidationPage implements OnInit {
             to: 'adrien.fek@gmail.com',
             cc: 'justine.gracia@gmail.com',
             attachments: [
-                this.file.dataDirectory + 'myletter.pdf'
+                this.file.dataDirectory + 'commande.pdf'
             ],
             subject: ' REFCLIENT : ' + this.userService.getActiveCustomer().CT_Num,
-            body: 'How are you?',
+            body: 'Ci-joint le récapitulatif de la commande',
             isHtml: true
         };
         this.emailComposer.open(email);
@@ -193,16 +273,17 @@ export class OrderValidationPage implements OnInit {
         this.modalController.dismiss();
     }
 
-    //remise à 0 du panier et des quantités d'article sélectionnées après envoi commande
-    deleteAll() {
-        let myCart = this.cartService.getCart();
-        myCart.forEach(
+    // remise à 0 du panier et des quantités d'article sélectionnées après envoi commande
+    deleteAll(orderlines: OrderLine[]) {
+        // faut fix ca ! ! ! ca efface tout sinon
+
+        orderlines.forEach(
             (orderLine) => {
                 orderLine.quantity = 0;
             }
         );
 
-        this.cartService.setCart(myCart);
+        this.cartService.resetCart();
         this.onDismiss();
     }
 }

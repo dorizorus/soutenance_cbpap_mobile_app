@@ -19,6 +19,8 @@ export class LoginPage implements OnInit {
     login: string;
     password: string;
     error: string;
+    userWeb : UserWeb;
+    usersWeb : UserWeb[] = [];
 
     constructor(private navCtrl: NavController,
                 private modalController: ModalController,
@@ -34,6 +36,24 @@ export class LoginPage implements OnInit {
             this.router.navigateByUrl('/acc-choice');
         }
     }
+    
+    // On subscribe à l'url et on récupère les comptes éligible a l'application
+    // C'est vraiment moche de récupérer le mdp et l'id comme ça n'empêche
+    // Il y a un soucis quand je manipule un tableau donc je simule un tableau via un push
+    async getUsersWeb() {
+        this.userService.usersObservable.subscribe(
+           (user : UserWeb) => {
+               this.usersWeb = [];
+               this.usersWeb.push(user);
+               this.userWeb = user;
+               console.log("Get effectué de " + this.userWeb.CT_Num + " et mdp " + this.userWeb.MDP);
+               // Quand on aura le tableau, remplacer par
+               // (users : UserWeb[]) => {
+               // this.usersWeb = users;
+           } 
+        )
+    }
+    
 
     async initClient() {
         // on créer le compte
@@ -49,8 +69,32 @@ export class LoginPage implements OnInit {
                 CT_Telephone: "06 01 03 10 07",
                 CT_EMail: "contact@adranopizz.fr"
             };
+        
         // on ne va pas utiliser de set mais un systeme d'ajout/suppresion de compte. Ici, il est ajouté
         this.userService.addF_COMPTET(compte);
+    }
+
+    // Pour pas a devoir refactor le customer, je vais prendre les paramètres de l'userweb et les mettre dans un customer
+    initUserWebToCustomer(user : UserWeb) : Customer {
+        let  customerWeb : Customer =
+            {
+                id: user.CT_Num,
+                name: user.CT_Intitule,
+                address: user.CT_Adresse,
+                email: null,
+                password: user.MDP,
+                customerPicture: 'assets/icon/devanturePizzaHut.png',
+                phoneNumber: null,
+                city:
+                    {
+                        id: 55,
+                        name: user.CT_Ville,
+                        postalCode: 57525
+                    },
+                customerFiles: null
+
+            };
+        return customerWeb;
     }
 
     // permet d'ajouter le client et d'aller aux articles. Async obligatoire sous peine d'erreur

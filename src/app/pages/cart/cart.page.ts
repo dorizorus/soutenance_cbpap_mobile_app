@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {OrderService} from 'src/app/services/order.service';
 import {OrderLine} from 'src/app/models/OrderLine';
 import {ModalController} from '@ionic/angular';
@@ -6,6 +6,7 @@ import {OrderValidationPage} from '../order-validation/order-validation.page';
 import {WarehouseRetService} from '../../services/warehouse-ret.service';
 import {CartService} from '../../services/cart.service';
 import {Subscription} from 'rxjs';
+import {Order} from '../../models/Order';
 
 
 @Component({
@@ -17,12 +18,12 @@ import {Subscription} from 'rxjs';
 export class CartPage implements OnInit, OnDestroy {
 
     possibleQuantities: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
-    cart: OrderLine[];
+    cart: Order;
     total: number;
     warehouseRetrieval: boolean;
     subscriptionToCart: Subscription;
     subscriptionToWHRetrieval: Subscription;
-    orderLineList: OrderLine[];
+    // orderLineList: OrderLine[];
     shippingPrice = 20;
     finalTotal: number;
     statusShipping: boolean;
@@ -30,13 +31,10 @@ export class CartPage implements OnInit, OnDestroy {
     constructor(private orderService: OrderService,
                 private modalController: ModalController,
                 private warehouseRetService: WarehouseRetService,
-                private cartService: CartService,
-                private cd: ChangeDetectorRef) {
+                private cartService: CartService) {
     }
 
     ngOnInit() {
-        // this.warehouseRetrieval = this.warehouseRetService.getStatus(); -> redondant comme on a la subscription
-
         // on subscribe aux données (ici un tableau de ligne de commande du cart), dès qu'un changement est detecté on les récupère
         this.subscriptionToCart = this.cartService.cart$.subscribe(data => {
                 this.cart = data;
@@ -46,7 +44,6 @@ export class CartPage implements OnInit, OnDestroy {
                 this.updateStatusShipping();
             }
         );
-
         this.subscriptionToWHRetrieval = this.warehouseRetService.toggle$.subscribe((status) => {
             this.warehouseRetrieval = status;
             this.total = this.cartService.getTotal();
@@ -54,8 +51,8 @@ export class CartPage implements OnInit, OnDestroy {
             this.updateStatusShipping();
         });
 
-        this.orderLineList = this.cartService.getOrderLineList();
     }
+
 
     // pour fermer la modal de manière explicite par un bouton
     // sinon si on clique à côté de la modal ça appel modalController.dismiss() tout seul
@@ -71,49 +68,20 @@ export class CartPage implements OnInit, OnDestroy {
     }
 
     deleteLine(orderLine: OrderLine) {
-        const index = this.findOrderLineIndex(orderLine);
-        if (index !== -1) {
-            this.orderLineList[index].quantity = 0;
-            setTimeout(() => {
-                this.cartService.setOrderLineList(this.orderLineList);
-            });
-        }
-        this.cart.splice(this.cart.indexOf(orderLine), 1);
-        this.cartService.setCart(this.cart);
-        if (this.cart.length === 0) {
+        this.cartService.updateOrderLineFromList(orderLine, 0);
+        // this.cart.orderLines.splice(this.cart.orderLines.indexOf(orderLine), 1);
+        if (this.cart.orderLines.length === 0) {
             this.onDismiss();
         }
+        this.cartService.setCart(this.cart);
     }
 
     deleteAll() {
-        this.cart.forEach(
-            (orderLine) => {
-                const index = this.findOrderLineIndex(orderLine);
-                if (index !== -1) {
-                    this.orderLineList[index].quantity = 0;
-                }
-            }
-        );
-        this.cartService.setOrderLineList(this.orderLineList);
-        this.cartService.setCart([]);
+        this.cartService.resetCartOrderLines();
+        this.cartService.resetQuantityOfOrderLineList();
         this.onDismiss();
     }
 
-    findOrderLineIndex(orderLine: OrderLine) {
-        let found = false;
-        let index = 0;
-        while (!found && index < this.orderLineList.length) {
-            if (this.orderLineList[index] === orderLine) {
-                found = true;
-            } else {
-                index++;
-            }
-        }
-        if (found) {
-            return index;
-        }
-        return -1;
-    }
 
     // toggle le warehouseRetrieval on-off
     toggled() {
@@ -123,6 +91,7 @@ export class CartPage implements OnInit, OnDestroy {
     async createValidationOrder() {
         this.cartService.setFinalTotal(this.finalTotal);
         this.warehouseRetService.setStatusShipping(this.statusShipping);
+        this.cartService.setCart(this.cart);
         this.modalController.dismiss();
         const modal = await this.modalController.create({
             component: OrderValidationPage,
@@ -136,24 +105,20 @@ export class CartPage implements OnInit, OnDestroy {
     setFinalTotal() {
         if (!this.warehouseRetrieval && this.total < 250) {
             this.finalTotal = this.total + 20;
-        }
-        else {
+        } else {
             this.finalTotal = this.total;
         }
     }
 
-    updateStatusShipping()  {
+    updateStatusShipping() {
         if (this.warehouseRetrieval || this.total >= 250) {
             this.statusShipping = false;
-        }
-        else {
+        } else {
             this.statusShipping = true;
         }
     }
 
     updateCart($event: any, line: OrderLine) {
         line.quantity = $event.target.value;
-        // on met à jour le cart dans le service
-        this.cartService.setCart(this.cart);
     }
 }

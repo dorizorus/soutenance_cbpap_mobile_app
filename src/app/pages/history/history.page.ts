@@ -19,6 +19,10 @@ export class HistoryPage implements OnInit {
         // this.history = this.initOrders();
     }
 
+    onClickOrder(order: Order) {
+        this.orderService.setOrder(order);
+    }
+
     private initOrders(): Order[] {
         const order1 = {
             orderNumber: 'MOBI1337',
@@ -167,7 +171,5 @@ export class HistoryPage implements OnInit {
         return [order1, order2, order3];
     }
 
-    onClickOrder(order: Order) {
-        this.orderService.setOrder(order);
-    }
+
 }

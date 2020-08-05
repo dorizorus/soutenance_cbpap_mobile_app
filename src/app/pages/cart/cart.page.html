@@ -12,13 +12,13 @@
     <ion-label><strong>Mon panier :</strong></ion-label>
 
 
-    <div *ngIf="cart.length != 0" class="centerRight">
+    <div *ngIf="cart.orderLines.length != 0" class="centerRight">
         <ion-button (click)="deleteAll()" color="danger" >
             Vider le panier
         </ion-button>
     </div>
     <ion-list>
-        <ion-item *ngFor="let orderLine of cart">
+        <ion-item *ngFor="let orderLine of cart.orderLines">
             <ion-avatar><img src="{{orderLine.article.articleImage.image}}"></ion-avatar>
             <span class="small">
             <ion-label><strong>{{orderLine.article.reference}}</strong></ion-label>
@@ -44,7 +44,7 @@
         </span>
         </ion-item>
     </ion-list>
-    <div *ngIf="cart.length != 0; else emptyCart" class="alignement">
+    <div *ngIf="cart.orderLines.length != 0; else emptyCart" class="alignement">
         
         <div *ngIf="!warehouseRetrieval">
             <div> Sous total HT : <span class="green">{{total | number:'1.2-2'}}</span></div>

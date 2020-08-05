@@ -6,6 +6,7 @@
           <ion-avatar>
             <img class="image" src="assets/icon/devanturePizzaHut.png" alt="avatar" (click)="goToSettings()">
           </ion-avatar>
+          <span class="smaller"><strong>{{customer.name}}</strong></span> 
         </ion-col>
         <ion-col class="logo" size="3" >
           <img src="assets/icon/logo.jpg" alt="logo">
@@ -15,7 +16,7 @@
           <ion-button color="light">
             <ion-icon class="icones" name="cart-outline" size="small"></ion-icon>
           </ion-button>
-          <ion-badge color="success">{{cart.length}}</ion-badge>
+          <ion-badge color="success">{{cart.orderLines.length}}</ion-badge>
           <br/>
           <span class="green" [ngStyle]="{'font-size': total > 1000 ? 'small' : 'medium'}">{{total | number : '1.2-2'}}€</span>
         </ion-col>
@@ -38,7 +39,8 @@
         </ion-col>
       </ion-row>
       <ion-row class="colonneMax">
-        <ion-col size="10"></ion-col>
+        <ion-col size="10"
+        ></ion-col>
         <ion-col size="2">
           <span><ion-toggle color="success" [ngModel]="WHRetrieval" (click)="toggle($event)"></ion-toggle></span>
         </ion-col>

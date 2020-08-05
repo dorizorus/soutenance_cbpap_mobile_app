@@ -1,13 +1,13 @@
 import {Component, OnInit} from '@angular/core';
-import {Order} from "../../models/Order";
-import {OrderService} from "../../services/order.service";
+import {Order} from '../../models/Order';
+import {OrderService} from '../../services/order.service';
 import {AlertController, NavController, Platform, ToastController} from '@ionic/angular';
 import { cloneDeep } from 'lodash';
-import {CartService} from "../../services/cart.service";
+import {CartService} from '../../services/cart.service';
 
 import {File} from '@ionic-native/file/ngx';
 import {FileOpener} from '@ionic-native/file-opener/ngx';
-import {EmailComposer} from '@ionic-native/email-composer/ngx'
+import {EmailComposer} from '@ionic-native/email-composer/ngx';
 import {UserService} from '../../services/user.service';
 
 import pdfMake from 'pdfmake/build/pdfmake';
@@ -21,36 +21,62 @@ pdfMake.vfs = pdfFonts.pdfMake.vfs;
     styleUrls: ['./single-order.page.scss'],
 })
 export class SingleOrderPage implements OnInit {
-    order: Order;
-    total: number = 0;
-    canEdit: boolean;
 
+    order: Order;
+    total = 0;
+    canEdit: boolean;
     pdfObj = null;
+    deadline: Date;
 
     constructor(private orderService: OrderService,
                 private cartService: CartService,
                 private alertController: AlertController,
                 private navController: NavController,
-                private toastController : ToastController,
+                private toastController: ToastController,
                 private plt: Platform,
                 private file: File,
                 private fileOpener: FileOpener,
                 private emailComposer: EmailComposer,
-                private userService: UserService) {}
+                private userService: UserService) {
+    }
 
     ngOnInit(): void {
         this.order = this.orderService.getOrder();
         this.total = 0;
         this.order.orderLines.forEach(value => this.total += (value.article.finalPrice * value.quantity));
+        this.calculateDeadLine();
+        this.calculateElapsedTime();
+    }
 
-        let limite: Date = this.order.orderDate;
-        limite.setHours(limite.getHours() + 3);
-
-        if (limite.getTime() > new Date().getTime()) {
+    // méthode permettant de calculer la date limite pour pouvoir encore éditer une commande
+    calculateDeadLine() {
+        // le new date est imporant car sinon orderDate change aussi
+        this.deadline = new Date(this.order.orderDate);
+        // d'apres le CC la deadline est de 3 heures apres l'heure de commande
+        this.deadline.setHours(this.deadline.getHours() + 3);
+        // on compare l'heure actuelle à la deadline
+        // si on a dépassé la deadline alors on peut plsu éditer la commande
+        if (new Date() < this.deadline) {
             this.canEdit = true;
         }
-
     }
+
+    // permet de calculer le temps restant à afficher avant de ne plus pouvoir éditer ou annuler une commande
+        calculateElapsedTime(){
+            const timeStart = new Date().getTime();
+            const timeEnd = new Date(this.deadline).getTime();
+            const hourDiff = timeEnd - timeStart; //in ms
+            const minDiff = Math.floor(hourDiff / 60 / 1000); //in minutes
+            const hDiff = hourDiff / 3600 / 1000; //in hours
+            const humanReadable = {
+                hours : null,
+                minutes : null
+            };
+            humanReadable.hours = Math.floor(hDiff);
+            humanReadable.minutes = minDiff - 60 * humanReadable.hours;
+            return humanReadable;
+        }
+
 
     async alertConfirm() {
         const alert = await this.alertController.create({
@@ -59,13 +85,12 @@ export class SingleOrderPage implements OnInit {
             buttons: [
                 {
                     text: 'Non',
-                    //cssClass: 'secondary',
+                    // cssClass: 'secondary',
                     role: 'cancel',
                     handler: () => {
-                        console.log('Annulation de la suppression');
                     }
                 }, {
-                    text: "Oui",
+                    text: 'Oui',
                     handler: () => {
                         this.sendCancel();
                     }
@@ -85,14 +110,28 @@ export class SingleOrderPage implements OnInit {
 
     }
 
-    // met a jour le cart dans le service
-    updateCart() {
+    // méthode appelée lorsqu'on veut recommander à partir de la commande (ajout des articles de la commande dans le panier)
+    reorder() {
         // création du toast
-        this.toastClick();
-        // fait un deep clone des lignes de la order
-        const newCart = cloneDeep(this.order.orderLines);
-        // on met à jour le panier avec le clone
-        this.cartService.setCart(newCart);
+        // this.toastClick();
+        // fait un deep clone de la commande
+        const newCart = cloneDeep(this.order);
+        // on met l'orderNumber du panier à null car on va refaire une nouvelle commande et non une édition de la commande
+        newCart.orderNumber = null;
+        // on met à jour les lignes du panier avec les lignes du clone de la commande
+        this.cartService.setOrderLineList(newCart.orderLines);
+        this.navController.navigateBack(['/nav/article']);
+    }
+
+    editOrder() {
+        // création du toast
+        // this.toastClick();
+        // fait un deep clone des lignes de la commande
+        const newCart = cloneDeep(this.order);
+        // on met à jour les lignes du panier avec les lignes du clone de la commande
+        this.cartService.setOrderLineList(newCart.orderLines);
+        // on envoie les informations sur la commande dans le cartService afin qu'il sache qu'il s'agit d'une édition de commande
+        this.cartService.updateCartInfos(newCart.orderNumber, newCart.orderDate);
         this.navController.navigateBack(['/nav/article']);
     }
 
@@ -104,26 +143,24 @@ export class SingleOrderPage implements OnInit {
           duration: 3000,
           message: 'Commande bien transférée!'
         });
-  
+
         await toast.present();
       }
 
       createPdf(){
-          let docDefinition = {
+        const docDefinition = {
               content: [
                   {text: 'CBPAPIERS', style: 'header'},
                   // impression de la date au format dd/mm/yyyy hh'h'mm
                   {
-                      text: new Date().getDate() + '/'
-                          + ('0' + (new Date().getMonth() + 1)).slice(-2) + '/'
-                          + new Date().getFullYear() + ' '
-                          // tslint:disable-next-line:no-unused-expression
+                      text: new Date().toLocaleDateString() + ' '
                           + new Date().toLocaleTimeString(),
                       alignment: 'right'
                   },
-                  {text: 'Commande du : ' + this.order.orderDate.getDate() + '/'
-                          + ('0' + (this.order.orderDate.getMonth() + 1)).slice(-2) + '/'
-                          + this.order.orderDate.getFullYear() + ' '
+                  {text: 'Commande du : ' + this.order.orderDate.toLocaleDateString() + ' '
+                          // this.order.orderDate.getDate() + '/'
+                          // + ('0' + (this.order.orderDate.getMonth() + 1)).slice(-2) + '/'
+                          // + this.order.orderDate.getFullYear() + ' '
                           + this.order.orderDate.toLocaleTimeString(), style: 'subheader'},
                   {text: 'Ref client : ' + this.userService.getActiveCustomer().CT_Num},
                   {text: this.userService.getActiveCustomer().CT_Intitule},
@@ -149,8 +186,8 @@ export class SingleOrderPage implements OnInit {
                   alignment: 'justify'
               }
           };
-          this.pdfObj = pdfMake.createPdf(docDefinition);
-          this.downloadPdf();
+        this.pdfObj = pdfMake.createPdf(docDefinition);
+        this.downloadPdf();
       }
 
       downloadPdf(){

@@ -24,11 +24,17 @@ export class OrderService {
         return this.orders;
     }
 
-    setOrders(orders: Order[]){
+    setOrders(orders: Order[]) {
         this.orders = orders;
     }
 
     addOrder(order) {
         this.orders.push(order);
     }
+
+    editOrder(order) {
+        const objIndex = this.orders.findIndex((obj => obj.orderNumber == order.orderNumber));
+        this.orders[objIndex] = order;
+    }
 }
+
