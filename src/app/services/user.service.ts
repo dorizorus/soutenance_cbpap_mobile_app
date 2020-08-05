@@ -26,15 +26,13 @@ export class UserService {
     constructor(private http: HttpClient) {
     }
     // récupère le compte actif
-    // todo changer la generation du pdf pour utiliser getActiveF_COMPTET
     getActiveCustomer() {
-        return this.activeCustomer;
+        return this.activeF_COMPTET;
     }
 
     // on récupère un compte (utilisé dans del-acc)
-    // todo changer pour utiliser fcomptet ( voir les usage et modifier le code en consequence )
     getCustomer() {
-        return this.customer;
+        return this.f_COMPTET;
     }
 
     private mockAccount() {
