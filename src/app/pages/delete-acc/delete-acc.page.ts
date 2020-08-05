@@ -4,6 +4,7 @@ import {ContactPageModule} from '../contact/contact.module';
 import {UserService} from 'src/app/services/user.service';
 import {Customer} from 'src/app/models/Customer';
 import {Router} from "@angular/router";
+import {F_COMPTET} from '../../models/JSON/F_COMPTET';
 
 @Component({
     selector: 'app-delete-acc',
@@ -12,7 +13,7 @@ import {Router} from "@angular/router";
 })
 export class DeleteAccPage implements OnInit {
 
-    customer: Customer;
+    customer: F_COMPTET;
     error: string;
     password: string;
 
@@ -25,6 +26,7 @@ export class DeleteAccPage implements OnInit {
         this.customer = this.userService.getCustomer();
     }
 
+    // todo recup ce qui a ete fait dans login pour la logique
    /* deleteAcc() {
         // recupere un msg d'erreur si invalid, sinon un account
         let res = this.userService.getUserValidity(this.customer.name,this.password);

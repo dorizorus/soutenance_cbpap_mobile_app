@@ -180,7 +180,7 @@ export class OrderValidationPage implements OnInit {
             attachments: [
                 this.file.dataDirectory + 'myletter.pdf'
             ],
-            subject: ' REFCLIENT : ' + this.userService.getActiveCustomer().id,
+            subject: ' REFCLIENT : ' + this.userService.getActiveCustomer().CT_Num,
             body: 'How are you?',
             isHtml: true
         };
@@ -205,6 +205,4 @@ export class OrderValidationPage implements OnInit {
         this.cartService.setCart(myCart);
         this.onDismiss();
     }
-
 }
-

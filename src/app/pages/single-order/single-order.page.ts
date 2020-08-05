@@ -125,9 +125,9 @@ export class SingleOrderPage implements OnInit {
                           + ('0' + (this.order.orderDate.getMonth() + 1)).slice(-2) + '/'
                           + this.order.orderDate.getFullYear() + ' '
                           + this.order.orderDate.toLocaleTimeString(), style: 'subheader'},
-                  {text: 'Ref client : ' + this.userService.getActiveCustomer().id},
-                  {text: this.userService.getActiveCustomer().name},
-                  {text: this.userService.getActiveCustomer().address},
+                  {text: 'Ref client : ' + this.userService.getActiveCustomer().CT_Num},
+                  {text: this.userService.getActiveCustomer().CT_Intitule},
+                  {text: this.userService.getActiveCustomer().CT_Adresse},
                   {text: 'Commande à annuler ! ! ! ', style: 'subheader'},
               ],
               styles: {
@@ -156,7 +156,6 @@ export class SingleOrderPage implements OnInit {
       downloadPdf(){
           if (this.plt.is('cordova')) {
               this.pdfObj.getBuffer((buffer) => {
-                  // tslint:disable-next-line:prefer-const
                   let blob = new Blob([buffer], {type: 'application/pdf'});
 
                   // Save the PDF to the data Directory of our App
@@ -177,7 +176,7 @@ export class SingleOrderPage implements OnInit {
               attachments: [
                   this.file.dataDirectory + 'annulation.pdf'
               ],
-          subject: 'ANNULATION COMMANDE ' + ' REFCLIENT : ' + this.userService.getActiveCustomer().id ,
+          subject: 'ANNULATION COMMANDE ' + ' REFCLIENT : ' + this.userService.getActiveCustomer().CT_Num ,
               body: 'ATTENTION ANNULATION ',
               isHtml: true
           };
