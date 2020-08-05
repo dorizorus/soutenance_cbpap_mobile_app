@@ -14,6 +14,10 @@ import {HeaderComponent} from "./header/header.component";
 import {OrderValidationPage} from "./pages/order-validation/order-validation.page";
 import {FormsModule} from "@angular/forms";
 
+// import pour le data storage local. On le met aussi dans l'import
+import { IonicStorageModule } from '@ionic/storage';
+
+// import pour la connexion et pouvoir faire des gets donc. Ajout dans import
 import { HttpClientModule }  from '@angular/common/http';
 
 //imports nécessaires pour générer pdf et créer un mail
@@ -25,7 +29,7 @@ import {UserService} from "./services/user.service";
 @NgModule({
   declarations: [AppComponent, CartPage, SingleOrderPage, HeaderComponent, OrderValidationPage],
   entryComponents: [CartPage, SingleOrderPage, OrderValidationPage],
-    imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, FormsModule, HttpClientModule],
+    imports: [BrowserModule, IonicModule.forRoot(), IonicStorageModule.forRoot(), AppRoutingModule, FormsModule, HttpClientModule],
   providers: [
     StatusBar,
     SplashScreen,
