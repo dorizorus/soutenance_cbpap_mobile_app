@@ -220,6 +220,7 @@ export class OrderValidationPage implements OnInit {
         this.downloadPdf();
         this.sendMail();
 
+        // on fait un clone de la commande et on envoie ce clone pour modification de la commande déjà existante avec le même numéro de commande
         const ORDER_HISTORY = cloneDeep(this.order);
         this.orderService.editOrder(ORDER_HISTORY);
 
