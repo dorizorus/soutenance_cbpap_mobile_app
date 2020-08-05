@@ -28,17 +28,16 @@ export class LoginPage implements OnInit {
 
 
     ngOnInit() {
-        if (this.userService.getAccounts().length == 1) {
+        if (this.userService.getF_COMPTETAccounts().length == 1) {
             this.router.navigateByUrl('/nav/article');
-        }
-        else if (this.userService.getAccounts().length > 1) {
+        } else if (this.userService.getF_COMPTETAccounts().length > 1) {
             this.router.navigateByUrl('/acc-choice');
- }
+        }
     }
 
     async initClient() {
         // on créer le compte
-        const compte : F_COMPTET =
+        const compte: F_COMPTET =
             {
                 CT_Num: 'SORAPIZZA',
                 CT_Intitule: 'SORA PIZZA',
@@ -77,7 +76,7 @@ export class LoginPage implements OnInit {
     // todo deplacer dans le service pour pouvoir reutiliser dans delete-acc
     logInF_COMPTET() {
         let F_Comptet: F_COMPTET = null;
-        this.userService.getF_COMPTETValidity().subscribe(
+        this.userService.getAllF_COMPTETs().subscribe(
             (F_COMPTETs) => {
                 let found = false;
                 let index = 0;
@@ -86,8 +85,7 @@ export class LoginPage implements OnInit {
                     if (F_COMPTETs[index].CT_Num.toUpperCase() == this.login.toUpperCase()) {
                         found = true;
                         F_Comptet = F_COMPTETs[index];
-                    }
-                    else {
+                    } else {
                         index++;
                     }
                 }
@@ -102,18 +100,4 @@ export class LoginPage implements OnInit {
         );
     }
 
-    // plus utilise dans cette version
-    logIn() {
-        const res = this.userService.getUserValidity(this.login, this.password);
-        console.log(res);
-        if (res == false) {
-            this.error = 'Mauvais identifiant/mot de passe';
-        }
-        else {
-            this.userService.setActiveCustomer(res);
-            this.userService.addCustomer(res);
-
-            this.router.navigateByUrl('/nav/article');
-        }
-    }
 }
