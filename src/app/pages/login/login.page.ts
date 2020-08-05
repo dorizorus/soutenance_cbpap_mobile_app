@@ -74,30 +74,24 @@ export class LoginPage implements OnInit {
     }
 
     // todo deplacer dans le service pour pouvoir reutiliser dans delete-acc
-    logInF_COMPTET() {
-        let F_Comptet: F_COMPTET = null;
-        this.userService.getAllF_COMPTETs().subscribe(
-            (F_COMPTETs) => {
-                let found = false;
-                let index = 0;
-
-                while (!found && index < F_COMPTETs.length) {
-                    if (F_COMPTETs[index].CT_Num.toUpperCase() == this.login.toUpperCase()) {
-                        found = true;
-                        F_Comptet = F_COMPTETs[index];
-                    } else {
-                        index++;
-                    }
+    async logInF_COMPTET() {
+        if(this.login == '' || this.login == null)
+            if(this.password == '' || this.password == null)
+                this.error = 'Veuillez entrer un identifiant & mot de passe';
+            else
+                this.error = 'Veuillez entrer un identifiant';
+        else if(this.password == '' || this.password == null)
+            this.error = 'Veuillez entrer un mot de passe';
+        else {
+            await this.userService.getUserValidity(this.login, this.password).then((data) => {
+                console.log(data);
+                console.log("win");
+                this.navCtrl.navigateForward(['/nav/article']);
+            }).catch((data) => {
+                    this.error = data;
+                    console.log("fail");
                 }
-                if (found) {
-                    this.userService.setActiveF_COMPTET(F_Comptet);
-                    this.userService.addF_COMPTET(F_Comptet);
-                    this.navCtrl.navigateForward(['/nav/article']);
-                } else {
-                    this.error = 'Mauvais identifiant/mot de passe';
-                }
-            }
-        );
+            );
+        }
     }
-
 }

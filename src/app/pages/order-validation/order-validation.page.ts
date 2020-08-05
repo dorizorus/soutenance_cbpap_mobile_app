@@ -28,15 +28,15 @@ export class OrderValidationPage implements OnInit {
 
     pdfObj = null;
     orderlines: OrderLine[];
-    statusShipping : boolean;
+    statusShipping: boolean;
 
     order =
         {
             orderNumber: 'the one',
             orderDate: new Date(),
-            customer : this.userService.getActiveCustomer(),
+            customer: this.userService.getActiveCustomer(),
             orderLines: this.cartService.getCart()
-        }
+        };
 
     // Erreur de dépendance circulaire dans la classe, si on enleve file, fileopener et emailc, l'erreur disparait
     constructor(private plt: Platform,
@@ -54,7 +54,6 @@ export class OrderValidationPage implements OnInit {
         this.orderlines = this.cartService.getCart();
         this.finalTotal = this.cartService.getFinalTotal();
         this.statusShipping = this.warehouseRetService.getStatusShipping();
-
     }
 
 
@@ -63,7 +62,7 @@ export class OrderValidationPage implements OnInit {
         return this.warehouseRetService.getStatus() ? 'OUI' : 'NON';
     }
 
-    shipping(){
+    shipping() {
         return this.statusShipping ? '20 €' : 'gratuite';
     }
 
@@ -115,7 +114,7 @@ export class OrderValidationPage implements OnInit {
                         body: this.constructBody()
                     }
                 },
-                {text : 'Livraison : ' + this.shipping(), alignment: 'right'},
+                {text: 'Livraison : ' + this.shipping(), alignment: 'right'},
                 {
                     text: 'Total HT : ' + this.finalTotal + ' €', alignment: 'right'
                 },
@@ -147,7 +146,7 @@ export class OrderValidationPage implements OnInit {
         this.sendMail();
 
         this.orderService.addOrder(this.order);
-        
+
         this.deleteAll();
 
     }
@@ -190,7 +189,7 @@ export class OrderValidationPage implements OnInit {
     }
 
     //fermeture de la modal après envoi commande
-    onDismiss(){
+    onDismiss() {
         this.modalController.dismiss();
     }
 

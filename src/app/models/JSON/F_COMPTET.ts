@@ -9,5 +9,5 @@ export class F_COMPTET {
     CT_Sommeil: number;
     CT_Telephone: string;
     CT_EMail: string;
-
+    MDP?:string;
 }

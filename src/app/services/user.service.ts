@@ -3,9 +3,7 @@ import {Customer} from '../models/Customer';
 import {BehaviorSubject} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {F_COMPTET} from '../models/JSON/F_COMPTET';
-import {F_DOCLIGNE} from "../models/JSON/F_DOCLIGNE";
-import {F_ARTICLE} from "../models/JSON/F_ARTICLE";
-import {F_ARTCLIENT} from "../models/JSON/F_ARTCLIENT";
+import {F_DOCLIGNE} from '../models/JSON/F_DOCLIGNE';
 
 
 @Injectable({
@@ -25,6 +23,7 @@ export class UserService {
 
     constructor(private http: HttpClient) {
     }
+
     // récupère le compte actif
     getActiveCustomer() {
         return this.activeF_COMPTET;
@@ -35,77 +34,6 @@ export class UserService {
         return this.f_COMPTET;
     }
 
-    private mockAccount() {
-        const compte1 =
-            {
-                id: '1',
-                name: 'test1',
-                address: '5 rue des pizzaiolo',
-                email: 'chezmoi@pizzasarl.com',
-                password: 'test1',
-                customerPicture: 'assets/icon/devanturePizzaHut.png',
-                phoneNumber: '0387254981',
-                city:
-                    {
-                        id: 55,
-                        name: 'Metz',
-                        postalCode: 57000
-                    },
-                customerFiles: ''
-            };
-        const compte2 =
-            {
-                id: '1',
-                name: 'test2',
-                address: '5 rue des pizzaiolo',
-                email: 'chezmoi@pizzasarl.com',
-                password: 'test2',
-                customerPicture: 'assets/icon/devanturePizzaHut.png',
-                phoneNumber: '0387254981',
-                city:
-                    {
-                        id: 55,
-                        name: 'Metz',
-                        postalCode: 57000
-                    },
-                customerFiles: ''
-            };
-        const compte3 =
-            {
-                id: '1',
-                name: 'test3',
-                address: '5 rue des pizzaiolo',
-                email: 'chezmoi@pizzasarl.com',
-                password: 'test3',
-                customerPicture: 'assets/icon/devanturePizzaHut.png',
-                phoneNumber: '0387254981',
-                city:
-                    {
-                        id: 55,
-                        name: 'Metz',
-                        postalCode: 57000
-                    },
-                customerFiles: ''
-            };
-        const compte4 =
-            {
-                id: '1',
-                name: 'Pizza Chez Moi Sarl',
-                address: '5 rue des pizzaiolo',
-                email: 'chezmoi@pizzasarl.com',
-                password: 'test3',
-                customerPicture: 'assets/icon/devanturePizzaHut.png',
-                phoneNumber: '0387254981',
-                city:
-                    {
-                        id: 55,
-                        name: 'Metz',
-                        postalCode: 57000
-                    },
-                customerFiles: ''
-            };
-        return [compte1, compte2, compte3, compte4];
-    }
 
     // Ajoute un compte au tableau de comptes du téléphone. Le client actif est attribué à ce moment la
     addF_COMPTET(f_COMPTET: F_COMPTET) {
@@ -161,5 +89,36 @@ export class UserService {
 
     getDocLignes() {
         return this.http.get<F_DOCLIGNE[]>('assets/F_DOCLIGNE.json');
+    }
+
+    async getUserValidity(login: string, password: string){
+        let F_Comptet = null;
+        console.log("user validity");
+        return new Promise((resolve,reject) => {
+            this.getAllF_COMPTETs().subscribe(
+                (F_COMPTETs) => {
+                    let found = false;
+                    let index = 0;
+
+                    console.log(index);
+                    console.log(F_COMPTETs.length);
+                    while (!found && index < F_COMPTETs.length) {
+                        if (F_COMPTETs[index].CT_Num.toUpperCase() == login.toUpperCase() && password == F_COMPTETs[index].MDP) {
+                            found = true;
+                            F_Comptet = F_COMPTETs[index];
+                        } else {
+                            index++;
+                        }
+                    }
+                    if (found) {
+                        this.setActiveF_COMPTET(F_Comptet);
+                        this.addF_COMPTET(F_Comptet);
+                        resolve(F_Comptet);
+                    } else {
+                        reject('Mauvais identifiant/mot de passe');
+                    }
+                }
+            );
+        });
     }
 }
