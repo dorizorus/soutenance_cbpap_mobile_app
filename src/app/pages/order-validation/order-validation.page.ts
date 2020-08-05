@@ -104,7 +104,7 @@ export class OrderValidationPage implements OnInit {
                 {text: 'Commande : ', style: 'subheader'},
                 {text: 'Ref client : ' + this.userService.getActiveCustomer().CT_Num},
                 {text: this.userService.getActiveCustomer().CT_Intitule},
-                {text: this.userService.getActiveCustomer().CT_Adresse + ' ' + this.userService.getActiveCustomer().CT_CodePostal + this.userService.getActiveCustomer().CT_Ville},
+                {text: this.userService.getActiveCustomer().CT_Adresse + ' ' + this.userService.getActiveCustomer().CT_CodePostal + ' ' + this.userService.getActiveCustomer().CT_Ville},
 
                 // c'est ici qu'on construit le tableau dans le pdf :
                 // on indique le nombre de colonnes et on injecte l'array myBody construit dans la méthode constructBody()
