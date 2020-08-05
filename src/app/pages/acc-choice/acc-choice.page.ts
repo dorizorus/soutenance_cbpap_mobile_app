@@ -20,22 +20,22 @@ export class AccChoicePage implements OnInit {
 
     ngOnInit() {
         // susbscribe à tout changement dans la liste de comptes
-        this.userService.activeF_COMPTET$.subscribe(data => {
+        this.userService.activeCustomer$.subscribe(data => {
             this.customer = data;
         });
-        this.userService.f_COMPTETAccounts$.subscribe(data => {
+        this.userService.customerAccounts$.subscribe(data => {
             this.accounts = data;
         });
     }
 
     selectAccountAndGoToArticles(customer: F_COMPTET) {
-        this.userService.setActiveF_COMPTET(customer);
+        this.userService.setActiveCustomer(customer);
         this.navCtrl.navigateBack(['/nav/article']);
     }
 
     // on indique simplement le compte que l'on va récupérer dans la page des options
     goToSettings(compte: F_COMPTET) {
-        this.userService.setActiveF_COMPTET(compte);
+        this.userService.setActiveCustomer(compte);
         this.navCtrl.navigateForward(['/acc-choice/settings']);
     }
 

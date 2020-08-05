@@ -12,8 +12,7 @@
             </ion-label>
         </ion-list-header>
         <ion-item *ngFor="let orderLine of orderLineList">
-            <!-- <ion-thumbnail slot="start" (click)="createOrderLineDetails(orderLine)"> -->
-            <ion-thumbnail slot="start">
+            <ion-thumbnail slot="start" (click)="createOrderLineDetails(orderLine)">
                 <span *ngIf="orderLine.article.articleImage != undefined && orderLine.article.articleImage.image != undefined; else emptyImage ">
                     <img src="{{orderLine.article.articleImage.image}}"/>
                 </span>
@@ -22,11 +21,10 @@
                 </ng-template>
             </ion-thumbnail>
 
-            <span class="small">
-                <!-- <button (click)="createOrderLineDetails(orderLine)"> -->
-                <button>
+            <span>
+                <button (click)=createOrderLineDetails(orderLine)>
                     <ion-label><small>{{orderLine.article.reference}}</small></ion-label>
-                {{orderLine.article.label}}
+                    {{orderLine.article.label | slice: 0 : 25}}
                 </button>
             </span>
 

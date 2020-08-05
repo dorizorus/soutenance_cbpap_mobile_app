@@ -32,7 +32,7 @@ export class OrderValidationPage implements OnInit {
     order: Order;
     
     statusShipping: boolean;
-    order: Order;
+
     constructor(private plt: Platform,
                 private file: File,
                 private fileOpener: FileOpener,
@@ -78,7 +78,7 @@ export class OrderValidationPage implements OnInit {
     constructBody() {
         for (const orderline of this.order.orderLines) {
             // @ts-ignore
-            this.myBody.push([`${orderline.article.reference}`, `${orderline.quantity}`, `${orderline.article.finalPrice * orderline.quantity + '€'}`]);
+            this.myBody.push([`${orderline.article.reference}`, `${orderline.quantity}`, `${orderline.article.unitPrice * orderline.quantity + '€'}`]);
         }
         return this.myBody;
     }
@@ -113,7 +113,8 @@ export class OrderValidationPage implements OnInit {
                 {text: 'Commande : ', style: 'subheader'},
                 {text: 'Ref client : ' + this.userService.getActiveCustomer().CT_Num},
                 {text: this.userService.getActiveCustomer().CT_Intitule},
-                {text: this.userService.getActiveCustomer().CT_Adresse + ' ' + this.userService.getActiveCustomer().CT_CodePostal + ' ' + this.userService.getActiveCustomer().CT_Ville},
+                {text: this.userService.getActiveCustomer().CT_Adresse},
+                {text: this.userService.getActiveCustomer().CT_CodePostal + ' ' + this.userService.getActiveCustomer().CT_Ville},
 
                 // c'est ici qu'on construit le tableau dans le pdf :
                 // on indique le nombre de colonnes et on injecte l'array myBody construit dans la méthode constructBody()
@@ -175,9 +176,11 @@ export class OrderValidationPage implements OnInit {
                 // tslint:disable-next-line:max-line-length
                 {text: 'ATTENTION Commande ' + this.cartService.getCart().orderNumber + ' ' + this.cartService.getCart().orderDate.toLocaleDateString() +
                        ' ' + this.cartService.getCart().orderDate.toLocaleTimeString() + ' MODIFIEE' , style: 'subheader'},
-                {text: 'Ref client : ' + this.userService.getActiveCustomer().id},
-                {text: this.userService.getActiveCustomer().name},
-                {text: this.userService.getActiveCustomer().address},
+                {text: 'Ref client : ' + this.userService.getActiveCustomer().CT_Num},
+                {text: this.userService.getActiveCustomer().CT_Intitule},
+                {text: this.userService.getActiveCustomer().CT_Adresse},
+                {text: this.userService.getActiveCustomer().CT_CodePostal + ' ' +
+                        this.userService.getActiveCustomer().CT_Ville},
 
                 // c'est ici qu'on construit le tableau dans le pdf :
                 // on indique le nombre de colonnes et on injecte l'array myBody construit dans la méthode constructBody()

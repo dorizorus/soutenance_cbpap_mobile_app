@@ -6,6 +6,10 @@ import {OrderLine} from 'src/app/models/OrderLine';
 import {UserService} from 'src/app/services/user.service';
 import {CartService} from '../../services/cart.service';
 import {ArticleService} from '../../services/article.service';
+import {cloneDeep} from 'lodash';
+import {F_ARTICLE} from "../../models/JSON/F_ARTICLE";
+import {Order} from "../../models/Order";
+import {F_COMPTET} from "../../models/JSON/F_COMPTET";
 
 @Component({
     selector: 'app-articles',
@@ -15,11 +19,11 @@ import {ArticleService} from '../../services/article.service';
 export class ArticlePage implements OnInit {
 
     possibleQuantities: number[] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
-    cart: OrderLine[] = [];
+    cart: Order;
     orderLineList: OrderLine[] = [];
     orderLineBackup: OrderLine[] = [];
-
-    f_articleList: F_ARTICLE[] = [];
+    totalQuantity: number;
+    customer: F_COMPTET;
 
     constructor(private modalController: ModalController,
                 private cartService: CartService,
@@ -39,12 +43,142 @@ export class ArticlePage implements OnInit {
             }
         );
 
-        // à la création de la page on fait une copie de la liste.
-        // cf. les méthodes "getOrderLines()" et "getArticleSearched(ev: any)
-        this.orderLineBackup = this.orderLineList;
+        this.userService.activeCustomer$.subscribe(
+            customer => this.customer = customer
+        );
 
         this.initTopF_ARTICLE();
-        // console.log(this.getAllArticleUnitPrice('801332'));
+    }
+
+    initTopF_ARTICLE() {
+        let articlesAndFrequency: [string, string, number][] = [];
+        let AR_Ref_Array: string[] = [];
+        const ctNum = this.customer.CT_Num;
+
+        this.userService.getDocLignes().subscribe(
+            (F_DOCLIGNES) => {
+                F_DOCLIGNES.forEach(
+                    (DOCLIGNE) => {
+                        if (DOCLIGNE.CT_Num == ctNum) {
+
+                            if (DOCLIGNE.AR_Ref.trim() != '')
+                                if (AR_Ref_Array.indexOf(DOCLIGNE.AR_Ref.trim()) != -1) {
+                                    articlesAndFrequency[AR_Ref_Array.indexOf(DOCLIGNE.AR_Ref.trim())][2]++;
+                                } else {
+                                    AR_Ref_Array.push(DOCLIGNE.AR_Ref.trim());
+                                    articlesAndFrequency.push([DOCLIGNE.AR_Ref.trim(), DOCLIGNE.DL_Design, 1]);
+                                }
+                        }
+
+                    }
+                );
+                articlesAndFrequency.sort((a, b) => (b[2] - a[2]));
+                articlesAndFrequency.forEach(
+                    data => {
+                        const orderLine = {
+                            article: {
+                                reference: data[0],
+                                label: data[1],
+                                AC_PrixVen: 0,
+                                AC_Remise: 0
+                            },
+                            quantity: 0,
+                            orderNumber: null,
+                        };
+                        this.orderLineList.push(orderLine);
+                    }
+                )
+            },
+            (error) => console.error(error),
+            () => {
+                this.initAllInfosTest();
+            }
+        );
+    }
+
+    private initAllInfosTest() {
+        console.log('in initAllInfosTest()');
+
+        let ctNum = this.customer.CT_Num;
+
+        this.articleService.getF_ARTCLIENT().subscribe(
+            (F_ARTCLIENT) => {
+
+                for (let orderLine of this.orderLineList) {
+
+                    for (const discount of F_ARTCLIENT) {
+
+                        if (discount.AR_Ref == orderLine.article.reference) {
+
+                            if (discount.CT_Num == ctNum) {
+                                const AC_PrixVen = parseFloat(discount.AC_PrixVen.replace(',', '.'));
+                                const AC_Remise = parseFloat(discount.AC_Remise.replace(',', '.'));
+                                if (AC_PrixVen != 0 && AC_Remise != 0) {
+                                    orderLine.article.AC_PrixVen = AC_PrixVen;
+                                    orderLine.article.AC_Remise = AC_Remise;
+                                    break;
+                                } else if (AC_PrixVen != 0 && AC_Remise == 0) {
+                                    orderLine.article.AC_PrixVen = AC_PrixVen;
+                                    break;
+                                } else if (AC_PrixVen == 0 && AC_Remise != 0) {
+                                    orderLine.article.AC_Remise = AC_Remise;
+                                    break;
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+            },
+            error => console.error(error),
+            () => this.initAllPricesTest());
+    }
+
+    private initAllPricesTest() {
+        console.log('in initAllPricesTest');
+        let copyOfOrderLineList = cloneDeep(this.orderLineList);
+        this.articleService.getF_ARTICLE().subscribe(
+            (F_ARTICLES) => {
+                for (const orderline of this.orderLineList) {
+
+                    for (const article of F_ARTICLES) {
+
+                        if (orderline.article.reference == article.AR_Ref.trim()) {
+                            console.log('yes');
+
+                            if (orderline.article.AC_PrixVen != 0 && orderline.article.AC_Remise != 0)
+                                orderline.article.unitPrice =
+                                    orderline.article.AC_PrixVen * (1 - orderline.article.AC_Remise / 100);
+
+                            else if (orderline.article.AC_PrixVen != 0 && orderline.article.AC_Remise == 0)
+                                orderline.article.unitPrice =
+                                    orderline.article.AC_PrixVen;
+
+                            else if (orderline.article.AC_PrixVen == 0 && orderline.article.AC_Remise != 0)
+                                orderline.article.unitPrice =
+                                    parseFloat(article.AR_PrixVen.replace(',', '.'))
+                                    * (1 - orderline.article.AC_Remise / 100);
+
+                            else
+                                orderline.article.unitPrice =
+                                    parseFloat(article.AR_PrixVen.replace(',', '.'));
+
+                            copyOfOrderLineList.splice(copyOfOrderLineList.indexOf(orderline), 1);
+                            break;
+                        }
+                        if (copyOfOrderLineList.length == 0)
+                            break;
+                    }
+                }
+            },
+            error => console.error(error),
+            () => {
+                console.log(this.orderLineList);
+                this.cartService.initOrderLinesList(this.orderLineList);
+                this.orderLineBackup = this.orderLineList;
+                console.log(this.orderLineList);
+            }
+        );
     }
 
 
@@ -119,129 +253,6 @@ export class ArticlePage implements OnInit {
 
         // on met à jour le nouveau panier dans le service
         this.cartService.setCart(this.cart);
-
-    initTopF_ARTICLE() {
-
-        let articlesAndFrequency: [string, string, number][] = [];
-        let AR_Ref_Array: string[] = [];
-        const ctNum = this.userService.getActiveF_COMPTET().CT_Num;
-
-        this.userService.getDocLignes().subscribe(
-            (F_DOCLIGNES) => {
-                F_DOCLIGNES.forEach(
-                    (DOCLIGNE) => {
-                        if (DOCLIGNE.CT_Num == ctNum) {
-
-                            if (DOCLIGNE.AR_Ref.trim() != '')
-                                if (AR_Ref_Array.indexOf(DOCLIGNE.AR_Ref.trim()) != -1) {
-                                    articlesAndFrequency[AR_Ref_Array.indexOf(DOCLIGNE.AR_Ref.trim())][2]++;
-                                } else {
-                                    AR_Ref_Array.push(DOCLIGNE.AR_Ref.trim());
-                                    articlesAndFrequency.push([DOCLIGNE.AR_Ref.trim(), DOCLIGNE.DL_Design, 1]);
-                                }
-                        }
-
-                    }
-                );
-                articlesAndFrequency.sort((a, b) => (b[2] - a[2]));
-                articlesAndFrequency.forEach(
-                    data => {
-                        const orderLine = {
-                            article: {
-                                reference: data[0],
-                                label: data[1],
-                                AC_PrixVen: 0,
-                                AC_Remise: 0
-                            },
-                            quantity: 0,
-                            orderNumber: null,
-                        };
-                        this.orderLineList.push(orderLine);
-                    }
-                )
-            },
-            (error) => console.error(error),
-            () => {
-                this.initAllInfosTest();
-            }
-        );
-
-    private initAllInfosTest() {
-        console.log('in initAllInfosTest()');
-
-        let ctNum = this.userService.getActiveF_COMPTET().CT_Num;
-
-        this.articleService.getF_ARTCLIENT().subscribe(
-            (F_ARTCLIENT) => {
-
-                for (let orderLine of this.orderLineList) {
-
-                    for (const discount of F_ARTCLIENT) {
-
-                        if (discount.AR_Ref == orderLine.article.reference) {
-
-                            if (discount.CT_Num == ctNum) {
-                                const AC_PrixVen = parseFloat(discount.AC_PrixVen.replace(',', '.'));
-                                const AC_Remise = parseFloat(discount.AC_Remise.replace(',', '.'));
-                                if (AC_PrixVen != 0 && AC_Remise != 0) {
-                                    orderLine.article.AC_PrixVen = AC_PrixVen;
-                                    orderLine.article.AC_Remise = AC_Remise;
-                                    break;
-                                } else if (AC_PrixVen != 0 && AC_Remise == 0) {
-                                    orderLine.article.AC_PrixVen = AC_PrixVen;
-                                    break;
-                                } else if (AC_PrixVen == 0 && AC_Remise != 0) {
-                                    orderLine.article.AC_Remise = AC_Remise;
-                                    break;
-                                }
-                                break;
-                            }
-                        }
-                    }
-                }
-            },
-            error => console.error(error),
-            () => this.initAllPricesTest());
-    }
-
-    private initAllPricesTest() {
-        console.log('in initAllPricesTest');
-        let copyOfOrderLineList = cloneDeep(this.orderLineList);
-        this.articleService.getF_ARTICLE().subscribe(
-            (F_ARTICLES) => {
-                for (const orderline of this.orderLineList) {
-
-                    for (const article of F_ARTICLES) {
-
-                        if (orderline.article.reference == article.AR_Ref.trim()) {
-
-                            if (orderline.article.AC_PrixVen != 0 && orderline.article.AC_Remise != 0)
-                                orderline.article.unitPrice =
-                                    orderline.article.AC_PrixVen * (1 - orderline.article.AC_Remise / 100);
-
-                            else if (orderline.article.AC_PrixVen != 0 && orderline.article.AC_Remise == 0)
-                                orderline.article.unitPrice =
-                                    orderline.article.AC_PrixVen;
-
-                            else if (orderline.article.AC_PrixVen == 0 && orderline.article.AC_Remise != 0)
-                                orderline.article.unitPrice =
-                                    parseFloat(article.AR_PrixVen.replace(',', '.'))
-                                    * (1 - orderline.article.AC_Remise / 100);
-
-                            else
-                                orderline.article.unitPrice =
-                                    parseFloat(article.AR_PrixVen.replace(',', '.'));
-
-                            copyOfOrderLineList.splice(copyOfOrderLineList.indexOf(orderline), 1);
-                            break;
-                        }
-                        if (copyOfOrderLineList.length == 0)
-                            break;
-                    }
-                }
-            },
-            error => console.error(error),
-            () => this.cartService.setOrderLineList(this.orderLineList)
-        );
     }
 }
+

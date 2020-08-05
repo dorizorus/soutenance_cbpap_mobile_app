@@ -1,100 +1,64 @@
 import {Injectable} from '@angular/core';
 import {Customer} from '../models/Customer';
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {F_COMPTET} from '../models/JSON/F_COMPTET';
 import {F_DOCLIGNE} from '../models/JSON/F_DOCLIGNE';
+import {UserWeb} from "../models/UserWeb";
+import {environment} from "../../environments/environment";
+import {Storage} from "@ionic/storage";
 
 @Injectable({
     providedIn: 'root'
 })
 export class UserService {
 
-    customer: Customer;
-    userWeb : UserWeb;
-    usersWebPool : UserWeb[] = [];
-    activeCustomer: Customer;
+    customer: F_COMPTET;
+    activeCustomer: F_COMPTET;
+    public activeCustomer$: BehaviorSubject<F_COMPTET> = new BehaviorSubject<F_COMPTET>(null);
+    customerAccounts: F_COMPTET[] = [];
+    public customerAccounts$: BehaviorSubject<F_COMPTET[]> = new BehaviorSubject<F_COMPTET[]>([]);
 
-    f_COMPTET: F_COMPTET;
-    activeF_COMPTET: F_COMPTET;
-    public activeF_COMPTET$: BehaviorSubject<F_COMPTET> = new BehaviorSubject<F_COMPTET>(null);
-    f_COMPTETAccounts: F_COMPTET[] = [];
-    public f_COMPTETAccounts$: BehaviorSubject<F_COMPTET[]> = new BehaviorSubject<F_COMPTET[]>([]);
-
-
-    constructor(private http: HttpClient) {
+    constructor(private http: HttpClient, private dataStorage: Storage) {
     }
-    
-    // Observable qui recupère un json du pool d'utilisateurs web. Mais vu
-    // qu'il y en a qu'un ... Dur d'être dynamique x)
-    // TODO remplacer adrano par .. rien afin d'avoir les utilisateurs web
-    readonly usersObservable = new Observable ((observer) => {
-        this.httpClient.
-        get(environment.baseUrl + '/HF_COMPTET/' + 'ADRANO').
-        subscribe(
-            (user : UserWeb) => {
-                console.log("Début du sub, le num du perso 0 est ")
-                this.usersWebPool.push(user);
-                observer.next(user);
-                console.log(this.usersWebPool[0].CT_Num)
+
 
     // récupère le compte actif
     getActiveCustomer() {
-        return this.activeF_COMPTET;
+        return this.activeCustomer;
     }
 
-    // on récupère un compte (utilisé dans del-acc)
-    getCustomer() {
-        return this.f_COMPTET;
+
+    // permet de définir quel est le compte actif puis l'envoie au subscribe
+    setActiveCustomer(f_comptet: F_COMPTET) {
+        this.activeCustomer = f_comptet;
+        this.activeCustomer$.next(this.activeCustomer);
+        localStorage.setItem('user', JSON.stringify(this.activeCustomer));
     }
+
+
+
+    // ici on fait simplement transiter un compte (pas forcément actif, utilisé dans settings)
+    setCustomer(f_comptet: F_COMPTET) {
+        this.customer = f_comptet;
+        this.activeCustomer$.next(this.customer);
+    }
+
 
 
     // Ajoute un compte au tableau de comptes du téléphone. Le client actif est attribué à ce moment la
-    addF_COMPTET(f_COMPTET: F_COMPTET) {
-        this.f_COMPTETAccounts.push(f_COMPTET);
-        this.f_COMPTETAccounts$.next(this.f_COMPTETAccounts);
-        this.setActiveF_COMPTET(f_COMPTET);
-    }
-
-    // Supprimer un compte des comptes sur le téléphone.
-    // On cherche l'index dans le tableau et on le supprime, ensuite on met à jour les subscribes
-    removeF_COMPTET(f_COMPTET: F_COMPTET) {
-        if (this.activeF_COMPTET === f_COMPTET) {
-            this.activeF_COMPTET = null;
-            this.activeF_COMPTET$.next(f_COMPTET);
-        }
-        const i = this.f_COMPTETAccounts.indexOf(this.f_COMPTET);
-        this.f_COMPTETAccounts.splice(i, 1);
-        this.f_COMPTETAccounts$.next(this.f_COMPTETAccounts);
+    addCustomer(f_COMPTET: F_COMPTET) {
+        this.customerAccounts.push(f_COMPTET);
+        this.customerAccounts$.next(this.customerAccounts);
+        this.setActiveCustomer(f_COMPTET);
     }
 
     // permet de récupérer la liste de comptes
-    getF_COMPTETAccounts() {
-        return this.f_COMPTETAccounts;
+    getCustomerAccounts() {
+        return this.customerAccounts;
     }
 
-    // permet de définir quel est le compte actif puis l'envoie au subscribe
-    setActiveF_COMPTET(f_comptet: F_COMPTET) {
-        this.activeF_COMPTET = f_comptet;
-        this.activeF_COMPTET$.next(this.f_COMPTET);
-        localStorage.setItem('user', JSON.stringify(this.activeF_COMPTET));
-    }
 
-    // récupère le compte actif
-    getActiveF_COMPTET() {
-        return this.activeF_COMPTET;
-    }
-
-    // ici on fait simplement transiter un compte (pas forcément actif, utilisé dans settings)
-    setF_COMPTET(f_comptet: F_COMPTET) {
-        this.f_COMPTET = f_comptet;
-        this.activeF_COMPTET$.next(this.f_COMPTET);
-    }
-
-    // on récupère un compte (utilisé dans del-acc)
-    getF_COMPTET() {
-        return this.f_COMPTET;
-    }
 
     getAllF_COMPTETs() {
         // todo remplacer par l'appel à l'api
@@ -102,6 +66,7 @@ export class UserService {
     }
 
     getDocLignes() {
+        // todo remplacer par l'appel à l'api
         return this.http.get<F_DOCLIGNE[]>('assets/F_DOCLIGNE.json');
     }
 
@@ -125,8 +90,8 @@ export class UserService {
                         }
                     }
                     if (found) {
-                        this.setActiveF_COMPTET(F_Comptet);
-                        this.addF_COMPTET(F_Comptet);
+                        this.setActiveCustomer(F_Comptet);
+                        this.addCustomer(F_Comptet);
                         resolve(F_Comptet);
                     } else {
                         reject('Mauvais identifiant/mot de passe');
@@ -134,11 +99,6 @@ export class UserService {
                 }
             );
         });
-    }
-
-    // A ne pas supprimer, utile avec l'arrivée du reste du webservice
-    getUserByRef(login : string) : Observable<UserWeb> {
-        return this.httpClient.get<UserWeb>(environment.baseUrl + '/HF_COMPTET/' + login);
     }
 
     setUserStorage(user : Customer) {
@@ -153,10 +113,32 @@ export class UserService {
             let taille : number;
             this.dataStorage.length().then((val : number) => {
                 taille = val;
-            })
+            });
             console.log("La taille du storage est de" + taille);
             console.log("J'ai mon user" + data.city + " dans le storage");
             return data;
         })
+    }
+
+
+    /**
+     * méthodes pour le del-acc
+     */
+
+    // on récupère un compte (utilisé dans del-acc)
+    getCustomer() {
+        return this.customer;
+    }
+
+    // Supprimer un compte des comptes sur le téléphone.
+    // On cherche l'index dans le tableau et on le supprime, ensuite on met à jour les subscribes
+    removeCustomer(customer: F_COMPTET) {
+        if (this.activeCustomer === customer) {
+            this.activeCustomer = null;
+            this.activeCustomer$.next(customer);
+        }
+        const i = this.customerAccounts.indexOf(this.customer);
+        this.customerAccounts.splice(i, 1);
+        this.customerAccounts$.next(this.customerAccounts);
     }
 }

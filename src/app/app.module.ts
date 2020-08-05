@@ -17,9 +17,6 @@ import {FormsModule} from '@angular/forms';
 // import pour le data storage local. On le met aussi dans l'import
 import { IonicStorageModule } from '@ionic/storage';
 
-// import pour la connexion et pouvoir faire des gets donc. Ajout dans import
-import { HttpClientModule }  from '@angular/common/http';
-
 //imports nécessaires pour générer pdf et créer un mail
 import { File } from '@ionic-native/file/ngx';
 import { FileOpener } from '@ionic-native/file-opener/ngx';

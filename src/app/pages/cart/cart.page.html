@@ -18,11 +18,20 @@
         </ion-button>
     </div>
     <ion-list>
+
         <ion-item *ngFor="let orderLine of cart.orderLines">
-            <ion-avatar><img src="{{orderLine.article.articleImage.image}}"></ion-avatar>
+            <ion-avatar *ngIf="orderLine.article.articleImage != undefined && orderLine.article.articleImage.image != undefined; else emptyImage ">
+                <img src="{{orderLine.article.articleImage.image}}">
+            </ion-avatar>
+                <ng-template #emptyImage>
+                    <ion-avatar>
+                <img src="./assets/icon/not_found.jpg"/>
+                    </ion-avatar>
+                </ng-template>
+
             <span class="small">
             <ion-label><strong>{{orderLine.article.reference}}</strong></ion-label>
-                {{orderLine.article.label}}
+                {{orderLine.article.label | slice:0:20 }}
             </span>
             <span class="align">
             {{orderLine.article.unitPrice}} €
