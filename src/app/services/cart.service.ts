@@ -44,8 +44,11 @@ export class CartService {
         );
     }
 
-    setCart(cart: Order) {
+    getCart(): Order {
+        return this.cart;
+    }
 
+    setCart(cart: Order) {
         this.cart = cart;
         this.updateTotal();
         this.cart$.next(this.cart);
@@ -57,21 +60,12 @@ export class CartService {
         this.cart$.next(this.cart);
     }
 
-    // vider toutes les orderlines du panier
-    resetCartOrderLines() {
-        this.cart.orderLines = [];
-        this.updateTotal();
-        this.cart$.next(this.cart);
-    }
-
+    // remet le panier à l'inital = vidage de panier
     resetCart() {
         this.cart = this.initCart;
         this.setCart(this.initCart);
     }
 
-    getCart(): Order {
-        return this.cart;
-    }
 
     // permet d'initialiser la liste d'articles dans articlePage
     initOrderLinesList(orderLines: OrderLine[]){
@@ -79,13 +73,27 @@ export class CartService {
         this.orderLineList$.next(orderLines);
     }
 
+    // mise à jour de la liste d'article avec la bonne quantité : prend une orderline en particulier
     updateOrderLineFromList(orderLine: OrderLine, qty: number) {
         const index = this.orderLineList.indexOf(orderLine);
         this.orderLineList[index].quantity = qty;
         this.orderLineList$.next(this.orderLineList);
+
+        // const index2 = this.cart.orderLines.indexOf(orderLine);
+        // console.log('index à supprimer');
+        // console.log(this.cart.orderLines.indexOf(orderLine));
+        //
+        // console.log('quantité à supprimer');
+        // console.log(this.cart.orderLines[index2].quantity);
+        //
+        // if(this.cart.orderLines[index2].quantity === 0){
+        //     console.log(this.cart.orderLines[index2]);
+        //     this.cart.orderLines.splice(index2,1);
+        //     // this.cart$.next(this.cart);
+        // }
     }
 
-    // mise à jour des quantités dans la liste des articles
+    // mise à jour des quantités dans la liste des articles : prend toutes les orderlines du panier en paramètre
     setOrderLineList(orderLinesFromCart: OrderLine[]) {
         orderLinesFromCart.forEach(orderLine => {
             let index = 0;
