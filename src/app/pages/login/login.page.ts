@@ -28,8 +28,7 @@ export class LoginPage implements OnInit {
                 private modalController: ModalController,
                 private userService: UserService,
                 private router: Router,
-                private platForm : Platform,
-                private dataStorage : Storage) {
+                private platForm : Platform) {
 
                     this.platForm.ready().then(() => {
                         this.userService.setAllUsersStorage();

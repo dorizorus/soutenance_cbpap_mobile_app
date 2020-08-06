@@ -50,8 +50,8 @@ export class ArticlePage implements OnInit {
             }
         );
 
-        // this.userService.getStorageLength();
-        this.userService.setAllUsersStorage();
+        console.log(this.userService.getStorageLength());
+        // this.userService.setAllUsersStorage();
     }
 
     initTopF_ARTICLE() {

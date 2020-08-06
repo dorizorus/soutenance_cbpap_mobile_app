@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {BehaviorSubject, Observable} from 'rxjs';
+import {BehaviorSubject} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {F_COMPTET} from '../models/JSON/F_COMPTET';
 import {F_DOCLIGNE} from '../models/JSON/F_DOCLIGNE';
@@ -11,7 +11,7 @@ import {Storage} from "@ionic/storage";
 export class UserService {
 
     customer: F_COMPTET;
-    sizeStorage : number;
+    sizeStorage: number;
     activeCustomer: F_COMPTET;
     public activeCustomer$: BehaviorSubject<F_COMPTET> = new BehaviorSubject<F_COMPTET>(null);
     customerAccounts: F_COMPTET[] = [];
@@ -35,13 +35,11 @@ export class UserService {
     }
 
 
-
     // ici on fait simplement transiter un compte (pas forcément actif, utilisé dans settings)
     setCustomer(f_comptet: F_COMPTET) {
         this.customer = f_comptet;
         this.activeCustomer$.next(this.customer);
     }
-
 
 
     // Ajoute un compte au tableau de comptes du téléphone. Le client actif est attribué à ce moment la
@@ -56,8 +54,6 @@ export class UserService {
         return this.customerAccounts;
     }
 
-
-
     getAllF_COMPTETs() {
         // todo remplacer par l'appel à l'api
         return this.http.get<F_COMPTET[]>('assets/F_COMPTET.json');
@@ -68,10 +64,10 @@ export class UserService {
         return this.http.get<F_DOCLIGNE[]>('assets/F_DOCLIGNE.json');
     }
 
-    async getUserValidity(login: string, password: string){
+    async getUserValidity(login: string, password: string) {
         let F_Comptet = null;
         console.log("user validity");
-        return new Promise((resolve,reject) => {
+        return new Promise((resolve, reject) => {
             this.getAllF_COMPTETs().subscribe(
                 (F_COMPTETs) => {
                     let found = false;
@@ -101,30 +97,31 @@ export class UserService {
         });
     }
 
-    setUserStorage(user : F_COMPTET) {
+    setUserStorage(user: F_COMPTET) {
         // On attend que le storage prêt
         this.dataStorage.ready().then(() => {
-        // systéme de clé / valeur
+            // systéme de clé / valeur
             this.dataStorage.set(user.CT_Num, user);
             this.getUserStorage(user.CT_Num);
         });
 
     }
 
-    getUserStorage(login : string) {
+    getUserStorage(login: string) {
         this.dataStorage.ready().then(() => {
-        // systéme de promesse
-        this.dataStorage.get(login).then((data : F_COMPTET) => {
-            console.log("J'ai mon user " + data.CT_Num + " dans le storage");
-            return data;
+            // systéme de promesse
+            this.dataStorage.get(login).then((data: F_COMPTET) => {
+                console.log("J'ai mon user " + data.CT_Num + " dans le storage");
+                console.log(this.getStorageLength());
+                return data;
+            });
         });
-      });
     }
 
     setAllUsersStorage() {
         this.customerAccounts = [];
         this.dataStorage.ready().then(() => {
-            this.dataStorage.forEach((valeur : F_COMPTET) => {
+            this.dataStorage.forEach((valeur: F_COMPTET) => {
                 this.customerAccounts.push(valeur);
                 console.log("3 " + valeur.CT_Num + " ajouté a customerAccounts");
             });
@@ -132,7 +129,13 @@ export class UserService {
     }
 
     getStorageLength() {
-        this.dataStorage.ready().then(() => {
+        this.dataStorage.length().then((total) => {
+            setTimeout(() => {
+                return total;
+            }, 100)
+        });
+        /*
+        return this.dataStorage.ready().then(() => {
             this.sizeStorage = 0;
             // this.dataStorage.clear().then(() => {
                 this.dataStorage.length().then((val : number) => {
@@ -141,6 +144,7 @@ export class UserService {
                 });
             // });
             });
+         */
     }
 
     /**
