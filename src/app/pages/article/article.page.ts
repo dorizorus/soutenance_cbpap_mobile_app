@@ -142,20 +142,20 @@ export class ArticlePage implements OnInit {
 
                             if (orderline.article.AC_PrixVen != 0 && orderline.article.AC_Remise != 0)
                                 orderline.article.unitPrice =
-                                    orderline.article.AC_PrixVen * (1 - orderline.article.AC_Remise / 100);
+                                    Math.ceil(orderline.article.AC_PrixVen * (1 - orderline.article.AC_Remise / 100)*100)/100;
 
                             else if (orderline.article.AC_PrixVen != 0 && orderline.article.AC_Remise == 0)
                                 orderline.article.unitPrice =
-                                    orderline.article.AC_PrixVen;
+                                    Math.ceil(orderline.article.AC_PrixVen*100)/100;
 
                             else if (orderline.article.AC_PrixVen == 0 && orderline.article.AC_Remise != 0)
                                 orderline.article.unitPrice =
-                                    parseFloat(article.AR_PrixVen.replace(',', '.'))
-                                    * (1 - orderline.article.AC_Remise / 100);
+                                    Math.ceil(parseFloat(article.AR_PrixVen.replace(',', '.'))
+                                    * (1 - orderline.article.AC_Remise / 100)*100)/100;
 
                             else
                                 orderline.article.unitPrice =
-                                    parseFloat(article.AR_PrixVen.replace(',', '.'));
+                                    Math.ceil(parseFloat(article.AR_PrixVen.replace(',', '.'))*100)/100;
 
 
             },

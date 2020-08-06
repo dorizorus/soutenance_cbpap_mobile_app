@@ -76,7 +76,7 @@ export class OrderValidationPage implements OnInit {
     constructBody() {
         for (const orderline of this.order.orderLines) {
             // @ts-ignore
-            this.myBody.push([`${orderline.article.reference}`, `${orderline.quantity}`, `${orderline.article.unitPrice * orderline.quantity + '€'}`]);
+            this.myBody.push([`${orderline.article.reference}`, `${orderline.quantity}`, `${Number(orderline.article.unitPrice * orderline.quantity).toFixed(2) + '€'}`]);
         }
         return this.myBody;
     }
@@ -125,7 +125,7 @@ export class OrderValidationPage implements OnInit {
                 },
                 {text: 'Livraison : ' + this.shipping(), alignment: 'right'},
                 {
-                    text: 'Total HT : ' + this.finalTotal + ' €', alignment: 'right'
+                    text: 'Total HT : ' + Number(this.finalTotal).toFixed(2) + ' €', alignment: 'right'
                 },
                 {
                     text: 'Retrait entrepôt : ' + this.isWarehouseRet(), alignment: 'right'
@@ -191,7 +191,7 @@ export class OrderValidationPage implements OnInit {
                 },
                 {text : 'Livraison : ' + this.shipping(), alignment: 'right'},
                 {
-                    text: 'Total HT : ' + this.finalTotal + ' €', alignment: 'right'
+                    text: 'Total HT : ' + Number(this.finalTotal).toFixed(2) + ' €', alignment: 'right'
                 },
                 {
                     text: 'Retrait entrepôt : ' + this.isWarehouseRet(), alignment: 'right'
