@@ -1,10 +1,11 @@
 import {Component, OnInit} from '@angular/core';
-import {ModalController, NavController} from '@ionic/angular';
+import {ModalController, NavController, Platform} from '@ionic/angular';
 import {ContactPageModule} from '../contact/contact.module';
 import {UserService} from 'src/app/services/user.service';
-import {Router} from '@angular/router';
+import {Router, NavigationEnd} from '@angular/router';
 import {F_COMPTET} from '../../models/JSON/F_COMPTET';
 import {UserWeb} from "../../models/UserWeb";
+import {Storage} from "@ionic/storage";
 
 @Component({
     selector: 'app-login',
@@ -26,18 +27,42 @@ export class LoginPage implements OnInit {
     constructor(private navCtrl: NavController,
                 private modalController: ModalController,
                 private userService: UserService,
-                private router: Router) {
-    }
+                private router: Router,
+                private platForm : Platform,
+                private dataStorage : Storage) {
+
+                    this.dataStorage.ready().then(() => {
+                        this.userService.getStorageLength();
+                        this.userService.setAllUsersStorage();
+                        this.redirection();
+                    })
+                    // on subscribe a l'evenement lié au routeur, a chaque changement d'url, on lance
+                    // la méthode. Si l'url est similaire a la page de login et si c'est vide, redirige vers la liste
+                    this.router.events.subscribe((e) => {
+                        if (e instanceof NavigationEnd) {
+                            if (e.url == '/login' && this.userService.sizeStorage > 0)
+                                this.router.navigateByUrl('/nav/article');
+                        }
+                    })
+                }
 
 
     ngOnInit() {
-        if (this.userService.getCustomerAccounts().length == 1) {
-            this.router.navigateByUrl('/nav/article');
-        } else if (this.userService.getCustomerAccounts().length > 1) {
-            this.router.navigateByUrl('/acc-choice');
-        }
+        
     }
 
+    async redirection() {
+        this.dataStorage.ready().then(() => {
+            if (this.userService.sizeStorage == 1) {
+                console.log("4 c'est pas vide!");
+                this.router.navigateByUrl('/nav/article');
+            } else if (this.userService.sizeStorage> 1) {
+                this.router.navigateByUrl('/acc-choice');
+            } else {
+                console.log("4 c'est vide :'(, storage vaut" + this.userService.sizeStorage);
+            }
+        });
+    }
     async initClient() {
         // on créer le compte
         const compte: F_COMPTET =

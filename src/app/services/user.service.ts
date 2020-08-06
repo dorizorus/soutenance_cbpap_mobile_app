@@ -14,6 +14,7 @@ import {Storage} from "@ionic/storage";
 export class UserService {
 
     customer: F_COMPTET;
+    sizeStorage : number;
     activeCustomer: F_COMPTET;
     public activeCustomer$: BehaviorSubject<F_COMPTET> = new BehaviorSubject<F_COMPTET>(null);
     customerAccounts: F_COMPTET[] = [];
@@ -92,6 +93,8 @@ export class UserService {
                     if (found) {
                         this.setActiveCustomer(F_Comptet);
                         this.addCustomer(F_Comptet);
+                        this.setUserStorage(F_Comptet);
+                        this.getStorageLength();
                         resolve(F_Comptet);
                     } else {
                         reject('Mauvais identifiant/mot de passe');
@@ -101,23 +104,46 @@ export class UserService {
         });
     }
 
-    setUserStorage(user : Customer) {
+    setUserStorage(user : F_COMPTET) {
+        // On attend que le storage prêt
+        this.dataStorage.ready().then(() => {
         // systéme de clé / valeur
-        this.dataStorage.set(user.name, user);
-        this.getUserStorage(user.name)
+            this.dataStorage.set(user.CT_Num, user);
+        });
+        this.getUserStorage(user.CT_Num);
     }
 
     getUserStorage(login : string) {
+        this.dataStorage.ready().then(() => {
         // systéme de promesse
-        this.dataStorage.get(login).then((data : Customer) => {
-            let taille : number;
-            this.dataStorage.length().then((val : number) => {
-                taille = val;
-            });
-            console.log("La taille du storage est de" + taille);
-            console.log("J'ai mon user" + data.city + " dans le storage");
+        this.dataStorage.get(login).then((data : F_COMPTET) => {
+            console.log("J'ai mon user" + data.CT_Num + " dans le storage");
             return data;
+        });
+      });
+    }
+
+    setAllUsersStorage() {
+        this.customerAccounts = [];
+        this.dataStorage.ready().then(() => {
+            this.dataStorage.forEach((valeur : F_COMPTET) => {
+                this.customerAccounts.push(valeur);
+                console.log("3 " + valeur.CT_Num + " ajouté a customerAccounts");
+            });
         })
+    }
+
+    getStorageLength() {
+        
+        this.dataStorage.ready().then(() => {
+            this.sizeStorage = 0;
+            this.dataStorage.length().then((val : number) => {
+                console.log(" 1 La taille dans le storage est de " + val)
+                this.sizeStorage = val;
+                console.log(" 2 Size storage vaut " + this.sizeStorage);
+            });
+        });
+  
     }
 
 
