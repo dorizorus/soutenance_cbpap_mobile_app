@@ -20,6 +20,7 @@ export class UserService {
     public customerAccounts$: BehaviorSubject<Customer[]> = new BehaviorSubject<Customer[]>([]);
     public activeCustomer$: BehaviorSubject<Customer> = new BehaviorSubject<Customer>(null);
     public adresseAdrano : string = 'http://80.14.6.243:8080/HF_COMPTET/ADRANO';
+    hfComptetUrl : string = '/HF_COMPTET/';
     
     constructor(private httpClient : HttpClient,
                 private dataStorage : Storage) {
@@ -29,9 +30,7 @@ export class UserService {
     // qu'il y en a qu'un ... Dur d'être dynamique x)
     // TODO remplacer adrano par .. rien afin d'avoir les utilisateurs web
     readonly usersObservable = new Observable ((observer) => {
-        this.httpClient.
-        get(environment.baseUrl + '/HF_COMPTET/' + 'ADRANO').
-        subscribe(
+        this.httpClient.get(environment.baseUrl + this.hfComptetUrl + 'ADRANO').subscribe(
             (user : UserWeb) => {
                 console.log("Début du sub, le num du perso 0 est ")
                 this.usersWebPool.push(user);
@@ -97,7 +96,7 @@ export class UserService {
     }
 
     getAllAccounts(): Customer[] {
-        // todo recup tous les comptes existants peut-être un localstorage ?
+        // todo recup tous les comptes existants peut-être un localstorage avant de faire la requête
         return this.mockAccount();
     }
 

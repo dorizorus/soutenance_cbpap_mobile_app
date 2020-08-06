@@ -6,17 +6,17 @@ import {IonicModule} from '@ionic/angular';
 
 import {ArticlePage} from './article.page';
 import {ArticlesPageRoutingModule} from "./article-routing.module";
-import {HeaderComponent} from "../../header/header.component";
+import {ComponentsModule} from "../../header/components.module";
 
 @NgModule({
     imports: [
         CommonModule,
         FormsModule,
         IonicModule,
+        ComponentsModule,
         ArticlesPageRoutingModule
     ],
-    exports: [HeaderComponent],
-    declarations: [ArticlePage, HeaderComponent]
+    declarations: [ArticlePage]
 })
 export class ArticlesPageModule {
 }

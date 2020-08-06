@@ -8,15 +8,17 @@ import { HistoryPageRoutingModule } from './history-routing.module';
 
 import { HistoryPage } from './history.page';
 import {HeaderComponent} from "../../header/header.component";
+import {ComponentsModule} from "../../header/components.module";
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
+    ComponentsModule,
     HistoryPageRoutingModule
   ],
-  exports: [HeaderComponent],
-  declarations: [HistoryPage, HeaderComponent]
+  exports: [],
+  declarations: [HistoryPage]
 })
 export class HistoryPageModule {}

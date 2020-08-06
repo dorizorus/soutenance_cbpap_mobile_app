@@ -35,8 +35,6 @@ export class LoginPage implements OnInit {
                                 this.router.navigateByUrl('/nav/article');
                         }
                     });
-
-
     }
 
 
@@ -65,7 +63,6 @@ export class LoginPage implements OnInit {
            } 
         )
     }
-    
 
     async initClient() {
         // on créer le compte
@@ -137,7 +134,6 @@ export class LoginPage implements OnInit {
     /* Utile plus tard, ne pas supprimer
     getUserData() {
         this.userService.getUserByRef(this.login).subscribe(user => {
-
         })
     } */
 
