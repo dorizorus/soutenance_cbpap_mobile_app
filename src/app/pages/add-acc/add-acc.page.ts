@@ -1,8 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {UserService} from 'src/app/services/user.service';
-import {Customer} from 'src/app/models/Customer';
-import {NavController} from '@ionic/angular';
-import {Router} from "@angular/router";
+import {Router} from '@angular/router';
 
 @Component({
     selector: 'app-add-acc',
@@ -22,15 +20,25 @@ export class AddAccPage implements OnInit {
     ngOnInit() {
     }
 
-/*    addAccountAndRedirect() {
-        // recupere un msg d'erreur si invalid, sinon un account
-        let res = this.userService.getUserValidity(this.login,this.password);
-        if(res == false)
-            this.error = "Mauvais mot de passe / identifiant";
-        else{
-            this.userService.addCustomer(res);
-            this.userService.setActiveCustomer(res);
-            this.router.navigateByUrl('/acc-choice');
+    async addAccountAndRedirect() {
+        if (this.login == '' || this.login == null) {
+            if (this.password == '' || this.password == null) {
+                this.error = 'Veuillez entrer un identifiant & mot de passe';
+            } else {
+                this.error = 'Veuillez entrer un identifiant';
+            }
+        } else if (this.password == '' || this.password == null) {
+            this.error = 'Veuillez entrer un mot de passe';
+        } else {
+            await this.userService.getUserValidity(this.login, this.password).then((data) => {
+                console.log(data);
+                console.log('win');
+                this.router.navigateByUrl('/nav/article');
+            }).catch((data) => {
+                    this.error = data;
+                    console.log("fail");
+                }
+            );
         }
-    }*/
+    }
 }

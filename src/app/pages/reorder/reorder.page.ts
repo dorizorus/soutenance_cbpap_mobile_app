@@ -1,10 +1,10 @@
 import {Component, OnInit} from '@angular/core';
-import {OrderService} from "../../services/order.service";
-import {Order} from "../../models/Order";
+import {OrderService} from '../../services/order.service';
+import {Order} from '../../models/Order';
 
 import {cloneDeep} from 'lodash';
-import {CartService} from "../../services/cart.service";
-import { ToastController } from '@ionic/angular';
+import {CartService} from '../../services/cart.service';
+import {ToastController} from '@ionic/angular';
 
 @Component({
     selector: 'app-recommande',
@@ -18,7 +18,7 @@ export class ReorderPage implements OnInit {
 
     constructor(private orderService: OrderService,
                 private cartService: CartService,
-                private toastController : ToastController) {
+                private toastController: ToastController) {
     }
 
     ngOnInit() {
@@ -37,17 +37,19 @@ export class ReorderPage implements OnInit {
     private updateTotal() {
         // Si le toggle est activé on applique la remise
         this.total = 0;
-        if (!this.warehouseRetrieval)
+        if (!this.warehouseRetrieval) {
             this.order.orderLines.forEach(value => this.total += (value.article.finalPrice * value.quantity));
-        else
+        } else {
             this.order.orderLines.forEach(value => this.total += ((value.article.finalPrice * value.quantity) * 0.95));
-        if (this.total < 250 && !this.warehouseRetrieval)
+        }
+        if (this.total < 250 && !this.warehouseRetrieval) {
             this.total += 20;
+        }
     }
 
     // todo faire en sorte d'envoyer pdf par mail
     startOrder() {
-        
+
     }
 
     // met a jour le cart dans le service
@@ -63,11 +65,11 @@ export class ReorderPage implements OnInit {
     // génère un toast pour indiquer le transfert de panier
     async toastClick() {
         const toast = await this.toastController.create({
-          color: 'white',
-          duration: 3000,
-          message: 'Commande bien transférée!'
+            color: 'white',
+            duration: 3000,
+            message: 'Commande bien transférée!'
         });
-  
+
         await toast.present();
-      }
+    }
 }

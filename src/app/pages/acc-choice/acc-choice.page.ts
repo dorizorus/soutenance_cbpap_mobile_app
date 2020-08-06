@@ -1,8 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {NavController} from '@ionic/angular';
 import {UserService} from 'src/app/services/user.service';
-import {Customer} from 'src/app/models/Customer';
-import {F_COMPTET} from "../../models/JSON/F_COMPTET";
+import {F_COMPTET} from '../../models/JSON/F_COMPTET';
 
 @Component({
     selector: 'app-choix-compte',

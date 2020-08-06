@@ -2,13 +2,10 @@ import {Component, OnInit} from '@angular/core';
 import {ModalController, NavController} from '@ionic/angular';
 import {OrderService} from '../services/order.service';
 import {CartPage} from '../pages/cart/cart.page';
-import {OrderLine} from '../models/OrderLine';
 import {UserService} from '../services/user.service';
-import {Customer} from '../models/Customer';
 import {WarehouseRetService} from '../services/warehouse-ret.service';
 import {CartService} from '../services/cart.service';
 import {Order} from '../models/Order';
-import { cloneDeep } from 'lodash';
 import {F_COMPTET} from "../models/JSON/F_COMPTET";
 
 @Component({

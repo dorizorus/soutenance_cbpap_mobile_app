@@ -1,7 +1,5 @@
 import {Component, OnInit} from '@angular/core';
 import {NavController, AlertController} from '@ionic/angular';
-
-import {Customer} from 'src/app/models/Customer';
 import {UserService} from 'src/app/services/user.service';
 import {F_COMPTET} from '../../models/JSON/F_COMPTET';
 
@@ -17,7 +15,7 @@ export class SettingsPage implements OnInit {
                 private userService: UserService) {
     }
 
-    customer : F_COMPTET;
+    customer: F_COMPTET;
 
     ngOnInit() {
         this.customer = this.userService.getActiveCustomer();
@@ -30,7 +28,6 @@ export class SettingsPage implements OnInit {
 
     // Fait apparaitre une alerte pour la confirmation. Le handler permet de faire des actions
     // via la fonction flechée
-
     async alertConfirm() {
         const alert = await this.alertCtrl.create({
             header: 'Suppression d\'un compte',

@@ -1,12 +1,10 @@
 import {Injectable} from '@angular/core';
-import {Customer} from '../models/Customer';
-import {BehaviorSubject, Observable} from 'rxjs';
+import {BehaviorSubject} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {F_COMPTET} from '../models/JSON/F_COMPTET';
 import {F_DOCLIGNE} from '../models/JSON/F_DOCLIGNE';
-import {UserWeb} from "../models/UserWeb";
-import {environment} from "../../environments/environment";
-import {Storage} from "@ionic/storage";
+import {Storage} from '@ionic/storage';
+import {environment} from '../../environments/environment.prod';
 
 @Injectable({
     providedIn: 'root'
@@ -23,7 +21,7 @@ export class UserService {
     }
 
 
-    // récupère le compte actif
+    // récupère le compte acti
     getActiveCustomer() {
         return this.activeCustomer;
     }
@@ -36,15 +34,11 @@ export class UserService {
         localStorage.setItem('user', JSON.stringify(this.activeCustomer));
     }
 
-
-
     // ici on fait simplement transiter un compte (pas forcément actif, utilisé dans settings)
     setCustomer(f_comptet: F_COMPTET) {
         this.customer = f_comptet;
         this.activeCustomer$.next(this.customer);
     }
-
-
 
     // Ajoute un compte au tableau de comptes du téléphone. Le client actif est attribué à ce moment la
     addCustomer(f_COMPTET: F_COMPTET) {
@@ -58,8 +52,6 @@ export class UserService {
         return this.customerAccounts;
     }
 
-
-
     getAllF_COMPTETs() {
         // todo remplacer par l'appel à l'api
         return this.http.get<F_COMPTET[]>('assets/F_COMPTET.json');
@@ -70,10 +62,10 @@ export class UserService {
         return this.http.get<F_DOCLIGNE[]>('assets/F_DOCLIGNE.json');
     }
 
-    async getUserValidity(login: string, password: string){
+    async getUserValidity(login: string, password: string) {
         let F_Comptet = null;
-        console.log("user validity");
-        return new Promise((resolve,reject) => {
+        console.log('user validity');
+        return new Promise((resolve, reject) => {
             this.getAllF_COMPTETs().subscribe(
                 (F_COMPTETs) => {
                     let found = false;
@@ -101,23 +93,47 @@ export class UserService {
         });
     }
 
-    setUserStorage(user : Customer) {
-        // systéme de clé / valeur
-        this.dataStorage.set(user.name, user);
-        this.getUserStorage(user.name)
+    getHF_COMPTETAPI(login: string) {
+        // todo remplacer par l'appel à l'api
+        return this.http.get<F_COMPTET>(environment.baseAPI + 'HF_COMPTET/' + login);
     }
 
-    getUserStorage(login : string) {
+    async getUserValidityAPI(login: string, password: string) {
+        let F_Comptet = null;
+        console.log('user validity');
+        return new Promise((resolve, reject) => {
+            this.getHF_COMPTETAPI(login).subscribe(
+                (F_COMPTET) => {
+
+                    if (F_COMPTET.CT_Num.toUpperCase() == login.toUpperCase() && password == F_COMPTET.MDP) {
+                        this.setActiveCustomer(F_Comptet);
+                        this.addCustomer(F_Comptet);
+                        resolve(F_Comptet);
+                    } else {
+                        reject('Mauvais identifiant/mot de passe');
+                    }
+                }
+            );
+        });
+    }
+
+    setUserStorage(user: F_COMPTET) {
+        // systéme de clé / valeur
+        this.dataStorage.set(user.CT_Num, user);
+        this.getUserStorage(user.CT_Num);
+    }
+
+    getUserStorage(login: string) {
         // systéme de promesse
-        this.dataStorage.get(login).then((data : Customer) => {
-            let taille : number;
-            this.dataStorage.length().then((val : number) => {
+        this.dataStorage.get(login).then((data: F_COMPTET) => {
+            let taille: number;
+            this.dataStorage.length().then((val: number) => {
                 taille = val;
             });
-            console.log("La taille du storage est de" + taille);
-            console.log("J'ai mon user" + data.city + " dans le storage");
+            console.log('La taille du storage est de' + taille);
+            console.log('J\'ai mon user' + data.CT_Num + ' dans le storage');
             return data;
-        })
+        });
     }
 
 

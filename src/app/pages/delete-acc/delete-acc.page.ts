@@ -1,9 +1,7 @@
 import {Component, OnInit} from '@angular/core';
-import {ModalController, NavController} from '@ionic/angular';
-import {ContactPageModule} from '../contact/contact.module';
+import {ModalController} from '@ionic/angular';
 import {UserService} from 'src/app/services/user.service';
-import {Customer} from 'src/app/models/Customer';
-import {Router} from "@angular/router";
+import {Router} from '@angular/router';
 import {F_COMPTET} from '../../models/JSON/F_COMPTET';
 
 @Component({
@@ -27,17 +25,20 @@ export class DeleteAccPage implements OnInit {
     }
 
     // todo recup ce qui a ete fait dans login pour la logique
-   /* deleteAcc() {
-        // recupere un msg d'erreur si invalid, sinon un account
-        let res = this.userService.getUserValidity(this.customer.name,this.password);
-        if(res == false)
-            this.error = "Mauvais mot de passe / identifiant";
-        else{
-            this.userService.removeCustomer(res);
-            if (this.userService.getAccounts().length != 0)
-                this.router.navigateByUrl('/acc-choice');
-            else
-                this.router.navigateByUrl('/login');
-        }
-    }*/
+    // mais remplacer le login par la suppression
+    // aussi delete du storage
+
+    /* deleteAcc() {
+         // recupere un msg d'erreur si invalid, sinon un account
+         let res = this.userService.getUserValidity(this.customer.name,this.password);
+         if(res == false)
+             this.error = "Mauvais mot de passe / identifiant";
+         else{
+             this.userService.removeCustomer(res);
+             if (this.userService.getAccounts().length != 0)
+                 this.router.navigateByUrl('/acc-choice');
+             else
+                 this.router.navigateByUrl('/login');
+         }
+     }*/
 }

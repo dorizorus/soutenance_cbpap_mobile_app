@@ -1,38 +1,37 @@
-<!-- 
-<ion-header>
-  <ion-toolbar>
-    <ion-title>Contact</ion-title>
-  </ion-toolbar>
-</ion-header>
--->
-
-<!-- C'était ma premiere page donc j'ai pas trop utilisé de balise ionic. A améliorer du coup -->
-
 <ion-content>
-  <div class="header">
-    <ion-title><img src="assets/icon/logo.jpg" alt="logo"></ion-title>
-    15 rue Lieut. Yves le Saux<br/>
-    57685 AUGNY
-  </div>
-  <div class="body">
-    <p><ion-icon name="mail-outline" class="icone-large"></ion-icon><strong>commercial@cbpapiers.com</strong></p>
-    <p><ion-icon name="mail-outline" class="icone-large"></ion-icon><strong>contact@cbpapiers.com</strong></p>
+    <div class="header">
+        <ion-title><img src="assets/icon/logo.jpg" alt="logo"></ion-title>
+        15 rue Lieut. Yves le Saux<br/>
+        57685 AUGNY
+    </div>
+    <div class="body">
+        <p>
+            <ion-icon name="mail-outline" class="icone-large"></ion-icon>
+            <strong>commercial@cbpapiers.com</strong></p>
+        <p>
+            <ion-icon name="mail-outline" class="icone-large"></ion-icon>
+            <strong>contact@cbpapiers.com</strong></p>
 
-    <p><ion-icon name="keypad-outline" class="icone-large"></ion-icon><strong>03 87 51 33 24</strong></p>
-    
-    <p class="box">Appuyez sur un numéro pour nous contacter</p>
+        <p>
+            <ion-icon name="keypad-outline" class="icone-large"></ion-icon>
+            <strong>03 87 51 33 24</strong></p>
 
-    <p (click)="onClickJerome()"><strong>Jerôme</strong><br/>
-      <ion-icon name="phone-portrait-sharp" class="icone-large"></ion-icon><strong><span id="numerophone">+33 6 76 41 18 29</span></strong><br/>
-    </p>
+        <p class="box">Appuyez sur un numéro pour nous contacter</p>
 
-    <p (click)="onClickXavier()"><strong>Xavier</strong><br/>
-      <ion-icon name="phone-portrait-sharp" class="icone-large"></ion-icon><strong><span id="numerophone">+33 6 07 95 06 20</span></strong><br/>
-    </p>
+        <p (click)="onClickJerome()"><strong>Jerôme</strong><br/>
+            <ion-icon name="phone-portrait-sharp" class="icone-large"></ion-icon>
+            <strong><span class="numerophone">+33 6 76 41 18 29</span></strong><br/>
+        </p>
 
-    <p (click)="onClickJulien()"><strong>Julien</strong><br/>
-      <ion-icon name="phone-portrait-sharp" class="icone-large"></ion-icon><strong><span id="numerophone">+33 6 07 54 74 99</span></strong><br/>
-    </p>
-  </div>
-  
+        <p (click)="onClickXavier()"><strong>Xavier</strong><br/>
+            <ion-icon name="phone-portrait-sharp" class="icone-large"></ion-icon>
+            <strong><span class="numerophone">+33 6 07 95 06 20</span></strong><br/>
+        </p>
+
+        <p (click)="onClickJulien()"><strong>Julien</strong><br/>
+            <ion-icon name="phone-portrait-sharp" class="icone-large"></ion-icon>
+            <strong><span class="numerophone">+33 6 07 54 74 99</span></strong><br/>
+        </p>
+    </div>
+
 </ion-content>

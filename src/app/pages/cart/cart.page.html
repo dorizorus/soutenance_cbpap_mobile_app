@@ -13,21 +13,22 @@
 
 
     <div *ngIf="cart.orderLines.length != 0" class="centerRight">
-        <ion-button (click)="deleteAll()" color="danger" >
+        <ion-button (click)="deleteAll()" color="danger">
             Vider le panier
         </ion-button>
     </div>
     <ion-list>
 
         <ion-item *ngFor="let orderLine of cart.orderLines">
-            <ion-avatar *ngIf="orderLine.article.articleImage != undefined && orderLine.article.articleImage.image != undefined; else emptyImage ">
+            <ion-avatar
+                    *ngIf="orderLine.article.articleImage != undefined && orderLine.article.articleImage.image != undefined; else emptyImage ">
                 <img src="{{orderLine.article.articleImage.image}}">
             </ion-avatar>
-                <ng-template #emptyImage>
-                    <ion-avatar>
-                <img src="./assets/icon/not_found.jpg"/>
-                    </ion-avatar>
-                </ng-template>
+            <ng-template #emptyImage>
+                <ion-avatar>
+                    <img src="./assets/icon/not_found.jpg"/>
+                </ion-avatar>
+            </ng-template>
 
             <span class="small">
             <ion-label><strong>{{orderLine.article.reference}}</strong></ion-label>
@@ -54,14 +55,15 @@
         </ion-item>
     </ion-list>
     <div *ngIf="cart.orderLines.length != 0; else emptyCart" class="alignement">
-        
+
         <div *ngIf="!warehouseRetrieval">
             <div> Sous total HT : <span class="green">{{total | number:'1.2-2'}}</span></div>
             <div *ngIf="total-250 >= 0; else noDiscount" class="green">
                 <small>LIVRAISON GRATUITE</small>
             </div>
             <ng-template #noDiscount>
-                <div><span class="green">{{250 - total | number:'1.2-2' }} </span><small> € avant la livraison gratuite</small></div>
+                <div><span class="green">{{250 - total | number:'1.2-2' }} </span><small> € avant la livraison
+                    gratuite</small></div>
                 <div>Livraison : <span class="red">{{shippingPrice}} €</span></div>
             </ng-template>
         </div>

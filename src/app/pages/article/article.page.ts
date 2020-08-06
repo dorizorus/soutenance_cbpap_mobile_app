@@ -1,15 +1,13 @@
 import {Component, OnInit} from '@angular/core';
 import {ModalController} from '@ionic/angular';
 import {SingleArticlePage} from '../single-article/single-article.page';
-import {Article} from 'src/app/models/Article';
 import {OrderLine} from 'src/app/models/OrderLine';
 import {UserService} from 'src/app/services/user.service';
 import {CartService} from '../../services/cart.service';
 import {ArticleService} from '../../services/article.service';
+import {Order} from '../../models/Order';
+import {F_COMPTET} from '../../models/JSON/F_COMPTET';
 import {cloneDeep} from 'lodash';
-import {F_ARTICLE} from "../../models/JSON/F_ARTICLE";
-import {Order} from "../../models/Order";
-import {F_COMPTET} from "../../models/JSON/F_COMPTET";
 
 @Component({
     selector: 'app-articles',
@@ -44,10 +42,11 @@ export class ArticlePage implements OnInit {
         );
 
         this.userService.activeCustomer$.subscribe(
-            customer => this.customer = customer
+            customer => {
+                this.customer = customer;
+                this.initTopF_ARTICLE();
+            }
         );
-
-        this.initTopF_ARTICLE();
     }
 
     initTopF_ARTICLE() {
@@ -61,13 +60,14 @@ export class ArticlePage implements OnInit {
                     (DOCLIGNE) => {
                         if (DOCLIGNE.CT_Num == ctNum) {
 
-                            if (DOCLIGNE.AR_Ref.trim() != '')
+                            if (DOCLIGNE.AR_Ref.trim() != '') {
                                 if (AR_Ref_Array.indexOf(DOCLIGNE.AR_Ref.trim()) != -1) {
                                     articlesAndFrequency[AR_Ref_Array.indexOf(DOCLIGNE.AR_Ref.trim())][2]++;
                                 } else {
                                     AR_Ref_Array.push(DOCLIGNE.AR_Ref.trim());
                                     articlesAndFrequency.push([DOCLIGNE.AR_Ref.trim(), DOCLIGNE.DL_Design, 1]);
                                 }
+                            }
                         }
 
                     }
@@ -87,7 +87,7 @@ export class ArticlePage implements OnInit {
                         };
                         this.orderLineList.push(orderLine);
                     }
-                )
+                );
             },
             (error) => console.error(error),
             () => {
@@ -131,11 +131,10 @@ export class ArticlePage implements OnInit {
                 }
             },
             error => console.error(error),
-            () => this.initAllPricesTest());
+            () => this.initAllPrices());
     }
 
-    private initAllPricesTest() {
-        console.log('in initAllPricesTest');
+    private initAllPrices() {
         let copyOfOrderLineList = cloneDeep(this.orderLineList);
         this.articleService.getF_ARTICLE().subscribe(
             (F_ARTICLES) => {
@@ -144,30 +143,27 @@ export class ArticlePage implements OnInit {
                     for (const article of F_ARTICLES) {
 
                         if (orderline.article.reference == article.AR_Ref.trim()) {
-                            console.log('yes');
-
-                            if (orderline.article.AC_PrixVen != 0 && orderline.article.AC_Remise != 0)
+                            if (orderline.article.AC_PrixVen != 0 && orderline.article.AC_Remise != 0) {
                                 orderline.article.unitPrice =
                                     orderline.article.AC_PrixVen * (1 - orderline.article.AC_Remise / 100);
-
-                            else if (orderline.article.AC_PrixVen != 0 && orderline.article.AC_Remise == 0)
+                            } else if (orderline.article.AC_PrixVen != 0 && orderline.article.AC_Remise == 0) {
                                 orderline.article.unitPrice =
                                     orderline.article.AC_PrixVen;
-
-                            else if (orderline.article.AC_PrixVen == 0 && orderline.article.AC_Remise != 0)
+                            } else if (orderline.article.AC_PrixVen == 0 && orderline.article.AC_Remise != 0) {
                                 orderline.article.unitPrice =
                                     parseFloat(article.AR_PrixVen.replace(',', '.'))
                                     * (1 - orderline.article.AC_Remise / 100);
-
-                            else
+                            } else {
                                 orderline.article.unitPrice =
                                     parseFloat(article.AR_PrixVen.replace(',', '.'));
+                            }
 
                             copyOfOrderLineList.splice(copyOfOrderLineList.indexOf(orderline), 1);
                             break;
                         }
-                        if (copyOfOrderLineList.length == 0)
+                        if (copyOfOrderLineList.length == 0) {
                             break;
+                        }
                     }
                 }
             },

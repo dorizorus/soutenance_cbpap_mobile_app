@@ -14,7 +14,7 @@ import {UserService} from '../../services/user.service';
 import {OrderLine} from '../../models/OrderLine';
 import {OrderService} from '../../services/order.service';
 import {Order} from '../../models/Order';
-import { cloneDeep } from 'lodash';
+import {cloneDeep} from 'lodash';
 import {GenerateIDService} from '../../services/generate-id.service';
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
@@ -30,7 +30,7 @@ export class OrderValidationPage implements OnInit {
 
     pdfObj = null;
     order: Order;
-    
+
     statusShipping: boolean;
 
     constructor(private plt: Platform,
@@ -83,14 +83,14 @@ export class OrderValidationPage implements OnInit {
         return this.myBody;
     }
 
-    checkEditOrderOrNot(){
-        if (this.order.orderNumber == null){
+    checkEditOrderOrNot() {
+        if (this.order.orderNumber == null) {
             this.order =
                 {
                     // numéro de commande généré dans le service generateID
                     orderNumber: this.generateIdService.generate(),
                     orderDate: new Date(),
-                    customer : this.userService.getActiveCustomer(),
+                    customer: this.userService.getActiveCustomer(),
                     orderLines: this.cartService.getCart().orderLines
                 };
             this.sendPdf();
@@ -174,13 +174,17 @@ export class OrderValidationPage implements OnInit {
                     alignment: 'right'
                 },
                 // tslint:disable-next-line:max-line-length
-                {text: 'ATTENTION Commande ' + this.cartService.getCart().orderNumber + ' ' + this.cartService.getCart().orderDate.toLocaleDateString() +
-                       ' ' + this.cartService.getCart().orderDate.toLocaleTimeString() + ' MODIFIEE' , style: 'subheader'},
+                {
+                    text: 'ATTENTION Commande ' + this.cartService.getCart().orderNumber + ' ' + this.cartService.getCart().orderDate.toLocaleDateString() +
+                        ' ' + this.cartService.getCart().orderDate.toLocaleTimeString() + ' MODIFIEE', style: 'subheader'
+                },
                 {text: 'Ref client : ' + this.userService.getActiveCustomer().CT_Num},
                 {text: this.userService.getActiveCustomer().CT_Intitule},
                 {text: this.userService.getActiveCustomer().CT_Adresse},
-                {text: this.userService.getActiveCustomer().CT_CodePostal + ' ' +
-                        this.userService.getActiveCustomer().CT_Ville},
+                {
+                    text: this.userService.getActiveCustomer().CT_CodePostal + ' ' +
+                        this.userService.getActiveCustomer().CT_Ville
+                },
 
                 // c'est ici qu'on construit le tableau dans le pdf :
                 // on indique le nombre de colonnes et on injecte l'array myBody construit dans la méthode constructBody()
@@ -191,7 +195,7 @@ export class OrderValidationPage implements OnInit {
                         body: this.constructBody()
                     }
                 },
-                {text : 'Livraison : ' + this.shipping(), alignment: 'right'},
+                {text: 'Livraison : ' + this.shipping(), alignment: 'right'},
                 {
                     text: 'Total HT : ' + this.finalTotal + ' €', alignment: 'right'
                 },

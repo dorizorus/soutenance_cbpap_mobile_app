@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {Order} from '../../models/Order';
 import {OrderService} from '../../services/order.service';
 import {AlertController, NavController, Platform, ToastController} from '@ionic/angular';
-import { cloneDeep } from 'lodash';
+import {cloneDeep} from 'lodash';
 import {CartService} from '../../services/cart.service';
 
 import {File} from '@ionic-native/file/ngx';
@@ -62,20 +62,20 @@ export class SingleOrderPage implements OnInit {
     }
 
     // permet de calculer le temps restant à afficher avant de ne plus pouvoir éditer ou annuler une commande
-        calculateElapsedTime(){
-            const timeStart = new Date().getTime();
-            const timeEnd = new Date(this.deadline).getTime();
-            const hourDiff = timeEnd - timeStart; //in ms
-            const minDiff = Math.floor(hourDiff / 60 / 1000); //in minutes
-            const hDiff = hourDiff / 3600 / 1000; //in hours
-            const humanReadable = {
-                hours : null,
-                minutes : null
-            };
-            humanReadable.hours = Math.floor(hDiff);
-            humanReadable.minutes = minDiff - 60 * humanReadable.hours;
-            return humanReadable;
-        }
+    calculateElapsedTime() {
+        const timeStart = new Date().getTime();
+        const timeEnd = new Date(this.deadline).getTime();
+        const hourDiff = timeEnd - timeStart; //in ms
+        const minDiff = Math.floor(hourDiff / 60 / 1000); //in minutes
+        const hDiff = hourDiff / 3600 / 1000; //in hours
+        const humanReadable = {
+            hours: null,
+            minutes: null
+        };
+        humanReadable.hours = Math.floor(hDiff);
+        humanReadable.minutes = minDiff - 60 * humanReadable.hours;
+        return humanReadable;
+    }
 
 
     async alertConfirm() {
@@ -138,88 +138,89 @@ export class SingleOrderPage implements OnInit {
     // génère un toast pour indiquer le transfert de panier
     async toastClick() {
         const toast = await this.toastController.create({
-          color: 'green',
-          position: 'top',
-          duration: 3000,
-          message: 'Commande bien transférée!'
+            color: 'green',
+            position: 'top',
+            duration: 3000,
+            message: 'Commande bien transférée!'
         });
 
         await toast.present();
-      }
+    }
 
-      createPdf(){
+    createPdf() {
         const docDefinition = {
-              content: [
-                  {text: 'CBPAPIERS', style: 'header'},
-                  // impression de la date au format dd/mm/yyyy hh'h'mm
-                  {
-                      text: new Date().toLocaleDateString() + ' '
-                          + new Date().toLocaleTimeString(),
-                      alignment: 'right'
-                  },
-                  {text: 'Commande du : ' + this.order.orderDate.toLocaleDateString() + ' '
-                          // this.order.orderDate.getDate() + '/'
-                          // + ('0' + (this.order.orderDate.getMonth() + 1)).slice(-2) + '/'
-                          // + this.order.orderDate.getFullYear() + ' '
-                          + this.order.orderDate.toLocaleTimeString(), style: 'subheader'},
-                  {text: 'Ref client : ' + this.userService.getActiveCustomer().CT_Num},
-                  {text: this.userService.getActiveCustomer().CT_Intitule},
-                  {text: this.userService.getActiveCustomer().CT_Adresse},
-                  {text: 'Commande à annuler ! ! ! ', style: 'subheader'},
-              ],
-              styles: {
-                  subheader: {
-                      fontSize: 16,
-                      bold: true,
-                      margin: [0, 10, 0, 5]
-                  },
-                  tableExample: {
-                      margin: [0, 5, 0, 15]
-                  },
-                  tableHeader: {
-                      bold: true,
-                      fontSize: 13,
-                      color: 'black'
-                  }
-              },
-              defaultStyle: {
-                  alignment: 'justify'
-              }
-          };
+            content: [
+                {text: 'CBPAPIERS', style: 'header'},
+                // impression de la date au format dd/mm/yyyy hh'h'mm
+                {
+                    text: new Date().toLocaleDateString() + ' '
+                        + new Date().toLocaleTimeString(),
+                    alignment: 'right'
+                },
+                {
+                    text: 'Commande du : ' + this.order.orderDate.toLocaleDateString() + ' '
+                        // this.order.orderDate.getDate() + '/'
+                        // + ('0' + (this.order.orderDate.getMonth() + 1)).slice(-2) + '/'
+                        // + this.order.orderDate.getFullYear() + ' '
+                        + this.order.orderDate.toLocaleTimeString(), style: 'subheader'
+                },
+                {text: 'Ref client : ' + this.userService.getActiveCustomer().CT_Num},
+                {text: this.userService.getActiveCustomer().CT_Intitule},
+                {text: this.userService.getActiveCustomer().CT_Adresse},
+                {text: 'Commande à annuler ! ! ! ', style: 'subheader'},
+            ],
+            styles: {
+                subheader: {
+                    fontSize: 16,
+                    bold: true,
+                    margin: [0, 10, 0, 5]
+                },
+                tableExample: {
+                    margin: [0, 5, 0, 15]
+                },
+                tableHeader: {
+                    bold: true,
+                    fontSize: 13,
+                    color: 'black'
+                }
+            },
+            defaultStyle: {
+                alignment: 'justify'
+            }
+        };
         this.pdfObj = pdfMake.createPdf(docDefinition);
         this.downloadPdf();
-      }
+    }
 
-      downloadPdf(){
-          if (this.plt.is('cordova')) {
-              this.pdfObj.getBuffer((buffer) => {
-                  let blob = new Blob([buffer], {type: 'application/pdf'});
+    downloadPdf() {
+        if (this.plt.is('cordova')) {
+            this.pdfObj.getBuffer((buffer) => {
+                let blob = new Blob([buffer], {type: 'application/pdf'});
 
-                  // Save the PDF to the data Directory of our App
-                  this.file.writeFile(this.file.dataDirectory, 'annulation.pdf', blob, {replace: true}).then(fileEntry => {
-                  });
-              });
-          } else {
-              // On a browser simply use download!
-              this.pdfObj.download();
-          }
-      }
+                // Save the PDF to the data Directory of our App
+                this.file.writeFile(this.file.dataDirectory, 'annulation.pdf', blob, {replace: true}).then(fileEntry => {
+                });
+            });
+        } else {
+            // On a browser simply use download!
+            this.pdfObj.download();
+        }
+    }
 
-      sendMail(){
-          const email = {
-              // to: 'contact@cbpapiers.com',
-              to: 'adrien.fek@gmail.com',
-              cc: 'justine.gracia@gmail.com',
-              attachments: [
-                  this.file.dataDirectory + 'annulation.pdf'
-              ],
-          subject: 'ANNULATION COMMANDE ' + ' REFCLIENT : ' + this.userService.getActiveCustomer().CT_Num ,
-              body: 'ATTENTION ANNULATION ',
-              isHtml: true
-          };
-          this.emailComposer.open(email);
-      }
-
+    sendMail() {
+        const email = {
+            // to: 'contact@cbpapiers.com',
+            to: 'adrien.fek@gmail.com',
+            cc: 'justine.gracia@gmail.com',
+            attachments: [
+                this.file.dataDirectory + 'annulation.pdf'
+            ],
+            subject: 'ANNULATION COMMANDE ' + ' REFCLIENT : ' + this.userService.getActiveCustomer().CT_Num,
+            body: 'ATTENTION ANNULATION ',
+            isHtml: true
+        };
+        this.emailComposer.open(email);
+    }
 
 
 }

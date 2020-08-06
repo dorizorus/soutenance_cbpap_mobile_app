@@ -15,7 +15,7 @@ export class DocumentsPage implements OnInit {
     }
 
     onClick() {
-        console.log("test");
+        console.log('test');
     }
 
 }

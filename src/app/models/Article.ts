@@ -1,5 +1,5 @@
-import { ArticlePicture } from './ArticlePicture';
 import { ArticleDetails } from './ArticleDetails';
+import {ArticlePicture} from './ArticlePicture';
 
 export class Article {
 

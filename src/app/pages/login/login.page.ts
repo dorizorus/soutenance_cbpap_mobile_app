@@ -4,7 +4,6 @@ import {ContactPageModule} from '../contact/contact.module';
 import {UserService} from 'src/app/services/user.service';
 import {Router} from '@angular/router';
 import {F_COMPTET} from '../../models/JSON/F_COMPTET';
-import {UserWeb} from "../../models/UserWeb";
 
 @Component({
     selector: 'app-login',
@@ -20,8 +19,6 @@ export class LoginPage implements OnInit {
     login: string;
     password: string;
     error: string;
-    userWeb : UserWeb;
-    usersWeb : UserWeb[] = [];
 
     constructor(private navCtrl: NavController,
                 private modalController: ModalController,
@@ -42,17 +39,17 @@ export class LoginPage implements OnInit {
         // on créer le compte
         const compte: F_COMPTET =
             {
-                CT_Num: "ADRANO",
-                CT_Intitule: "ADRANO PIZZ",
-                CT_Adresse: "9 ZONE COMMERCIALE DU TRIANGLE",
-                CT_CodePostal: "F-57525",
-                CT_Ville: "TALANGE",
-                CT_Pays: "FRANCE",
+                CT_Num: 'ADRANO',
+                CT_Intitule: 'ADRANO PIZZ',
+                CT_Adresse: '9 ZONE COMMERCIALE DU TRIANGLE',
+                CT_CodePostal: 'F-57525',
+                CT_Ville: 'TALANGE',
+                CT_Pays: 'FRANCE',
                 CT_Sommeil: 0,
-                CT_Telephone: "06 01 03 10 07",
-                CT_EMail: "contact@adranopizz.fr"
+                CT_Telephone: '06 01 03 10 07',
+                CT_EMail: 'contact@adranopizz.fr'
             };
-        
+
         // on ne va pas utiliser de set mais un systeme d'ajout/suppresion de compte. Ici, il est ajouté
         this.userService.addCustomer(compte);
     }
@@ -79,21 +76,22 @@ export class LoginPage implements OnInit {
 
     // todo deplacer dans le service pour pouvoir reutiliser dans delete-acc
     async logInF_COMPTET() {
-        if(this.login == '' || this.login == null)
-            if(this.password == '' || this.password == null)
+        if (this.login == '' || this.login == null) {
+            if (this.password == '' || this.password == null) {
                 this.error = 'Veuillez entrer un identifiant & mot de passe';
-            else
+            } else {
                 this.error = 'Veuillez entrer un identifiant';
-        else if(this.password == '' || this.password == null)
+            }
+        } else if (this.password == '' || this.password == null) {
             this.error = 'Veuillez entrer un mot de passe';
-        else {
+        } else {
             await this.userService.getUserValidity(this.login, this.password).then((data) => {
                 console.log(data);
-                console.log("win");
+                console.log('win');
                 this.navCtrl.navigateForward(['/nav/article']);
             }).catch((data) => {
                     this.error = data;
-                    console.log("fail");
+                    console.log('fail');
                 }
             );
         }
