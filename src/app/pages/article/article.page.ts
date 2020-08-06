@@ -44,10 +44,13 @@ export class ArticlePage implements OnInit {
         );
 
         this.userService.activeCustomer$.subscribe(
-            customer => this.customer = customer
+            customer => {
+                this.customer = customer;
+                this.initTopF_ARTICLE();
+            }
         );
 
-        this.initTopF_ARTICLE();
+
     }
 
     initTopF_ARTICLE() {
@@ -59,17 +62,15 @@ export class ArticlePage implements OnInit {
             (F_DOCLIGNES) => {
                 F_DOCLIGNES.forEach(
                     (DOCLIGNE) => {
-                        if (DOCLIGNE.CT_Num == ctNum) {
+                        if (DOCLIGNE.CT_Num == ctNum && DOCLIGNE.AR_Ref.trim() != '')
 
-                            if (DOCLIGNE.AR_Ref.trim() != '')
-                                if (AR_Ref_Array.indexOf(DOCLIGNE.AR_Ref.trim()) != -1) {
-                                    articlesAndFrequency[AR_Ref_Array.indexOf(DOCLIGNE.AR_Ref.trim())][2]++;
-                                } else {
-                                    AR_Ref_Array.push(DOCLIGNE.AR_Ref.trim());
-                                    articlesAndFrequency.push([DOCLIGNE.AR_Ref.trim(), DOCLIGNE.DL_Design, 1]);
-                                }
-                        }
+                            if (AR_Ref_Array.indexOf(DOCLIGNE.AR_Ref.trim()) != -1)
+                                articlesAndFrequency[AR_Ref_Array.indexOf(DOCLIGNE.AR_Ref.trim())][2]++;
 
+                            else {
+                                AR_Ref_Array.push(DOCLIGNE.AR_Ref.trim());
+                                articlesAndFrequency.push([DOCLIGNE.AR_Ref.trim(), DOCLIGNE.DL_Design, 1]);
+                            }
                     }
                 );
                 articlesAndFrequency.sort((a, b) => (b[2] - a[2]));
@@ -103,48 +104,40 @@ export class ArticlePage implements OnInit {
 
         this.articleService.getF_ARTCLIENT().subscribe(
             (F_ARTCLIENT) => {
+                for (let orderLine of this.orderLineList)
 
-                for (let orderLine of this.orderLineList) {
+                    for (const discount of F_ARTCLIENT)
 
-                    for (const discount of F_ARTCLIENT) {
+                        if (discount.CT_Num == ctNum && discount.AR_Ref == orderLine.article.reference) {
 
-                        if (discount.AR_Ref == orderLine.article.reference) {
+                            const AC_PrixVen = parseFloat(discount.AC_PrixVen.replace(',', '.'));
+                            const AC_Remise = parseFloat(discount.AC_Remise.replace(',', '.'));
+                            if (AC_PrixVen != 0 && AC_Remise != 0) {
+                                orderLine.article.AC_PrixVen = AC_PrixVen;
+                                orderLine.article.AC_Remise = AC_Remise;
 
-                            if (discount.CT_Num == ctNum) {
-                                const AC_PrixVen = parseFloat(discount.AC_PrixVen.replace(',', '.'));
-                                const AC_Remise = parseFloat(discount.AC_Remise.replace(',', '.'));
-                                if (AC_PrixVen != 0 && AC_Remise != 0) {
-                                    orderLine.article.AC_PrixVen = AC_PrixVen;
-                                    orderLine.article.AC_Remise = AC_Remise;
-                                    break;
-                                } else if (AC_PrixVen != 0 && AC_Remise == 0) {
-                                    orderLine.article.AC_PrixVen = AC_PrixVen;
-                                    break;
-                                } else if (AC_PrixVen == 0 && AC_Remise != 0) {
-                                    orderLine.article.AC_Remise = AC_Remise;
-                                    break;
-                                }
-                                break;
-                            }
+                            } else if (AC_PrixVen != 0 && AC_Remise == 0)
+                                orderLine.article.AC_PrixVen = AC_PrixVen;
+
+                            else if (AC_PrixVen == 0 && AC_Remise != 0)
+                                orderLine.article.AC_Remise = AC_Remise;
+
                         }
-                    }
-                }
             },
             error => console.error(error),
-            () => this.initAllPricesTest());
+            () => this.initAllPricesTest()
+        );
     }
 
     private initAllPricesTest() {
-        console.log('in initAllPricesTest');
-        let copyOfOrderLineList = cloneDeep(this.orderLineList);
+
         this.articleService.getF_ARTICLE().subscribe(
             (F_ARTICLES) => {
-                for (const orderline of this.orderLineList) {
+                for (const orderline of this.orderLineList)
 
-                    for (const article of F_ARTICLES) {
+                    for (const article of F_ARTICLES)
 
-                        if (orderline.article.reference == article.AR_Ref.trim()) {
-                            console.log('yes');
+                        if (orderline.article.reference == article.AR_Ref.trim())
 
                             if (orderline.article.AC_PrixVen != 0 && orderline.article.AC_Remise != 0)
                                 orderline.article.unitPrice =
@@ -163,20 +156,12 @@ export class ArticlePage implements OnInit {
                                 orderline.article.unitPrice =
                                     parseFloat(article.AR_PrixVen.replace(',', '.'));
 
-                            copyOfOrderLineList.splice(copyOfOrderLineList.indexOf(orderline), 1);
-                            break;
-                        }
-                        if (copyOfOrderLineList.length == 0)
-                            break;
-                    }
-                }
+
             },
             error => console.error(error),
             () => {
-                console.log(this.orderLineList);
                 this.cartService.initOrderLinesList(this.orderLineList);
                 this.orderLineBackup = this.orderLineList;
-                console.log(this.orderLineList);
             }
         );
     }
@@ -236,11 +221,11 @@ export class ArticlePage implements OnInit {
 
         // 1er if : on checke si il s'agit d'une suppression
         // l'article est dans le panier : quantité = 0 et on supprime l'article du panier
-        if (qty == 0 && this.cart.orderLines.length !== 0 && index !== -1) {
+        if (qty == 0 && this.cart.orderLines.length !== 0 && index !== -1)
             this.cart.orderLines.splice(index, 1);
 
-            // on met à jour la quantité d'article d'un article déjà présent dans le panier (mais pas à supprimer : qté >0)
-        } else if (index !== -1) {
+        // on met à jour la quantité d'article d'un article déjà présent dans le panier (mais pas à supprimer : qté >0)
+        else if (index !== -1) {
             orderLine.quantity = qty;
             this.cart.orderLines[index] = orderLine;
 
