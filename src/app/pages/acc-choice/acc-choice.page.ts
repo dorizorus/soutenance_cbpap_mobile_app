@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {NavController} from '@ionic/angular';
 import {UserService} from 'src/app/services/user.service';
 import {Customer} from 'src/app/models/Customer';
+import {F_COMPTET} from "../../models/JSON/F_COMPTET";
 
 @Component({
     selector: 'app-choix-compte',
@@ -10,8 +11,8 @@ import {Customer} from 'src/app/models/Customer';
 })
 export class AccChoicePage implements OnInit {
 
-    accounts : Customer[];
-    customer : Customer;
+    accounts: F_COMPTET[];
+    customer: F_COMPTET;
 
     constructor(private navCtrl: NavController,
                 private userService: UserService) {
@@ -19,19 +20,22 @@ export class AccChoicePage implements OnInit {
 
     ngOnInit() {
         // susbscribe à tout changement dans la liste de comptes
+        this.userService.activeCustomer$.subscribe(data => {
+            this.customer = data;
+        });
         this.userService.customerAccounts$.subscribe(data => {
             this.accounts = data;
-        })
+        });
     }
 
-    selectAccountAndGoToArticles(customer : Customer) {
+    selectAccountAndGoToArticles(customer: F_COMPTET) {
         this.userService.setActiveCustomer(customer);
         this.navCtrl.navigateBack(['/nav/article']);
     }
 
     // on indique simplement le compte que l'on va récupérer dans la page des options
-    goToSettings(compte : Customer) {
-        this.userService.setCustomer(compte);
+    goToSettings(compte: F_COMPTET) {
+        this.userService.setActiveCustomer(compte);
         this.navCtrl.navigateForward(['/acc-choice/settings']);
     }
 

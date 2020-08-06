@@ -1,10 +1,11 @@
 import {Component, OnInit} from '@angular/core';
-import {ModalController, NavController} from '@ionic/angular';
+import {ModalController, NavController, Platform} from '@ionic/angular';
 import {ContactPageModule} from '../contact/contact.module';
 import {UserService} from 'src/app/services/user.service';
-import {Router, NavigationEnd} from "@angular/router";
-import { UserWeb } from 'src/app/models/UserWeb';
-import { Customer } from 'src/app/models/Customer';
+import {Router, NavigationEnd} from '@angular/router';
+import {F_COMPTET} from '../../models/JSON/F_COMPTET';
+import {UserWeb} from "../../models/UserWeb";
+import {Storage} from "@ionic/storage";
 
 @Component({
     selector: 'app-login',
@@ -17,8 +18,8 @@ export class LoginPage implements OnInit {
     // les infos dans certaines parties de l'application (genre la partie compte). Actuellement dans l'application, on utilise un service
     // pour transférer les données d'un client sur les différentes page.
 
-    login:string;
-    password:string;
+    login: string;
+    password: string;
     error: string;
     userWeb : UserWeb;
     usersWeb : UserWeb[] = [];
@@ -26,89 +27,60 @@ export class LoginPage implements OnInit {
     constructor(private navCtrl: NavController,
                 private modalController: ModalController,
                 private userService: UserService,
-                private router:Router) {
+                private router: Router,
+                private platForm : Platform,
+                private dataStorage : Storage) {
+
+                    this.dataStorage.ready().then(() => {
+                        this.userService.getStorageLength();
+                        this.userService.setAllUsersStorage();
+                        this.redirection();
+                    })
                     // on subscribe a l'evenement lié au routeur, a chaque changement d'url, on lance
                     // la méthode. Si l'url est similaire a la page de login et si c'est vide, redirige vers la liste
                     this.router.events.subscribe((e) => {
                         if (e instanceof NavigationEnd) {
-                            if (e.url == '/login' && this.userService.getAccounts().length > 0)
+                            if (e.url == '/login' && this.userService.sizeStorage > 0)
                                 this.router.navigateByUrl('/nav/article');
                         }
                     });
-    }
+                }
 
 
     ngOnInit() {
-        if(this.userService.getAccounts().length == 1)
-            this.router.navigateByUrl('/nav/article');
-        else if(this.userService.getAccounts().length > 1)
-            this.router.navigateByUrl('/acc-choice');
 
-        this.getUsersWeb();
     }
-    
-    // On subscribe à l'url et on récupère les comptes éligible a l'application
-    // C'est vraiment moche de récupérer le mdp et l'id comme ça n'empêche
-    // Il y a un soucis quand je manipule un tableau donc je simule un tableau via un push
-    async getUsersWeb() {
-        this.userService.usersObservable.subscribe(
-           (user : UserWeb) => {
-               this.usersWeb = [];
-               this.usersWeb.push(user);
-               this.userWeb = user;
-               console.log("Get effectué de " + this.userWeb.CT_Num + " et mdp " + this.userWeb.MDP);
-               // Quand on aura le tableau, remplacer par
-               // (users : UserWeb[]) => {
-               // this.usersWeb = users;
-           } 
-        )
+
+    async redirection() {
+        this.dataStorage.ready().then(() => {
+            if (this.userService.sizeStorage == 1) {
+                console.log("4 c'est pas vide!");
+                this.router.navigateByUrl('/nav/article');
+            } else if (this.userService.sizeStorage> 1) {
+                this.router.navigateByUrl('/acc-choice');
+            } else {
+                console.log("4 c'est vide :'(, storage vaut" + this.userService.sizeStorage);
+            }
+        });
     }
 
     async initClient() {
         // on créer le compte
-        const compte =
+        const compte: F_COMPTET =
             {
-                id: '1',
-                name: 'Pizza Chez Moi Sarl',
-                address: '5 rue des pizzaiolo',
-                email: 'chezmoi@pizzasarl.com',
-                password: 'test',
-                customerPicture: 'assets/icon/devanturePizzaHut.png',
-                phoneNumber: '0387254981',
-                city:
-                    {
-                        id: 55,
-                        name: 'Metz',
-                        postalCode: 57000
-                    },
-                customerFiles: ''
+                CT_Num: "ADRANO",
+                CT_Intitule: "ADRANO PIZZ",
+                CT_Adresse: "9 ZONE COMMERCIALE DU TRIANGLE",
+                CT_CodePostal: "F-57525",
+                CT_Ville: "TALANGE",
+                CT_Pays: "FRANCE",
+                CT_Sommeil: 0,
+                CT_Telephone: "06 01 03 10 07",
+                CT_EMail: "contact@adranopizz.fr"
             };
         
         // on ne va pas utiliser de set mais un systeme d'ajout/suppresion de compte. Ici, il est ajouté
         this.userService.addCustomer(compte);
-    }
-
-    // Pour pas a devoir refactor le customer, je vais prendre les paramètres de l'userweb et les mettre dans un customer
-    initUserWebToCustomer(user : UserWeb) : Customer {
-        let  customerWeb : Customer =
-            {
-                id: user.CT_Num,
-                name: user.CT_Intitule,
-                address: user.CT_Adresse,
-                email: null,
-                password: user.MDP,
-                customerPicture: 'assets/icon/devanturePizzaHut.png',
-                phoneNumber: null,
-                city:
-                    {
-                        id: 55,
-                        name: user.CT_Ville,
-                        postalCode: 57525
-                    },
-                customerFiles: null
-
-            };
-        return customerWeb;
     }
 
     // permet d'ajouter le client et d'aller aux articles. Async obligatoire sous peine d'erreur
@@ -131,38 +103,25 @@ export class LoginPage implements OnInit {
         return await modal.present();
     }
 
-    /* Utile plus tard, ne pas supprimer
-    getUserData() {
-        this.userService.getUserByRef(this.login).subscribe(user => {
-        })
-    } */
-
-    // Ce n'est pas un booléen qui est checké mais un objet.
-    async logIn() {
-        let i = 0;
-        let found = false;
-        let res : UserWeb = null;
-
-        while (!found && i < this.usersWeb.length) {
-            if (this.usersWeb[i].CT_Num == this.login) {
-                found = true;
-                res = this.userService.getUserWebValidity(this.login,this.password);
-            }
-            else {
-                i++;
-                res = null;
-            }
-        }
-
-        if(res) {
-            console.log("Concorde avec les logins et mdp");
-            let user = this.initUserWebToCustomer(res);
-            this.userService.setActiveCustomer(user);
-            this.userService.addCustomer(user);
-            this.userService.setUserStorage(user);
-            this.router.navigateByUrl('/nav/article');
-        } else{
-            this.error = "Mauvais identifiant/mot de passe";
+    // todo deplacer dans le service pour pouvoir reutiliser dans delete-acc
+    async logInF_COMPTET() {
+        if(this.login == '' || this.login == null)
+            if(this.password == '' || this.password == null)
+                this.error = 'Veuillez entrer un identifiant & mot de passe';
+            else
+                this.error = 'Veuillez entrer un identifiant';
+        else if(this.password == '' || this.password == null)
+            this.error = 'Veuillez entrer un mot de passe';
+        else {
+            await this.userService.getUserValidity(this.login, this.password).then((data) => {
+                console.log(data);
+                console.log("win");
+                this.navCtrl.navigateForward(['/nav/article']);
+            }).catch((data) => {
+                    this.error = data;
+                    console.log("fail");
+                }
+            );
         }
     }
 }

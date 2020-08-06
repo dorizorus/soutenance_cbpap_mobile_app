@@ -8,7 +8,8 @@
    "CT_Pays": "France",
    "CT_Sommeil": 1,
    "CT_Telephone": "03 87 01 12 74",
-   "CT_EMail": ""
+   "CT_EMail": "",
+   "MDP": "password"
  },
  {
    "CT_Num": "VERTNET",

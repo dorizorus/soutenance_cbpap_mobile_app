@@ -22,10 +22,11 @@
         </ng-template>
         <div>
             <ion-button color="success" size="small" (click)="reorder()">Commander à nouveau</ion-button>
+            <ion-button *ngIf="!canEdit" (click)="alertCBPapiers()" > Contacter CBPapiers </ion-button>
         </div>
         <div *ngIf="canEdit">
             <div *ngIf="!order.isCancelled">
-                <span> TEMPS RESTANT {{order.orderDate | date : 'H' }}h{{order.orderDate | date : 'mm' }} POUR : </span>
+                <span> TEMPS RESTANT {{calculateElapsedTime().hours }}h{{calculateElapsedTime().minutes }} POUR : </span>
                 <div>
                     <ion-button (click)="alertConfirm()" color="danger"  size="small" fill="solid">Annuler</ion-button>
                     <ion-button (click)="editOrder()" color="warning" size="small" fill="solid" routerLink="/nav/article">Editer</ion-button>

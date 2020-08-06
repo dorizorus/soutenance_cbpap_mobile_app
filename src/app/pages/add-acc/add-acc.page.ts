@@ -11,9 +11,9 @@ import {Router} from "@angular/router";
 })
 export class AddAccPage implements OnInit {
 
-    login:string;
-    password:string;
-    error:string;
+    login: string;
+    password: string;
+    error: string;
 
     constructor(private userService: UserService,
                 private router: Router) {
@@ -22,7 +22,7 @@ export class AddAccPage implements OnInit {
     ngOnInit() {
     }
 
-    addAccountAndRedirect() {
+/*    addAccountAndRedirect() {
         // recupere un msg d'erreur si invalid, sinon un account
         let res = this.userService.getUserValidity(this.login,this.password);
         if(res == false)
@@ -32,5 +32,5 @@ export class AddAccPage implements OnInit {
             this.userService.setActiveCustomer(res);
             this.router.navigateByUrl('/acc-choice');
         }
-    }
+    }*/
 }

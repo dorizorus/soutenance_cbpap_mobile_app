@@ -5,11 +5,11 @@ import {CanActivate, Router} from '@angular/router';
     providedIn: 'root'
 })
 export class AuthGuard implements CanActivate {
-    constructor(private router:Router) {
+    constructor(private router: Router) {
     }
 
     canActivate(): boolean {
-        if(localStorage.getItem('user') == null)
+        if (localStorage.getItem('user') == null)
             this.router.navigateByUrl('/login');
         return true;
     }

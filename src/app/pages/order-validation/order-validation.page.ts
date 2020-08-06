@@ -27,12 +27,10 @@ pdfMake.vfs = pdfFonts.pdfMake.vfs;
 export class OrderValidationPage implements OnInit {
 
     finalTotal: number;
-
     pdfObj = null;
-    statusShipping: boolean;
     order: Order;
+    statusShipping: boolean;
 
-    // Erreur de dépendance circulaire dans la classe, si on enleve file, fileopener et emailc, l'erreur disparait
     constructor(private plt: Platform,
                 private file: File,
                 private fileOpener: FileOpener,
@@ -57,7 +55,7 @@ export class OrderValidationPage implements OnInit {
         return this.warehouseRetService.getStatus() ? 'OUI' : 'NON';
     }
 
-    shipping(){
+    shipping() {
         return this.statusShipping ? '20 €' : 'gratuite';
     }
 
@@ -78,7 +76,7 @@ export class OrderValidationPage implements OnInit {
     constructBody() {
         for (const orderline of this.order.orderLines) {
             // @ts-ignore
-            this.myBody.push([`${orderline.article.reference}`, `${orderline.quantity}`, `${orderline.article.finalPrice * orderline.quantity + '€'}`]);
+            this.myBody.push([`${orderline.article.reference}`, `${orderline.quantity}`, `${orderline.article.unitPrice * orderline.quantity + '€'}`]);
         }
         return this.myBody;
     }
@@ -102,7 +100,7 @@ export class OrderValidationPage implements OnInit {
 
     sendPdf() {
         // enregistrement de la commande réalisée dans le tableau des commandes de orderService
-        let docDefinition = {
+        const docDefinition = {
             content: [
                 {text: 'CBPAPIERS', style: 'header'},
                 // impression de la date au format dd/mm/yyyy hh'h'mm
@@ -110,10 +108,11 @@ export class OrderValidationPage implements OnInit {
                     text: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString(),
                     alignment: 'right'
                 },
-                {text: 'Commande : ' , style: 'subheader'},
-                {text: 'Ref client : ' + this.userService.getActiveCustomer().id},
-                {text: this.userService.getActiveCustomer().name},
-                {text: this.userService.getActiveCustomer().address},
+                {text: 'Commande : ', style: 'subheader'},
+                {text: 'Ref client : ' + this.userService.getActiveCustomer().CT_Num},
+                {text: this.userService.getActiveCustomer().CT_Intitule},
+                {text: this.userService.getActiveCustomer().CT_Adresse},
+                {text: this.userService.getActiveCustomer().CT_CodePostal + ' ' + this.userService.getActiveCustomer().CT_Ville},
 
                 // c'est ici qu'on construit le tableau dans le pdf :
                 // on indique le nombre de colonnes et on injecte l'array myBody construit dans la méthode constructBody()
@@ -124,7 +123,7 @@ export class OrderValidationPage implements OnInit {
                         body: this.constructBody()
                     }
                 },
-                {text : 'Livraison : ' + this.shipping(), alignment: 'right'},
+                {text: 'Livraison : ' + this.shipping(), alignment: 'right'},
                 {
                     text: 'Total HT : ' + this.finalTotal + ' €', alignment: 'right'
                 },
@@ -164,7 +163,7 @@ export class OrderValidationPage implements OnInit {
 
     sendPdfEdit() {
         // enregistrement de la commande réalisée dans le tableau des commandes de orderService
-        let docDefinition = {
+        const docDefinition = {
             content: [
                 {text: 'CBPAPIERS', style: 'header'},
                 // impression de la date au format dd/mm/yyyy hh'h'mm
@@ -175,9 +174,11 @@ export class OrderValidationPage implements OnInit {
                 // tslint:disable-next-line:max-line-length
                 {text: 'ATTENTION Commande ' + this.cartService.getCart().orderNumber + ' ' + this.cartService.getCart().orderDate.toLocaleDateString() +
                        ' ' + this.cartService.getCart().orderDate.toLocaleTimeString() + ' MODIFIEE' , style: 'subheader'},
-                {text: 'Ref client : ' + this.userService.getActiveCustomer().id},
-                {text: this.userService.getActiveCustomer().name},
-                {text: this.userService.getActiveCustomer().address},
+                {text: 'Ref client : ' + this.userService.getActiveCustomer().CT_Num},
+                {text: this.userService.getActiveCustomer().CT_Intitule},
+                {text: this.userService.getActiveCustomer().CT_Adresse},
+                {text: this.userService.getActiveCustomer().CT_CodePostal + ' ' +
+                        this.userService.getActiveCustomer().CT_Ville},
 
                 // c'est ici qu'on construit le tableau dans le pdf :
                 // on indique le nombre de colonnes et on injecte l'array myBody construit dans la méthode constructBody()
@@ -220,6 +221,8 @@ export class OrderValidationPage implements OnInit {
         this.downloadPdf();
         this.sendMail();
 
+        // on fait un clone de la commande
+        // on envoie ce clone pour modification de la commande déjà existante avec le même numéro de commande
         const ORDER_HISTORY = cloneDeep(this.order);
         this.orderService.editOrder(ORDER_HISTORY);
 
@@ -259,7 +262,7 @@ export class OrderValidationPage implements OnInit {
             attachments: [
                 this.file.dataDirectory + 'commande.pdf'
             ],
-            subject: ' REFCLIENT : ' + this.userService.getActiveCustomer().id,
+            subject: ' REFCLIENT : ' + this.userService.getActiveCustomer().CT_Num,
             body: 'Ci-joint le récapitulatif de la commande',
             isHtml: true
         };
@@ -267,15 +270,13 @@ export class OrderValidationPage implements OnInit {
 
     }
 
-    // fermeture de la modal après envoi commande
-    onDismiss(){
+    //fermeture de la modal après envoi commande
+    onDismiss() {
         this.modalController.dismiss();
     }
 
     // remise à 0 du panier et des quantités d'article sélectionnées après envoi commande
     deleteAll(orderlines: OrderLine[]) {
-        // faut fix ca ! ! ! ca efface tout sinon
-
         orderlines.forEach(
             (orderLine) => {
                 orderLine.quantity = 0;
@@ -283,8 +284,7 @@ export class OrderValidationPage implements OnInit {
         );
 
         this.cartService.resetCart();
+        this.warehouseRetService.setStatus(false);
         this.onDismiss();
     }
-
 }
-

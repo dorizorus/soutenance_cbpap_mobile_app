@@ -9,6 +9,7 @@ import {WarehouseRetService} from '../services/warehouse-ret.service';
 import {CartService} from '../services/cart.service';
 import {Order} from '../models/Order';
 import { cloneDeep } from 'lodash';
+import {F_COMPTET} from "../models/JSON/F_COMPTET";
 
 @Component({
     selector: 'app-header',
@@ -20,7 +21,7 @@ export class HeaderComponent implements OnInit {
     cart: Order;
     total = 0;
     WHRetrieval = false;
-    customer: Customer;
+    customer: F_COMPTET = null;
 
     constructor(private modalController: ModalController,
                 private navCtrl: NavController,
@@ -31,15 +32,11 @@ export class HeaderComponent implements OnInit {
     ) {}
 
     ngOnInit() {
-        this.customer = this.userService.getActiveCustomer();
-
         // on subscribe à toute nouvelles données du cart
         this.cartService.cart$.subscribe((data) => {
             this.cart = data;
             this.total = this.cartService.getTotal();
         });
-
-
 
         // on subscribe à tout nouveau changement du customer actif
         this.userService.activeCustomer$.subscribe((data) => {
@@ -47,14 +44,11 @@ export class HeaderComponent implements OnInit {
             this.cart.customer = data;
         });
 
-
-
         // on subscribe à tout nouveau changement du status du toogle
         this.warehouseRetService.toggle$.subscribe((status) => {
             this.WHRetrieval = status;
             this.total = this.cartService.getTotal();
         });
-
     }
 
 
@@ -78,12 +72,10 @@ export class HeaderComponent implements OnInit {
     // solution ci-dessous, permet de fix le ion-toggle, erreur de synchro entre cart & header
     // https://medium.com/@aleksandarmitrev/ionic-toggle-asynchronous-change-challenge-7e7cbdd50cb7
     toggle($event: any) {
-
         // méthodes pour fix l'erreur de synchro qui pop
         $event.stopImmediatePropagation();
         $event.stopPropagation();
         $event.preventDefault();
-
         // le setTimeout fait parti des méthodes pour fix l'erreur de synchro.
         // on set le boolean dans le BehaviorSubject à la valeur inverse
         // s'il était à true au toggle -> on le met à false

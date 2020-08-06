@@ -4,10 +4,12 @@ import {SingleArticlePage} from '../single-article/single-article.page';
 import {Article} from 'src/app/models/Article';
 import {OrderLine} from 'src/app/models/OrderLine';
 import {UserService} from 'src/app/services/user.service';
-import {Customer} from 'src/app/models/Customer';
 import {CartService} from '../../services/cart.service';
 import {ArticleService} from '../../services/article.service';
-import {Order} from '../../models/Order';
+import {cloneDeep} from 'lodash';
+import {F_ARTICLE} from "../../models/JSON/F_ARTICLE";
+import {Order} from "../../models/Order";
+import {F_COMPTET} from "../../models/JSON/F_COMPTET";
 
 @Component({
     selector: 'app-articles',
@@ -17,21 +19,16 @@ import {Order} from '../../models/Order';
 export class ArticlePage implements OnInit {
 
     possibleQuantities: number[] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
-    articleList: Article[] = [];
-    totalQuantity: number;
     cart: Order;
     orderLineList: OrderLine[] = [];
     orderLineBackup: OrderLine[] = [];
+    totalQuantity: number;
+    customer: F_COMPTET;
 
     constructor(private modalController: ModalController,
                 private cartService: CartService,
                 private userService: UserService,
                 private articleService: ArticleService) {
-
-        // initialisation de notre liste d'article de base
-        this.initializeArticles();
-        // this.initClient();
-        this.initOrderLines(this.articleList);
     }
 
     ngOnInit(): void {
@@ -46,217 +43,130 @@ export class ArticlePage implements OnInit {
             }
         );
 
-        // à la création de la page on fait une copie de la liste.
-        // cf. les methodes "getOrderLines()" et "getArticleSearched(ev: any)
-        this.orderLineBackup = this.orderLineList;
-    }
-
-    // initialisation de la liste d'article créée. On utilisera le back à la place ici
-    initializeArticles() {
-        this.articleList = [{
-            reference: 'AR578',
-            label: 'Carton cache test long texte jtriueothikre',
-            unitPrice: 40.00,
-            finalPrice: 40.00,
-            family: 'Carton',
-            articleImage: {
-                id: 1,
-                image: 'assets/icon/devanturePizzaHut.png'
-            },
-            articleDetails: {
-                id: 2,
-                description: 'Un carton qui vous permet d\'echapper à vos poursuivants, que ce soit un huissier ou un membre de votre famille qui réclame le prêt qu\'il vous a attribué 10 ans auparavant. NE PAS APPROCHER DE LOUPS SAUVAGE, CETTE PROTECTION NE SUFFIRA PAS.'
-            }
-        },
-            {
-                reference: '3EA45F',
-                label: 'Carton mystere',
-                unitPrice: 20.00,
-                finalPrice: 20.00,
-                family: 'Carton',
-                articleImage: {
-                    id: 1,
-                    image: 'assets/icon/devanturePizzaHut.png'
-                },
-                articleDetails: {
-                    id: 2,
-                    description: 'Un carton super grand'
-                }
-            },
-            {
-                reference: '98877RRF',
-                label: 'Carton nature',
-                unitPrice: 15.00,
-                finalPrice: 15.00,
-                family: 'Carton',
-                articleImage: {
-                    id: 1,
-                    image: 'assets/icon/devanturePizzaHut.png'
-                },
-                articleDetails: {
-                    id: 2,
-                    description: 'Un carton basique'
-                }
-            },
-            {
-                reference: 'AAA78ff',
-                label: 'Carton rosé',
-                unitPrice: 12.00,
-                finalPrice: 12.00,
-                family: 'Carton',
-                articleImage: {
-                    id: 1,
-                    image: 'assets/icon/devanturePizzaHut.png'
-                },
-                articleDetails: {
-                    id: 2,
-                    description: 'Un carton qui sent bon la rose'
-                }
-            },
-            {
-                reference: 'AAA78ff',
-                label: 'Carton rosé',
-                unitPrice: 12.00,
-                finalPrice: 12.00,
-                family: 'Carton',
-                articleImage: {
-                    id: 1,
-                    image: 'assets/icon/devanturePizzaHut.png'
-                },
-                articleDetails: {
-                    id: 2,
-                    description: 'Un carton qui sent bon la rose'
-                }
-            },
-            {
-                reference: 'AAA78ff',
-                label: 'Carton rosé',
-                unitPrice: 12.00,
-                finalPrice: 12.00,
-                family: 'Carton',
-                articleImage: {
-                    id: 1,
-                    image: 'assets/icon/devanturePizzaHut.png'
-                },
-                articleDetails: {
-                    id: 2,
-                    description: 'Un carton qui sent bon la rose'
-                }
-            },
-            {
-                reference: 'AAA78ff',
-                label: 'Carton rosé',
-                unitPrice: 12.00,
-                finalPrice: 12.00,
-                family: 'Carton',
-                articleImage: {
-                    id: 1,
-                    image: 'assets/icon/devanturePizzaHut.png'
-                },
-                articleDetails: {
-                    id: 2,
-                    description: 'Un carton qui sent bon la rose'
-                }
-            },
-            {
-                reference: 'AAA78ff',
-                label: 'Carton rosé',
-                unitPrice: 12.00,
-                finalPrice: 12.00,
-                family: 'Carton',
-                articleImage: {
-                    id: 1,
-                    image: 'assets/icon/devanturePizzaHut.png'
-                },
-                articleDetails: {
-                    id: 2,
-                    description: 'Un carton qui sent bon la rose'
-                }
-            },
-            {
-                reference: 'AAA78ff',
-                label: 'Carton rosé',
-                unitPrice: 12.00,
-                finalPrice: 12.00,
-                family: 'Carton',
-                articleImage: {
-                    id: 1,
-                    image: 'assets/icon/devanturePizzaHut.png'
-                },
-                articleDetails: {
-                    id: 2,
-                    description: 'Un carton qui sent bon la rose'
-                }
-            },
-            {
-                reference: 'AAA78ff',
-                label: 'Carton rosé',
-                unitPrice: 12.00,
-                finalPrice: 12.00,
-                family: 'Carton',
-                articleImage: {
-                    id: 1,
-                    image: 'assets/icon/devanturePizzaHut.png'
-                },
-                articleDetails: {
-                    id: 2,
-                    description: 'Un carton qui sent bon la rose'
-                }
-            },
-            {
-                reference: 'AAA78ff',
-                label: 'Carton rosé',
-                unitPrice: 12.00,
-                finalPrice: 12.00,
-                family: 'Carton',
-                articleImage: {
-                    id: 1,
-                    image: 'assets/icon/devanturePizzaHut.png'
-                },
-                articleDetails: {
-                    id: 2,
-                    description: 'Un carton qui sent bon la rose'
-                }
-            }
-        ];
-    }
-
-    initClient() {
-        let clientFactice = new Customer();
-        clientFactice =
-            {
-                id: '2',
-                name: 'Pizza Chez Moi Sarl',
-                address: '5 rue des pizzaiolo',
-                email: 'chezmoi@pizzasarl.com',
-                password: '458dsqfdkdsqlfkqsd54',
-                customerPicture: 'assets/icon/devanturePizzaHut.png',
-                phoneNumber: '0387254981',
-                customerFiles: 'blabla',
-                city:
-                    {
-                        id: 55,
-                        name: 'Metz',
-                        postalCode: 57000
-                    }
-
-            };
-        this.userService.setCustomer(clientFactice);
-    }
-
-    initOrderLines(articleList: Article[]) {
-        articleList.forEach(
-            (article) => {
-                const orderLine = {
-                    orderNumber: null,
-                    quantity: 0,
-                    article
-                };
-                this.orderLineList.push(orderLine);
+        this.userService.activeCustomer$.subscribe(
+            customer => {
+                this.customer = customer;
+                this.initTopF_ARTICLE();
             }
         );
-        this.cartService.initOrderLinesList(this.orderLineList);
+
+        // this.userService.getStorageLength();
+        this.userService.setAllUsersStorage();
     }
+
+    initTopF_ARTICLE() {
+        let articlesAndFrequency: [string, string, number][] = [];
+        let AR_Ref_Array: string[] = [];
+        const ctNum = this.customer.CT_Num;
+
+        this.userService.getDocLignes().subscribe(
+            (F_DOCLIGNES) => {
+                F_DOCLIGNES.forEach(
+                    (DOCLIGNE) => {
+                        if (DOCLIGNE.CT_Num == ctNum && DOCLIGNE.AR_Ref.trim() != '')
+
+                            if (AR_Ref_Array.indexOf(DOCLIGNE.AR_Ref.trim()) != -1)
+                                articlesAndFrequency[AR_Ref_Array.indexOf(DOCLIGNE.AR_Ref.trim())][2]++;
+
+                            else {
+                                AR_Ref_Array.push(DOCLIGNE.AR_Ref.trim());
+                                articlesAndFrequency.push([DOCLIGNE.AR_Ref.trim(), DOCLIGNE.DL_Design, 1]);
+                            }
+                    }
+                );
+                articlesAndFrequency.sort((a, b) => (b[2] - a[2]));
+                articlesAndFrequency.forEach(
+                    data => {
+                        const orderLine = {
+                            article: {
+                                reference: data[0],
+                                label: data[1],
+                                AC_PrixVen: 0,
+                                AC_Remise: 0
+                            },
+                            quantity: 0,
+                            orderNumber: null,
+                        };
+                        this.orderLineList.push(orderLine);
+                    }
+                )
+            },
+            (error) => console.error(error),
+            () => {
+                this.initAllInfosTest();
+            }
+        );
+    }
+
+    private initAllInfosTest() {
+        console.log('in initAllInfosTest()');
+
+        let ctNum = this.customer.CT_Num;
+
+        this.articleService.getF_ARTCLIENT().subscribe(
+            (F_ARTCLIENT) => {
+                for (let orderLine of this.orderLineList)
+
+                    for (const discount of F_ARTCLIENT)
+
+                        if (discount.CT_Num == ctNum && discount.AR_Ref == orderLine.article.reference) {
+
+                            const AC_PrixVen = parseFloat(discount.AC_PrixVen.replace(',', '.'));
+                            const AC_Remise = parseFloat(discount.AC_Remise.replace(',', '.'));
+                            if (AC_PrixVen != 0 && AC_Remise != 0) {
+                                orderLine.article.AC_PrixVen = AC_PrixVen;
+                                orderLine.article.AC_Remise = AC_Remise;
+
+                            } else if (AC_PrixVen != 0 && AC_Remise == 0)
+                                orderLine.article.AC_PrixVen = AC_PrixVen;
+
+                            else if (AC_PrixVen == 0 && AC_Remise != 0)
+                                orderLine.article.AC_Remise = AC_Remise;
+
+                        }
+            },
+            error => console.error(error),
+            () => this.initAllPricesTest()
+        );
+    }
+
+    private initAllPricesTest() {
+
+        this.articleService.getF_ARTICLE().subscribe(
+            (F_ARTICLES) => {
+                for (const orderline of this.orderLineList)
+
+                    for (const article of F_ARTICLES)
+
+                        if (orderline.article.reference == article.AR_Ref.trim())
+
+                            if (orderline.article.AC_PrixVen != 0 && orderline.article.AC_Remise != 0)
+                                orderline.article.unitPrice =
+                                    orderline.article.AC_PrixVen * (1 - orderline.article.AC_Remise / 100);
+
+                            else if (orderline.article.AC_PrixVen != 0 && orderline.article.AC_Remise == 0)
+                                orderline.article.unitPrice =
+                                    orderline.article.AC_PrixVen;
+
+                            else if (orderline.article.AC_PrixVen == 0 && orderline.article.AC_Remise != 0)
+                                orderline.article.unitPrice =
+                                    parseFloat(article.AR_PrixVen.replace(',', '.'))
+                                    * (1 - orderline.article.AC_Remise / 100);
+
+                            else
+                                orderline.article.unitPrice =
+                                    parseFloat(article.AR_PrixVen.replace(',', '.'));
+
+
+            },
+            error => console.error(error),
+            () => {
+                this.cartService.initOrderLinesList(this.orderLineList);
+                this.orderLineBackup = this.orderLineList;
+            }
+        );
+    }
+
 
     // retourne un backup d'orderLineList générée en initialisation de page.
     // l'intérêt est d'avoir une liste clean en backup qu'on envoie à la fonction filtre
@@ -283,14 +193,9 @@ export class ArticlePage implements OnInit {
         }
 
         // on l'envoie à l'observable pour que la page se mette à jour
-        // la raison pour laquelle la quantité ne revient pas à 0 est probablement dûe
-        // au fait que le select est initialité à la création de la page
-        // et modifié seulement si ionChange est appelé dans le template
         this.cartService.setOrderLineList(orderLines);
     }
 
-
-    // quand on clique sur l'article (image ou libelle), on affiche la description de l'article(considéré comme un orderline ici)
     async createOrderLineDetails(orderLine: OrderLine) {
 
         const modal = await this.modalController.create({
@@ -317,11 +222,11 @@ export class ArticlePage implements OnInit {
 
         // 1er if : on checke si il s'agit d'une suppression
         // l'article est dans le panier : quantité = 0 et on supprime l'article du panier
-        if (qty == 0 && this.cart.orderLines.length !== 0 && index !== -1) {
+        if (qty == 0 && this.cart.orderLines.length !== 0 && index !== -1)
             this.cart.orderLines.splice(index, 1);
 
-            // on met à jour la quantité d'article d'un article déjà présent dans le panier (mais pas à supprimer : qté >0)
-        } else if (index !== -1) {
+        // on met à jour la quantité d'article d'un article déjà présent dans le panier (mais pas à supprimer : qté >0)
+        else if (index !== -1) {
             orderLine.quantity = qty;
             this.cart.orderLines[index] = orderLine;
 
@@ -334,10 +239,6 @@ export class ArticlePage implements OnInit {
 
         // on met à jour le nouveau panier dans le service
         this.cartService.setCart(this.cart);
-
-        // on met à jour la liste d'articles avec la nouvelle quantité dans le service
-        this.cartService.setOrderLineList(this.orderLineList);
     }
-
 }
 

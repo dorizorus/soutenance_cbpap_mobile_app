@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  baseUrl : "http://80.14.6.243:8080"
+  baseURL: '../assets/'
 };
 
 /*
