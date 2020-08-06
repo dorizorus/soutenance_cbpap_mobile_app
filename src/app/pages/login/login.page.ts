@@ -12,10 +12,6 @@ import {F_COMPTET} from '../../models/JSON/F_COMPTET';
 })
 export class LoginPage implements OnInit {
 
-    // todo : comparer les données envoyé en front avec le back, ensuite récupérer un token avec les infos pour qu'on puisse afficher
-    // les infos dans certaines parties de l'application (genre la partie compte). Actuellement dans l'application, on utilise un service
-    // pour transférer les données d'un client sur les différentes page.
-
     login: string;
     password: string;
     error: string;
@@ -74,7 +70,6 @@ export class LoginPage implements OnInit {
         return await modal.present();
     }
 
-    // todo deplacer dans le service pour pouvoir reutiliser dans delete-acc
     async logInF_COMPTET() {
         if (this.login == '' || this.login == null) {
             if (this.password == '' || this.password == null) {
