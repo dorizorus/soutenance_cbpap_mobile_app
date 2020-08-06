@@ -53,7 +53,6 @@ export class CartPage implements OnInit, OnDestroy {
 
     }
 
-
     // pour fermer la modal de manière explicite par un bouton
     // sinon si on clique à côté de la modal ça appel modalController.dismiss() tout seul
     onDismiss() {
@@ -67,17 +66,18 @@ export class CartPage implements OnInit, OnDestroy {
         this.subscriptionToWHRetrieval.unsubscribe();
     }
 
+    //supprime une orderline du panier
     deleteLine(orderLine: OrderLine) {
         this.cartService.updateOrderLineFromList(orderLine, 0);
-        // this.cart.orderLines.splice(this.cart.orderLines.indexOf(orderLine), 1);
-        if (this.cart.orderLines.length === 0) {
-            this.onDismiss();
-        }
+        // if (this.cart.orderLines.length === 0 ) {
+        //     this.onDismiss();
+        // }
         this.cartService.setCart(this.cart);
     }
 
     deleteAll() {
-        this.cartService.resetCartOrderLines();
+        // this.cartService.resetCartOrderLines();
+        this.cartService.resetCart();
         this.cartService.resetQuantityOfOrderLineList();
         this.onDismiss();
     }

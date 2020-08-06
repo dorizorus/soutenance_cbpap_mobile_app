@@ -22,6 +22,7 @@
         </ng-template>
         <div>
             <ion-button color="success" size="small" (click)="reorder()">Commander à nouveau</ion-button>
+            <ion-button *ngIf="!canEdit" (click)="alertCBPapiers()" > Contacter CBPapiers </ion-button>
         </div>
         <div *ngIf="canEdit">
             <div *ngIf="!order.isCancelled">

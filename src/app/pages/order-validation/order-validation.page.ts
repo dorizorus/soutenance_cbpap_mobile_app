@@ -27,10 +27,8 @@ pdfMake.vfs = pdfFonts.pdfMake.vfs;
 export class OrderValidationPage implements OnInit {
 
     finalTotal: number;
-
     pdfObj = null;
     order: Order;
-    
     statusShipping: boolean;
 
     constructor(private plt: Platform,
@@ -102,7 +100,7 @@ export class OrderValidationPage implements OnInit {
 
     sendPdf() {
         // enregistrement de la commande réalisée dans le tableau des commandes de orderService
-        let docDefinition = {
+        const docDefinition = {
             content: [
                 {text: 'CBPAPIERS', style: 'header'},
                 // impression de la date au format dd/mm/yyyy hh'h'mm
@@ -165,7 +163,7 @@ export class OrderValidationPage implements OnInit {
 
     sendPdfEdit() {
         // enregistrement de la commande réalisée dans le tableau des commandes de orderService
-        let docDefinition = {
+        const docDefinition = {
             content: [
                 {text: 'CBPAPIERS', style: 'header'},
                 // impression de la date au format dd/mm/yyyy hh'h'mm
@@ -223,7 +221,8 @@ export class OrderValidationPage implements OnInit {
         this.downloadPdf();
         this.sendMail();
 
-        // on fait un clone de la commande et on envoie ce clone pour modification de la commande déjà existante avec le même numéro de commande
+        // on fait un clone de la commande
+        // on envoie ce clone pour modification de la commande déjà existante avec le même numéro de commande
         const ORDER_HISTORY = cloneDeep(this.order);
         this.orderService.editOrder(ORDER_HISTORY);
 
@@ -278,8 +277,6 @@ export class OrderValidationPage implements OnInit {
 
     // remise à 0 du panier et des quantités d'article sélectionnées après envoi commande
     deleteAll(orderlines: OrderLine[]) {
-        // faut fix ca ! ! ! ca efface tout sinon
-
         orderlines.forEach(
             (orderLine) => {
                 orderLine.quantity = 0;
@@ -287,6 +284,7 @@ export class OrderValidationPage implements OnInit {
         );
 
         this.cartService.resetCart();
+        this.warehouseRetService.setStatus(false);
         this.onDismiss();
     }
 }

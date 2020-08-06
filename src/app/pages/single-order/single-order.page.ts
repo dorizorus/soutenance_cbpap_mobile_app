@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {Order} from '../../models/Order';
 import {OrderService} from '../../services/order.service';
-import {AlertController, NavController, Platform, ToastController} from '@ionic/angular';
+import {AlertController, AnimationController, ModalController, NavController, Platform, ToastController} from '@ionic/angular';
 import { cloneDeep } from 'lodash';
 import {CartService} from '../../services/cart.service';
 
@@ -12,6 +12,7 @@ import {UserService} from '../../services/user.service';
 
 import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
+import {ContactPage} from '../contact/contact.page';
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
@@ -37,7 +38,9 @@ export class SingleOrderPage implements OnInit {
                 private file: File,
                 private fileOpener: FileOpener,
                 private emailComposer: EmailComposer,
-                private userService: UserService) {
+                private userService: UserService,
+                public modalController: ModalController,
+                public animationCtrl: AnimationController) {
     }
 
     ngOnInit(): void {
@@ -101,8 +104,6 @@ export class SingleOrderPage implements OnInit {
     }
 
     private sendCancel() {
-        // todo : supprimer order dans le app preference
-        // todo : on ne doit pas supprimer la commande annulée de l'historique des commandes ou plutôt ajouter un petit indicateur annulée
         this.createPdf();
         this.sendMail();
         this.orderService.getOrder().isCancelled = true;
@@ -158,9 +159,6 @@ export class SingleOrderPage implements OnInit {
                       alignment: 'right'
                   },
                   {text: 'Commande du : ' + this.order.orderDate.toLocaleDateString() + ' '
-                          // this.order.orderDate.getDate() + '/'
-                          // + ('0' + (this.order.orderDate.getMonth() + 1)).slice(-2) + '/'
-                          // + this.order.orderDate.getFullYear() + ' '
                           + this.order.orderDate.toLocaleTimeString(), style: 'subheader'},
                   {text: 'Ref client : ' + this.userService.getActiveCustomer().CT_Num},
                   {text: this.userService.getActiveCustomer().CT_Intitule},
@@ -220,6 +218,46 @@ export class SingleOrderPage implements OnInit {
           this.emailComposer.open(email);
       }
 
+// ouverture de la modal contact lorsqu'on souhaite contacter CB Papiers aprés que la deadline pour éditer ou annuler une commande soit passée
+    async alertCBPapiers() {
+            const enterAnimation = (baseEl: any) => {
+                // création de l'animation via AnimationControleur
+                const backdropAnimation = this.animationCtrl.create()
+                    .addElement(baseEl.querySelector('ion-backdrop'));
 
+                // définition des paramétres de l'animation
+                const wrapperAnimation = this.animationCtrl.create()
+                    .addElement(baseEl.querySelector('.modal-wrapper'));
 
+                // la méthode fromTo permet de dire de quels parametres ça commence / ça fini
+                wrapperAnimation.fromTo('transform', 'scaleX(0.1) scaleY(0.1)', 'translateX(0%) scaleX(1) scaleY(1)')
+                    .fromTo('opacity', 0, 1);
+
+                backdropAnimation.fromTo('opacity', 0.01, 0.4);
+
+                // on retourne l'animation avec ses différents éléments
+                return this.animationCtrl.create()
+                    .addElement(baseEl)
+                    .easing('cubic-bezier(0.36,0.66,0.04,1)')
+                    .duration(300)
+                    .beforeAddClass('show-modal')
+                    .addAnimation([backdropAnimation, wrapperAnimation]);
+            }
+
+            // pour l'animation de retour, on joue simplement l'inverse de l'animation d'entrée
+            const leaveAnimation = (baseEl: any) => {
+                return enterAnimation(baseEl).direction('reverse');
+            }
+            // Création du modal avec les animations et les css défini
+            const modal = await this.modalController.create({
+                component: ContactPage,
+                enterAnimation,
+                leaveAnimation,
+                cssClass: 'modal-pop'
+            });
+
+            // lancement du modal
+            return await modal.present();
+
+    }
 }
