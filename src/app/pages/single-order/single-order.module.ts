@@ -6,9 +6,6 @@ import {IonicModule} from '@ionic/angular';
 
 import {SingleOrderPageRoutingModule} from './single-order-routing.module';
 
-import {SingleOrderPage} from './single-order.page';
-import {HeaderComponent} from "../../header/header.component";
-
 @NgModule({
     imports: [
         CommonModule,
@@ -16,8 +13,6 @@ import {HeaderComponent} from "../../header/header.component";
         IonicModule,
         SingleOrderPageRoutingModule,
     ],
-    exports: [HeaderComponent],
-    declarations: [HeaderComponent]
 })
 export class SingleOrderPageModule {
 }

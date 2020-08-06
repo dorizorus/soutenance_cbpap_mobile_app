@@ -7,8 +7,6 @@ import { IonicModule } from '@ionic/angular';
 import { SettingsPageRoutingModule } from './settings-routing.module';
 
 import { SettingsPage } from './settings.page';
-import { HeaderComponent } from '../../header/header.component';
-
 
 @NgModule({
   imports: [
@@ -17,7 +15,6 @@ import { HeaderComponent } from '../../header/header.component';
     IonicModule,
     SettingsPageRoutingModule
   ],
-  declarations: [SettingsPage, HeaderComponent],
-  exports:[HeaderComponent]
+  declarations: [SettingsPage],
 })
 export class SettingsPageModule {}
