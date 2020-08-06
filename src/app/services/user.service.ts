@@ -1,11 +1,8 @@
 import {Injectable} from '@angular/core';
-import {Customer} from '../models/Customer';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {F_COMPTET} from '../models/JSON/F_COMPTET';
 import {F_DOCLIGNE} from '../models/JSON/F_DOCLIGNE';
-import {UserWeb} from "../models/UserWeb";
-import {environment} from "../../environments/environment";
 import {Storage} from "@ionic/storage";
 
 @Injectable({
@@ -109,15 +106,16 @@ export class UserService {
         this.dataStorage.ready().then(() => {
         // systéme de clé / valeur
             this.dataStorage.set(user.CT_Num, user);
+            this.getUserStorage(user.CT_Num);
         });
-        this.getUserStorage(user.CT_Num);
+
     }
 
     getUserStorage(login : string) {
         this.dataStorage.ready().then(() => {
         // systéme de promesse
         this.dataStorage.get(login).then((data : F_COMPTET) => {
-            console.log("J'ai mon user" + data.CT_Num + " dans le storage");
+            console.log("J'ai mon user " + data.CT_Num + " dans le storage");
             return data;
         });
       });
@@ -134,18 +132,16 @@ export class UserService {
     }
 
     getStorageLength() {
-
         this.dataStorage.ready().then(() => {
             this.sizeStorage = 0;
-            this.dataStorage.length().then((val : number) => {
-                console.log(" 1 La taille dans le storage est de " + val)
-                this.sizeStorage = val;
-                console.log(" 2 Size storage vaut " + this.sizeStorage);
+            // this.dataStorage.clear().then(() => {
+                this.dataStorage.length().then((val : number) => {
+                    this.sizeStorage = val;
+                    console.log(" 2 Size storage vaut " + this.sizeStorage);
+                });
+            // });
             });
-        });
-
     }
-
 
     /**
      * méthodes pour le del-acc
