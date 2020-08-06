@@ -31,11 +31,10 @@ export class LoginPage implements OnInit {
                 private platForm : Platform,
                 private dataStorage : Storage) {
 
-                    this.dataStorage.ready().then(() => {
-                        this.userService.getStorageLength();
+                    this.platForm.ready().then(() => {
                         this.userService.setAllUsersStorage();
-                        this.redirection();
-                    })
+                        this.userService.getStorageLength();
+                    });
                     // on subscribe a l'evenement lié au routeur, a chaque changement d'url, on lance
                     // la méthode. Si l'url est similaire a la page de login et si c'est vide, redirige vers la liste
                     this.router.events.subscribe((e) => {
@@ -50,8 +49,8 @@ export class LoginPage implements OnInit {
     ngOnInit() {
         
     }
-
-    async redirection() {
+     /*
+    redirection() {
         this.dataStorage.ready().then(() => {
             if (this.userService.sizeStorage == 1) {
                 console.log("4 c'est pas vide!");
@@ -59,10 +58,12 @@ export class LoginPage implements OnInit {
             } else if (this.userService.sizeStorage> 1) {
                 this.router.navigateByUrl('/acc-choice');
             } else {
-                console.log("4 c'est vide :'(, storage vaut" + this.userService.sizeStorage);
+                console.log("4 c'est vide :'(, storage vaut " + this.userService.sizeStorage);
             }
         });
     }
+    */
+
     async initClient() {
         // on créer le compte
         const compte: F_COMPTET =
