@@ -15,7 +15,7 @@ import {File} from '@ionic-native/file/ngx';
 import {FileOpener} from '@ionic-native/file-opener/ngx';
 import {EmailComposer} from '@ionic-native/email-composer/ngx';
 import {UserService} from "./services/user.service";
-import {HttpInterceptorService} from "./services/http-interceptor.service";
+import {HttpInterceptorService} from "./security/http-interceptor.service";
 
 // todo verifier que cartPage, SingleOrderPage, OrderValidationPage marchent
 @NgModule({

@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {Storage} from "@ionic/storage";
-import {UserService} from "./user.service";
+import {UserService} from "../services/user.service";
 
 @Injectable({
     providedIn: 'root'
@@ -27,7 +27,10 @@ export class HttpInterceptorService implements HttpInterceptor {
             Authorization: `Bearer ${this.token}`
           }
         });
+          return next.handle(httpClone);
+      } else{
+          return next.handle(req);
       }
-    return next.handle(httpClone);
+
     }
 }
