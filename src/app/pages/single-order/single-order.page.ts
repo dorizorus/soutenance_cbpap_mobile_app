@@ -46,7 +46,7 @@ export class SingleOrderPage implements OnInit {
     ngOnInit(): void {
         this.order = this.orderService.getOrder();
         this.total = 0;
-        this.order.orderLines.forEach(value => this.total += (value.article.unitPrice * value.quantity));
+        this.order.orderLines.forEach(value => this.total += (value.article.finalPrice * value.quantity));
         this.calculateDeadLine();
         this.calculateElapsedTime();
     }
