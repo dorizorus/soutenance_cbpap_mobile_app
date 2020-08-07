@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
-import {BehaviorSubject} from 'rxjs';
-import {HttpClient} from '@angular/common/http';
+import {BehaviorSubject, Observable} from 'rxjs';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Storage} from "@ionic/storage";
 import {Customer} from "../models/Customer";
 import {environment} from "../../environments/environment";
@@ -57,14 +57,17 @@ export class UserService {
 
     async getUserValidity(login: string, password: string) {
         let customer : Customer = null;
-        console.log("user validity");
+
         return new Promise((resolve, reject) => {
-            this.http.post(environment.baseURL + 'customers/authentification', {id: login, password}, {responseType: 'text'}).subscribe(
+            this.http.post(environment.baseURL + 'customers/authentification',
+                {id: login, password},
+                {responseType: 'text'}).subscribe(
                 (token) => {
-                   this.dataStorage.set(login + 'token',token);
+                   this.dataStorage.set(login + 'token', token);
 
                     console.log('mon token', token);
-                    this.http.get<Customer>(environment.customer + '/' + login).subscribe( (responseCustomer) =>
+                    this.http.get<Customer>(environment.customer + '/' + login)
+                        .subscribe( responseCustomer =>
                     {
                         customer = responseCustomer;
                         this.setActiveCustomer(customer);

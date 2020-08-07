@@ -69,7 +69,7 @@ export class CartService {
 
 
     // permet d'initialiser la liste d'articles dans articlePage
-    initOrderLinesList(idCustomer : string){
+    initOrderLinesList(idCustomer : string) {
         this.http.get<TopArticle[]>(environment.topArticle + idCustomer).subscribe(data => {
             data.forEach( topArticle => {
                 const orderLine = {
@@ -81,26 +81,14 @@ export class CartService {
             },
             error => console.log(error),
             () => this.orderLineList$.next(this.orderLineList)
-        )}
+        );
+    }
 
     // mise à jour de la liste d'article avec la bonne quantité : prend une orderline en particulier
     updateOrderLineFromList(orderLine: OrderLine, qty: number) {
         const index = this.orderLineList.indexOf(orderLine);
         this.orderLineList[index].quantity = qty;
         this.orderLineList$.next(this.orderLineList);
-
-        // const index2 = this.cart.orderLines.indexOf(orderLine);
-        // console.log('index à supprimer');
-        // console.log(this.cart.orderLines.indexOf(orderLine));
-        //
-        // console.log('quantité à supprimer');
-        // console.log(this.cart.orderLines[index2].quantity);
-        //
-        // if(this.cart.orderLines[index2].quantity === 0){
-        //     console.log(this.cart.orderLines[index2]);
-        //     this.cart.orderLines.splice(index2,1);
-        //     // this.cart$.next(this.cart);
-        // }
     }
 
     // mise à jour des quantités dans la liste des articles : prend toutes les orderlines du panier en paramètre

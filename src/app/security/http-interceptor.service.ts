@@ -13,9 +13,11 @@ export class HttpInterceptorService implements HttpInterceptor {
 
   constructor(private storage: Storage, private userService: UserService) {
     this.userService.activeCustomer$.subscribe(customer => {
-      this.login = customer.id;
-      this.storage.get(this.login + 'token').then(dataToken =>
-        this.token = dataToken);
+        if (customer != null) {
+            this.login = customer.id;
+            this.storage.get(this.login + 'token').then(dataToken =>
+                this.token = dataToken);
+        }
     });
   }
 

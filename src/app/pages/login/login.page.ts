@@ -6,6 +6,7 @@ import {Router, NavigationEnd} from '@angular/router';
 import {UserWeb} from "../../models/UserWeb";
 import {Storage} from "@ionic/storage";
 import {Customer} from "../../models/Customer";
+import {Observable} from "rxjs";
 
 @Component({
     selector: 'app-login',
@@ -18,11 +19,9 @@ export class LoginPage implements OnInit {
     // les infos dans certaines parties de l'application (genre la partie compte). Actuellement dans l'application, on utilise un service
     // pour transférer les données d'un client sur les différentes page.
 
-    login: string;
-    password: string;
-    error: string;
-    userWeb : UserWeb;
-    usersWeb : UserWeb[] = [];
+    private login: string;
+    private password: string;
+    private error: string;
 
     constructor(private navCtrl: NavController,
                 private modalController: ModalController,
@@ -44,10 +43,7 @@ export class LoginPage implements OnInit {
                     });
                 }
 
-
-    ngOnInit() {
-
-    }
+    ngOnInit() {}
      /*
     redirection() {
         this.dataStorage.ready().then(() => {
@@ -93,7 +89,7 @@ export class LoginPage implements OnInit {
         this.navCtrl.navigateForward(['administration']);
     }
 
-    // censé faire apparaitre la modal mais ne marche pas non plus. La modal est créer dans tabs.ts
+    // censé faire apparaitre la modal mais ne marche pas non plus. La modal est créée dans tabs.ts
     async createContact() {
         const modal = await this.modalController.create({
             component: ContactPageModule,
@@ -103,8 +99,8 @@ export class LoginPage implements OnInit {
         return await modal.present();
     }
 
-    // todo deplacer dans le service pour pouvoir reutiliser dans delete-acc
     async logIn() {
+        console.log('in login, yay');
         if(this.login == '' || this.login == null)
             if(this.password == '' || this.password == null)
                 this.error = 'Veuillez entrer un identifiant & mot de passe';

@@ -7,7 +7,6 @@ import {WarehouseRetService} from '../services/warehouse-ret.service';
 import {CartService} from '../services/cart.service';
 import {Order} from '../models/Order';
 import { cloneDeep } from 'lodash';
-import {F_COMPTET} from "../models/JSON/F_COMPTET";
 import {Customer} from "../models/Customer";
 
 @Component({
