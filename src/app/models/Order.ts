@@ -1,10 +1,10 @@
 import {OrderLine} from './OrderLine';
-import {F_COMPTET} from "./JSON/F_COMPTET";
+import {Customer} from "./Customer";
 
 export class Order {
 
     orderNumber: string;
-    customer: F_COMPTET;
+    customer: Customer;
     orderLines: OrderLine[];
     orderDate: Date;
     isCancelled?: boolean;

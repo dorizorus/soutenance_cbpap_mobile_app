@@ -3,8 +3,9 @@ import {OrderLine} from '../models/OrderLine';
 import {BehaviorSubject} from 'rxjs';
 import {WarehouseRetService} from './warehouse-ret.service';
 import {HttpClient} from "@angular/common/http";
-import {F_DOCLIGNE} from "../models/JSON/F_DOCLIGNE";
 import {Order} from '../models/Order';
+import {environment} from "../../environments/environment";
+import {TopArticle} from "../models/TopArticle";
 
 @Injectable({
     providedIn: 'root'
@@ -68,10 +69,19 @@ export class CartService {
 
 
     // permet d'initialiser la liste d'articles dans articlePage
-    initOrderLinesList(orderLines: OrderLine[]){
-        this.orderLineList = orderLines;
-        this.orderLineList$.next(orderLines);
-    }
+    initOrderLinesList(idCustomer : string){
+        this.http.get<TopArticle[]>(environment.topArticle + idCustomer).subscribe(data => {
+            data.forEach( topArticle => {
+                const orderLine = {
+                    article : topArticle.article,
+                    quantity : 0
+            };
+                this.orderLineList.push(orderLine);
+            })
+            },
+            error => console.log(error),
+            () => this.orderLineList$.next(this.orderLineList)
+        )}
 
     // mise à jour de la liste d'article avec la bonne quantité : prend une orderline en particulier
     updateOrderLineFromList(orderLine: OrderLine, qty: number) {
@@ -131,9 +141,9 @@ export class CartService {
         // Si le toggle est activé on applique la WHRetrieval
         this.total = 0;
         if (!this.WHRetrieval) {
-            this.cart.orderLines.forEach(value => this.total += (value.article.unitPrice * value.quantity));
+            this.cart.orderLines.forEach(value => this.total += (value.article.finalPrice * value.quantity));
         } else {
-            this.cart.orderLines.forEach(value => this.total += ((value.article.unitPrice * value.quantity) * 0.95));
+            this.cart.orderLines.forEach(value => this.total += ((value.article.finalPrice * value.quantity) * 0.95));
         }
     }
 

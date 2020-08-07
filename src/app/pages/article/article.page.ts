@@ -1,15 +1,12 @@
 import {Component, OnInit} from '@angular/core';
 import {ModalController} from '@ionic/angular';
 import {SingleArticlePage} from '../single-article/single-article.page';
-import {Article} from 'src/app/models/Article';
 import {OrderLine} from 'src/app/models/OrderLine';
 import {UserService} from 'src/app/services/user.service';
 import {CartService} from '../../services/cart.service';
-import {ArticleService} from '../../services/article.service';
 import {cloneDeep} from 'lodash';
-import {F_ARTICLE} from "../../models/JSON/F_ARTICLE";
 import {Order} from "../../models/Order";
-import {F_COMPTET} from "../../models/JSON/F_COMPTET";
+import {Customer} from "../../models/Customer";
 
 @Component({
     selector: 'app-articles',
@@ -23,12 +20,11 @@ export class ArticlePage implements OnInit {
     orderLineList: OrderLine[] = [];
     orderLineBackup: OrderLine[] = [];
     totalQuantity: number;
-    customer: F_COMPTET;
+    customer: Customer;
 
     constructor(private modalController: ModalController,
                 private cartService: CartService,
-                private userService: UserService,
-                private articleService: ArticleService) {
+                private userService: UserService) {
     }
 
     ngOnInit(): void {
@@ -46,125 +42,12 @@ export class ArticlePage implements OnInit {
         this.userService.activeCustomer$.subscribe(
             customer => {
                 this.customer = customer;
-                this.initTopF_ARTICLE();
+                this.initTopArticles();
             }
         );
 
         console.log(this.userService.getStorageLength());
         // this.userService.setAllUsersStorage();
-    }
-
-    initTopF_ARTICLE() {
-        let articlesAndFrequency: [string, string, number][] = [];
-        let AR_Ref_Array: string[] = [];
-        const ctNum = this.customer.CT_Num;
-
-        this.userService.getDocLignes().subscribe(
-            (F_DOCLIGNES) => {
-                F_DOCLIGNES.forEach(
-                    (DOCLIGNE) => {
-                        if (DOCLIGNE.CT_Num == ctNum && DOCLIGNE.AR_Ref.trim() != '')
-
-                            if (AR_Ref_Array.indexOf(DOCLIGNE.AR_Ref.trim()) != -1)
-                                articlesAndFrequency[AR_Ref_Array.indexOf(DOCLIGNE.AR_Ref.trim())][2]++;
-
-                            else {
-                                AR_Ref_Array.push(DOCLIGNE.AR_Ref.trim());
-                                articlesAndFrequency.push([DOCLIGNE.AR_Ref.trim(), DOCLIGNE.DL_Design, 1]);
-                            }
-                    }
-                );
-                articlesAndFrequency.sort((a, b) => (b[2] - a[2]));
-                articlesAndFrequency.forEach(
-                    data => {
-                        const orderLine = {
-                            article: {
-                                reference: data[0],
-                                label: data[1],
-                                AC_PrixVen: 0,
-                                AC_Remise: 0
-                            },
-                            quantity: 0,
-                            orderNumber: null,
-                        };
-                        this.orderLineList.push(orderLine);
-                    }
-                )
-            },
-            (error) => console.error(error),
-            () => {
-                this.initAllInfosTest();
-            }
-        );
-    }
-
-    private initAllInfosTest() {
-        console.log('in initAllInfosTest()');
-
-        let ctNum = this.customer.CT_Num;
-
-        this.articleService.getF_ARTCLIENT().subscribe(
-            (F_ARTCLIENT) => {
-                for (let orderLine of this.orderLineList)
-
-                    for (const discount of F_ARTCLIENT)
-
-                        if (discount.CT_Num == ctNum && discount.AR_Ref == orderLine.article.reference) {
-
-                            const AC_PrixVen = parseFloat(discount.AC_PrixVen.replace(',', '.'));
-                            const AC_Remise = parseFloat(discount.AC_Remise.replace(',', '.'));
-                            if (AC_PrixVen != 0 && AC_Remise != 0) {
-                                orderLine.article.AC_PrixVen = AC_PrixVen;
-                                orderLine.article.AC_Remise = AC_Remise;
-
-                            } else if (AC_PrixVen != 0 && AC_Remise == 0)
-                                orderLine.article.AC_PrixVen = AC_PrixVen;
-
-                            else if (AC_PrixVen == 0 && AC_Remise != 0)
-                                orderLine.article.AC_Remise = AC_Remise;
-
-                        }
-            },
-            error => console.error(error),
-            () => this.initAllPricesTest()
-        );
-    }
-
-    private initAllPricesTest() {
-
-        this.articleService.getF_ARTICLE().subscribe(
-            (F_ARTICLES) => {
-                for (const orderline of this.orderLineList)
-
-                    for (const article of F_ARTICLES)
-
-                        if (orderline.article.reference == article.AR_Ref.trim())
-
-                            if (orderline.article.AC_PrixVen != 0 && orderline.article.AC_Remise != 0)
-                                orderline.article.unitPrice =
-                                    Math.ceil(orderline.article.AC_PrixVen * (1 - orderline.article.AC_Remise / 100)*100)/100;
-
-                            else if (orderline.article.AC_PrixVen != 0 && orderline.article.AC_Remise == 0)
-                                orderline.article.unitPrice =
-                                    Math.ceil(orderline.article.AC_PrixVen*100)/100;
-
-                            else if (orderline.article.AC_PrixVen == 0 && orderline.article.AC_Remise != 0)
-                                orderline.article.unitPrice =
-                                    Math.ceil(parseFloat(article.AR_PrixVen.replace(',', '.'))
-                                    * (1 - orderline.article.AC_Remise / 100)*100)/100;
-
-                            else
-                                orderline.article.unitPrice =
-                                    Math.ceil(parseFloat(article.AR_PrixVen.replace(',', '.'))*100)/100;
-
-
-            },
-            error => console.error(error),
-            () => {
-                this.cartService.initOrderLinesList(this.orderLineList);
-                this.orderLineBackup = this.orderLineList;
-            }
-        );
     }
 
 
@@ -239,6 +122,10 @@ export class ArticlePage implements OnInit {
 
         // on met à jour le nouveau panier dans le service
         this.cartService.setCart(this.cart);
+    }
+
+    private initTopArticles() {
+        this.cartService.initOrderLinesList(this.customer.id);
     }
 }
 

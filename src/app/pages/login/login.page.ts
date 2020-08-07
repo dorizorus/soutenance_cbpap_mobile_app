@@ -3,9 +3,9 @@ import {ModalController, NavController, Platform} from '@ionic/angular';
 import {ContactPageModule} from '../contact/contact.module';
 import {UserService} from 'src/app/services/user.service';
 import {Router, NavigationEnd} from '@angular/router';
-import {F_COMPTET} from '../../models/JSON/F_COMPTET';
 import {UserWeb} from "../../models/UserWeb";
 import {Storage} from "@ionic/storage";
+import {Customer} from "../../models/Customer";
 
 @Component({
     selector: 'app-login',
@@ -65,17 +65,18 @@ export class LoginPage implements OnInit {
 
     async initClient() {
         // on créer le compte
-        const compte: F_COMPTET =
+        const compte: Customer =
             {
-                CT_Num: "ADRANO",
-                CT_Intitule: "ADRANO PIZZ",
-                CT_Adresse: "9 ZONE COMMERCIALE DU TRIANGLE",
-                CT_CodePostal: "F-57525",
-                CT_Ville: "TALANGE",
-                CT_Pays: "FRANCE",
-                CT_Sommeil: 0,
-                CT_Telephone: "06 01 03 10 07",
-                CT_EMail: "contact@adranopizz.fr"
+                id: "ADRANO",
+                name: "ADRANO PIZZ",
+                address: "9 ZONE COMMERCIALE DU TRIANGLE",
+                city: {
+                    postalCode : 57525,
+                    name : "TALANGE",
+                },
+                country: "FRANCE",
+                phoneNumber: "06 01 03 10 07",
+                email: "contact@adranopizz.fr"
             };
         
         // on ne va pas utiliser de set mais un systeme d'ajout/suppresion de compte. Ici, il est ajouté
@@ -103,7 +104,7 @@ export class LoginPage implements OnInit {
     }
 
     // todo deplacer dans le service pour pouvoir reutiliser dans delete-acc
-    async logInF_COMPTET() {
+    async logIn() {
         if(this.login == '' || this.login == null)
             if(this.password == '' || this.password == null)
                 this.error = 'Veuillez entrer un identifiant & mot de passe';

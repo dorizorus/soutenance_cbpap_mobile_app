@@ -2,7 +2,7 @@ import {Article} from './Article';
 
 export class OrderLine{
 
-    orderNumber: string;
+    orderNumber?: string;
     article: Article;
     quantity: number;
 

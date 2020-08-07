@@ -8,6 +8,7 @@ import {CartService} from '../services/cart.service';
 import {Order} from '../models/Order';
 import { cloneDeep } from 'lodash';
 import {F_COMPTET} from "../models/JSON/F_COMPTET";
+import {Customer} from "../models/Customer";
 
 @Component({
     selector: 'app-header',
@@ -19,7 +20,7 @@ export class HeaderComponent implements OnInit {
     cart: Order;
     total = 0;
     WHRetrieval = false;
-    customer: F_COMPTET = null;
+    customer: Customer = null;
 
     constructor(private modalController: ModalController,
                 private navCtrl: NavController,

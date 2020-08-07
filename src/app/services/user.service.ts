@@ -1,21 +1,21 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
-import {F_COMPTET} from '../models/JSON/F_COMPTET';
-import {F_DOCLIGNE} from '../models/JSON/F_DOCLIGNE';
 import {Storage} from "@ionic/storage";
+import {Customer} from "../models/Customer";
+import {environment} from "../../environments/environment";
 
 @Injectable({
     providedIn: 'root'
 })
 export class UserService {
 
-    customer: F_COMPTET;
+    customer: Customer;
     sizeStorage: number;
-    activeCustomer: F_COMPTET;
-    public activeCustomer$: BehaviorSubject<F_COMPTET> = new BehaviorSubject<F_COMPTET>(null);
-    customerAccounts: F_COMPTET[] = [];
-    public customerAccounts$: BehaviorSubject<F_COMPTET[]> = new BehaviorSubject<F_COMPTET[]>([]);
+    activeCustomer: Customer;
+    public activeCustomer$: BehaviorSubject<Customer> = new BehaviorSubject<Customer>(null);
+    customerAccounts: Customer[] = [];
+    public customerAccounts$: BehaviorSubject<Customer[]> = new BehaviorSubject<Customer[]>([]);
 
     constructor(private http: HttpClient, private dataStorage: Storage) {
     }
@@ -28,25 +28,25 @@ export class UserService {
 
 
     // permet de définir quel est le compte actif puis l'envoie au subscribe
-    setActiveCustomer(f_comptet: F_COMPTET) {
-        this.activeCustomer = f_comptet;
+    setActiveCustomer(customer : Customer) {
+        this.activeCustomer = customer;
         this.activeCustomer$.next(this.activeCustomer);
-        localStorage.setItem('user', JSON.stringify(this.activeCustomer));
+        this.dataStorage.set(customer.id, this.activeCustomer);
     }
 
 
     // ici on fait simplement transiter un compte (pas forcément actif, utilisé dans settings)
-    setCustomer(f_comptet: F_COMPTET) {
-        this.customer = f_comptet;
+    setCustomer(customer: Customer) {
+        this.customer = customer;
         this.activeCustomer$.next(this.customer);
     }
 
 
     // Ajoute un compte au tableau de comptes du téléphone. Le client actif est attribué à ce moment la
-    addCustomer(f_COMPTET: F_COMPTET) {
-        this.customerAccounts.push(f_COMPTET);
+    addCustomer(customer: Customer) {
+        this.customerAccounts.push(customer);
         this.customerAccounts$.next(this.customerAccounts);
-        this.setActiveCustomer(f_COMPTET);
+        this.setActiveCustomer(customer);
     }
 
     // permet de récupérer la liste de comptes
@@ -54,55 +54,40 @@ export class UserService {
         return this.customerAccounts;
     }
 
-    getAllF_COMPTETs() {
-        // todo remplacer par l'appel à l'api
-        return this.http.get<F_COMPTET[]>('assets/F_COMPTET.json');
-    }
-
-    getDocLignes() {
-        // todo remplacer par l'appel à l'api
-        return this.http.get<F_DOCLIGNE[]>('assets/F_DOCLIGNE.json');
-    }
 
     async getUserValidity(login: string, password: string) {
-        let F_Comptet = null;
+        let customer : Customer = null;
         console.log("user validity");
         return new Promise((resolve, reject) => {
-            this.getAllF_COMPTETs().subscribe(
-                (F_COMPTETs) => {
-                    let found = false;
-                    let index = 0;
+            this.http.post(environment.baseURL + 'customers/authentification', {id: login, password}, {responseType: 'text'}).subscribe(
+                (token) => {
+                   this.dataStorage.set(login + 'token',token);
 
-                    console.log(index);
-                    console.log(F_COMPTETs.length);
-                    while (!found && index < F_COMPTETs.length) {
-                        if (F_COMPTETs[index].CT_Num.toUpperCase() == login.toUpperCase() && password == F_COMPTETs[index].MDP) {
-                            found = true;
-                            F_Comptet = F_COMPTETs[index];
-                        } else {
-                            index++;
-                        }
-                    }
-                    if (found) {
-                        this.setActiveCustomer(F_Comptet);
-                        this.addCustomer(F_Comptet);
-                        this.setUserStorage(F_Comptet);
+                    console.log('mon token', token);
+                    this.http.get<Customer>(environment.customer + '/' + login).subscribe( (responseCustomer) =>
+                    {
+                        customer = responseCustomer;
+                        this.setActiveCustomer(customer);
+                        this.addCustomer(customer);
+                        this.setUserStorage(customer);
                         this.getStorageLength();
-                        resolve(F_Comptet);
-                    } else {
-                        reject('Mauvais identifiant/mot de passe');
-                    }
+                        resolve(Customer);
+                    });
+                },
+                error => {
+                    reject('Mauvais identifiant/mot de passe');
                 }
+
             );
         });
     }
 
-    setUserStorage(user: F_COMPTET) {
+    setUserStorage(customer: Customer) {
         // On attend que le storage prêt
         this.dataStorage.ready().then(() => {
             // systéme de clé / valeur
-            this.dataStorage.set(user.CT_Num, user);
-            this.getUserStorage(user.CT_Num);
+            this.dataStorage.set(customer.id, customer);
+            this.getUserStorage(customer.id);
         });
 
     }
@@ -110,8 +95,8 @@ export class UserService {
     getUserStorage(login: string) {
         this.dataStorage.ready().then(() => {
             // systéme de promesse
-            this.dataStorage.get(login).then((data: F_COMPTET) => {
-                console.log("J'ai mon user " + data.CT_Num + " dans le storage");
+            this.dataStorage.get(login).then((data: Customer) => {
+                console.log("J'ai mon user " + data.id + " dans le storage");
                 console.log(this.getStorageLength());
                 return data;
             });
@@ -121,9 +106,9 @@ export class UserService {
     setAllUsersStorage() {
         this.customerAccounts = [];
         this.dataStorage.ready().then(() => {
-            this.dataStorage.forEach((valeur: F_COMPTET) => {
+            this.dataStorage.forEach((valeur: Customer) => {
                 this.customerAccounts.push(valeur);
-                console.log("3 " + valeur.CT_Num + " ajouté a customerAccounts");
+                console.log("3 " + valeur.id + " ajouté a customerAccounts");
             });
         })
     }
@@ -158,7 +143,7 @@ export class UserService {
 
     // Supprimer un compte des comptes sur le téléphone.
     // On cherche l'index dans le tableau et on le supprime, ensuite on met à jour les subscribes
-    removeCustomer(customer: F_COMPTET) {
+    removeCustomer(customer: Customer) {
         if (this.activeCustomer === customer) {
             this.activeCustomer = null;
             this.activeCustomer$.next(customer);

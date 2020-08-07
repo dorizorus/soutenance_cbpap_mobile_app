@@ -1,6 +1,6 @@
 export class City {
 
-    id: number;
+    id?: number;
     name: string;
     postalCode: number;
 }

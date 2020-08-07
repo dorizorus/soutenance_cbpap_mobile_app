@@ -3,7 +3,6 @@ import {NavController, AlertController} from '@ionic/angular';
 
 import {Customer} from 'src/app/models/Customer';
 import {UserService} from 'src/app/services/user.service';
-import {F_COMPTET} from '../../models/JSON/F_COMPTET';
 
 @Component({
     selector: 'app-settings',
@@ -17,7 +16,7 @@ export class SettingsPage implements OnInit {
                 private userService: UserService) {
     }
 
-    customer : F_COMPTET;
+    customer : Customer;
 
     ngOnInit() {
         this.customer = this.userService.getActiveCustomer();

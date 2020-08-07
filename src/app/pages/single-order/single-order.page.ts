@@ -160,9 +160,9 @@ export class SingleOrderPage implements OnInit {
                   },
                   {text: 'Commande du : ' + this.order.orderDate.toLocaleDateString() + ' '
                           + this.order.orderDate.toLocaleTimeString(), style: 'subheader'},
-                  {text: 'Ref client : ' + this.userService.getActiveCustomer().CT_Num},
-                  {text: this.userService.getActiveCustomer().CT_Intitule},
-                  {text: this.userService.getActiveCustomer().CT_Adresse},
+                  {text: 'Ref client : ' + this.userService.getActiveCustomer().id},
+                  {text: this.userService.getActiveCustomer().name},
+                  {text: this.userService.getActiveCustomer().address},
                   {text: 'Commande à annuler ! ! ! ', style: 'subheader'},
               ],
               styles: {
@@ -211,7 +211,7 @@ export class SingleOrderPage implements OnInit {
               attachments: [
                   this.file.dataDirectory + 'annulation.pdf'
               ],
-          subject: 'ANNULATION COMMANDE ' + ' REFCLIENT : ' + this.userService.getActiveCustomer().CT_Num ,
+          subject: 'ANNULATION COMMANDE ' + ' REFCLIENT : ' + this.userService.getActiveCustomer().id ,
               body: 'ATTENTION ANNULATION ',
               isHtml: true
           };

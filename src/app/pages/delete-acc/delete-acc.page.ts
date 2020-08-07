@@ -4,7 +4,6 @@ import {ContactPageModule} from '../contact/contact.module';
 import {UserService} from 'src/app/services/user.service';
 import {Customer} from 'src/app/models/Customer';
 import {Router} from "@angular/router";
-import {F_COMPTET} from '../../models/JSON/F_COMPTET';
 
 @Component({
     selector: 'app-delete-acc',
@@ -13,7 +12,7 @@ import {F_COMPTET} from '../../models/JSON/F_COMPTET';
 })
 export class DeleteAccPage implements OnInit {
 
-    customer: F_COMPTET;
+    customer: Customer;
     error: string;
     password: string;
 
