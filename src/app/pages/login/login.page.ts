@@ -37,7 +37,7 @@ export class LoginPage implements OnInit {
                     // la méthode. Si l'url est similaire a la page de login et si c'est vide, redirige vers la liste
                     this.router.events.subscribe((e) => {
                         if (e instanceof NavigationEnd) {
-                            if (e.url == '/login' && this.userService.sizeStorage > 0)
+                            if (e.url == '/login' && this.userService.getSizeStorage() > 0)
                                 this.router.navigateByUrl('/nav/article');
                         }
                     });

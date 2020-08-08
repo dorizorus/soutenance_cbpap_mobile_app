@@ -16,21 +16,35 @@ export class AddAccPage implements OnInit {
     error: string;
 
     constructor(private userService: UserService,
-                private router: Router) {
+                private navCtrl: NavController) {
     }
 
     ngOnInit() {
     }
 
-/*    addAccountAndRedirect() {
-        // recupere un msg d'erreur si invalid, sinon un account
-        let res = this.userService.getUserValidity(this.login,this.password);
-        if(res == false)
-            this.error = "Mauvais mot de passe / identifiant";
-        else{
-            this.userService.addCustomer(res);
-            this.userService.setActiveCustomer(res);
-            this.router.navigateByUrl('/acc-choice');
+ async addAccountAndRedirect() {
+       console.log('in addAccountAndRedirect(), yay');
+        if (this.login == '' || this.login == null)
+
+            if(this.password == '' || this.password == null)
+                this.error = 'Veuillez entrer un identifiant & mot de passe';
+
+            else
+                this.error = 'Veuillez entrer un identifiant';
+
+        else if(this.password == '' || this.password == null)
+            this.error = 'Veuillez entrer un mot de passe';
+
+        else {
+            await this.userService.getUserValidity(this.login, this.password).then((data) => {
+                console.log(data);
+                console.log("win");
+                this.navCtrl.navigateForward(['/nav/article']);
+            }).catch((data) => {
+                    this.error = data;
+                    console.log("fail");
+                }
+            );
         }
-    }*/
+    }
 }

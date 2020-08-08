@@ -10,12 +10,14 @@ import {environment} from "../../environments/environment";
 })
 export class UserService {
 
-    customer: Customer;
-    sizeStorage: number;
-    activeCustomer: Customer;
+    private customer: Customer;
+    private token: string;
+    private sizeStorage: number;
+    private activeCustomer: Customer;
     public activeCustomer$: BehaviorSubject<Customer> = new BehaviorSubject<Customer>(null);
-    customerAccounts: Customer[] = [];
+    private customerAccounts: Customer[] = [];
     public customerAccounts$: BehaviorSubject<Customer[]> = new BehaviorSubject<Customer[]>([]);
+
 
     constructor(private http: HttpClient, private dataStorage: Storage) {
     }
@@ -29,9 +31,11 @@ export class UserService {
 
     // permet de définir quel est le compte actif puis l'envoie au subscribe
     setActiveCustomer(customer : Customer) {
-        this.activeCustomer = customer;
-        this.activeCustomer$.next(this.activeCustomer);
-        this.dataStorage.set(customer.id, this.activeCustomer);
+        this.dataStorage.get(customer.id+'token').then(token => this.token = token);
+        this.dataStorage.get(customer.id).then(customer => {
+            this.activeCustomer = customer;
+            this.activeCustomer$.next(this.activeCustomer);
+        });
     }
 
 
@@ -44,6 +48,7 @@ export class UserService {
 
     // Ajoute un compte au tableau de comptes du téléphone. Le client actif est attribué à ce moment la
     addCustomer(customer: Customer) {
+        this.dataStorage.set(customer.id, customer);
         this.customerAccounts.push(customer);
         this.customerAccounts$.next(this.customerAccounts);
         this.setActiveCustomer(customer);
@@ -55,27 +60,22 @@ export class UserService {
     }
 
 
-    async getUserValidity(login: string, password: string) {
-        let customer : Customer = null;
-
+    async getUserValidity(id: string, password: string) {
         return new Promise((resolve, reject) => {
             this.http.post(environment.baseURL + 'customers/authentification',
-                {id: login, password},
+                {id, password},
                 {responseType: 'text'}).subscribe(
                 (token) => {
-                   this.dataStorage.set(login + 'token', token);
-
-                    console.log('mon token', token);
-                    this.http.get<Customer>(environment.customer + '/' + login)
-                        .subscribe( responseCustomer =>
-                    {
-                        customer = responseCustomer;
-                        this.setActiveCustomer(customer);
-                        this.addCustomer(customer);
-                        this.setUserStorage(customer);
-                        this.getStorageLength();
-                        resolve(Customer);
-                    });
+                    this.token = token;
+                    this.dataStorage.set(id+'token', token);
+                        this.http.get<Customer>(environment.customer + '/' + id)
+                            .subscribe(responseCustomer => {
+                                this.addCustomer(responseCustomer);
+                                this.setActiveCustomer(responseCustomer);
+                                this.setUserStorage(responseCustomer);
+                                this.getStorageLength();
+                                resolve(responseCustomer);
+                            });
                 },
                 error => {
                     reject('Mauvais identifiant/mot de passe');
@@ -83,6 +83,10 @@ export class UserService {
 
             );
         });
+    }
+
+    getToken() {
+        return this.token;
     }
 
     setUserStorage(customer: Customer) {
@@ -119,21 +123,14 @@ export class UserService {
     getStorageLength() {
         this.dataStorage.length().then((total) => {
             setTimeout(() => {
-                return total;
+                this.sizeStorage = total;
             }, 100)
         });
-        /*
-        return this.dataStorage.ready().then(() => {
-            this.sizeStorage = 0;
-            // this.dataStorage.clear().then(() => {
-                this.dataStorage.length().then((val : number) => {
-                    this.sizeStorage = val;
-                    console.log(" 2 Size storage vaut " + this.sizeStorage);
-                });
-            // });
-            });
-         */
     }
+
+        getSizeStorage() {
+            return this.sizeStorage;
+        }
 
     /**
      * méthodes pour le del-acc
