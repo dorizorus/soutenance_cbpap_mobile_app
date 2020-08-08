@@ -16,6 +16,8 @@ import {OrderService} from '../../services/order.service';
 import {Order} from '../../models/Order';
 import { cloneDeep } from 'lodash';
 import {GenerateIDService} from '../../services/generate-id.service';
+import {HttpClient} from "@angular/common/http";
+import {environment} from "../../../environments/environment";
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
@@ -40,7 +42,8 @@ export class OrderValidationPage implements OnInit {
                 private userService: UserService,
                 private orderService: OrderService,
                 private modalController: ModalController,
-                private generateIdService: GenerateIDService) {
+                private generateIdService: GenerateIDService,
+                private httpClient: HttpClient) {
     }
 
     ngOnInit() {
@@ -88,7 +91,7 @@ export class OrderValidationPage implements OnInit {
                     // numéro de commande généré dans le service generateID
                     orderNumber: this.generateIdService.generate(),
                     orderDate: new Date(),
-                    customer : this.userService.getActiveCustomer(),
+                    customer: this.userService.getActiveCustomer(),
                     orderLines: this.cartService.getCart().orderLines
                 };
             this.sendPdf();
@@ -153,6 +156,7 @@ export class OrderValidationPage implements OnInit {
         this.pdfObj = pdfMake.createPdf(docDefinition);
         this.downloadPdf();
         this.sendMail();
+        this.saveOrder(this.userService.getActiveCustomer().id);
 
         const ORDER_HISTORY = cloneDeep(this.order);
         this.orderService.addOrder(ORDER_HISTORY);
@@ -285,5 +289,14 @@ export class OrderValidationPage implements OnInit {
         this.cartService.resetCart();
         this.warehouseRetService.setStatus(false);
         this.onDismiss();
+    }
+
+    // enregistrer la commande dans la bdd
+    saveOrder(idCustomer : string){
+        this.httpClient.post(environment.order + idCustomer,this.order).subscribe( () =>
+            console.log('enregistre'),
+            error => console.log(error)
+        );
+
     }
 }

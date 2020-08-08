@@ -128,7 +128,6 @@ export class ArticlePage implements OnInit {
     }
 
     private initTopArticles() {
-        console.log('initTopArticles', this.customer);
         this.cartService.initOrderLinesList(this.customer.id);
     }
 }

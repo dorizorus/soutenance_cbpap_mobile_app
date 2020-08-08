@@ -1,5 +1,11 @@
 import {Injectable} from '@angular/core';
 import {Order} from "../models/Order";
+import {HttpClient} from "@angular/common/http";
+import {environment} from "../../environments/environment";
+import {error} from "@angular/compiler/src/util";
+import {BehaviorSubject} from "rxjs";
+import {OrderLine} from "../models/OrderLine";
+import {UserService} from "./user.service";
 
 @Injectable({
     providedIn: 'root'
@@ -7,8 +13,9 @@ import {Order} from "../models/Order";
 export class OrderService {
     private order: Order;
     private orders: Order[] = [];
+    public ordersList$: BehaviorSubject<Order[]> = new BehaviorSubject<Order[]>([]);
 
-    constructor() {
+    constructor(private http: HttpClient, private userService: UserService) {
     }
 
     // transfère une order (utilise dans l'history)
@@ -17,10 +24,25 @@ export class OrderService {
     }
 
     getOrder(): Order {
+
         return this.order;
     }
 
-    getOrders(): Order[] {
+    getOrders(idCustomer : string): Order[] {
+        this.http.get<Order[]>(environment.order + 'history/' + idCustomer).subscribe(ordersCustomer => {
+            ordersCustomer.forEach(element => {
+                const orderHistory = {
+                    orderNumber: element.orderNumber,
+                    orderDate: element.orderDate,
+                    customer: this.userService.getActiveCustomer(),
+                    orderLines: element.orderLines
+                };
+                this.orders.push(orderHistory);
+            })
+        },
+        error => console.log(error),
+        () => this.ordersList$.next(this.orders)
+        );
         return this.orders;
     }
 
@@ -30,6 +52,7 @@ export class OrderService {
 
     addOrder(order) {
         this.orders.push(order);
+        this.ordersList$.next(this.orders);
     }
 
     editOrder(order) {

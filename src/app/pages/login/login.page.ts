@@ -100,7 +100,6 @@ export class LoginPage implements OnInit {
     }
 
     async logIn() {
-        console.log('in login, yay');
         if(this.login == '' || this.login == null)
             if(this.password == '' || this.password == null)
                 this.error = 'Veuillez entrer un identifiant & mot de passe';
