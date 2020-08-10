@@ -48,6 +48,7 @@ export class OrderValidationPage implements OnInit {
 
     ngOnInit() {
         this.order = this.cartService.getCart();
+        console.log('init order', this.order);
         this.finalTotal = this.cartService.getFinalTotal();
         this.statusShipping = this.warehouseRetService.getStatusShipping();
     }
@@ -89,7 +90,7 @@ export class OrderValidationPage implements OnInit {
             this.order =
                 {
                     // numéro de commande généré dans le service generateID
-                    orderNumber: this.generateIdService.generate(),
+                    // orderNumber: this.generateIdService.generate(),
                     orderDate: new Date(),
                     customer: this.userService.getActiveCustomer(),
                     orderLines: this.cartService.getCart().orderLines
@@ -160,9 +161,7 @@ export class OrderValidationPage implements OnInit {
 
         const ORDER_HISTORY = cloneDeep(this.order);
         this.orderService.addOrder(ORDER_HISTORY);
-
-        // on reinitialise les orderlines de panier pour le remettre à 0
-        this.deleteAll(this.order.orderLines);
+        // this.deleteAll(this.order.orderLines)
     }
 
     sendPdfEdit() {
@@ -293,9 +292,13 @@ export class OrderValidationPage implements OnInit {
 
     // enregistrer la commande dans la bdd
     saveOrder(idCustomer : string){
+        console.log(this.order);
         this.httpClient.post(environment.order + idCustomer,this.order).subscribe( () =>
             console.log('enregistre'),
-            error => console.log(error)
+            error => console.log(error),
+            () =>
+                // on reinitialise les orderlines de panier pour le remettre à 0
+                this.deleteAll(this.order.orderLines)
         );
 
     }

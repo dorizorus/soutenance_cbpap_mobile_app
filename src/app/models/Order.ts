@@ -3,7 +3,7 @@ import {Customer} from "./Customer";
 
 export class Order {
 
-    orderNumber: string;
+    orderNumber?: string;
     customer: Customer;
     orderLines: OrderLine[];
     orderDate: Date;
