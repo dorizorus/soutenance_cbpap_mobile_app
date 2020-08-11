@@ -16,7 +16,9 @@ export class HistoryPage implements OnInit {
     }
 
     ngOnInit() {
-        this.history = this.orderService.getOrders(this.userService.getActiveCustomer().id);
+        this.orderService.getOrders(this.userService.getActiveCustomer().id);
+        this.orderService.ordersList$.subscribe(history => {this.history = history;
+            console.log(history)});
     }
 
     onClickOrder(order: Order) {

@@ -14,7 +14,7 @@ import {UserService} from '../../services/user.service';
 import {OrderLine} from '../../models/OrderLine';
 import {OrderService} from '../../services/order.service';
 import {Order} from '../../models/Order';
-import { cloneDeep } from 'lodash';
+import {cloneDeep} from 'lodash';
 import {GenerateIDService} from '../../services/generate-id.service';
 import {HttpClient} from "@angular/common/http";
 import {environment} from "../../../environments/environment";
@@ -80,61 +80,83 @@ export class OrderValidationPage implements OnInit {
     constructBody() {
         for (const orderline of this.order.orderLines) {
             // @ts-ignore
-            this.myBody.push([`${orderline.article.reference}`, `${orderline.quantity}`, `${Number(orderline.article.finalPrice* orderline.quantity).toFixed(2) + '€'}`]);
+            this.myBody.push([`${orderline.article.reference}`, `${orderline.quantity}`, `${Number(orderline.article.finalPrice * orderline.quantity).toFixed(2) + '€'}`]);
         }
         return this.myBody;
     }
 
-    checkEditOrderOrNot(){
-        if (this.order.orderNumber == null){
-            this.order =
-                {
-                    // numéro de commande généré dans le service generateID
-                    // orderNumber: this.generateIdService.generate(),
-                    orderDate: new Date(),
-                    customer: this.userService.getActiveCustomer(),
-                    orderLines: this.cartService.getCart().orderLines
-                };
-            this.sendPdf();
-        } else {
-            this.order = this.cartService.getCart();
-            this.sendPdfEdit();
-        }
-    }
+    // checkEditOrderOrNot() {
+    //     if (this.order.orderNumber == null) {
+    //         this.order =
+    //             {
+    //                 // numéro de commande généré dans le service generateID
+    //                 // orderNumber: this.generateIdService.generate(),
+    //                 orderDate: new Date(),
+    //                 customer: this.userService.getActiveCustomer(),
+    //                 orderLines: this.cartService.getCart().orderLines
+    //             };
+    //         this.sendPdf();
+    //     } else {
+    //         this.order = this.cartService.getCart();
+    //         this.sendPdfEdit();
+    //     }
+    // }
 
     sendPdf() {
         // enregistrement de la commande réalisée dans le tableau des commandes de orderService
-        const docDefinition = {
-            content: [
-                {text: 'CBPAPIERS', style: 'header'},
-                // impression de la date au format dd/mm/yyyy hh'h'mm
-                {
-                    text: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString(),
-                    alignment: 'right'
-                },
+        const docDefinitionPart1 = [
+            {text: 'CBPAPIERS', style: 'header'},
+            // impression de la date au format dd/mm/yyyy hh'h'mm
+            {
+                text: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString(),
+                alignment: 'right'
+            }
+        ];
+
+        let docDefinitionPart2;
+        if (this.order.orderNumber == null) {
+            this.order.orderDate = new Date();
+            docDefinitionPart2 = [
                 {text: 'Commande : ', style: 'subheader'},
                 {text: 'Ref client : ' + this.userService.getActiveCustomer().id},
                 {text: this.userService.getActiveCustomer().name},
                 {text: this.userService.getActiveCustomer().address},
-                {text: this.userService.getActiveCustomer().city.postalCode + ' ' + this.userService.getActiveCustomer().city.name},
+                {text: this.userService.getActiveCustomer().city.postalCode + ' ' + this.userService.getActiveCustomer().city.name}
+            ];
+        } else {
+            docDefinitionPart2 = [
+                {
+                    text: 'ATTENTION Commande ' + this.cartService.getCart().orderNumber
+                        // + ' ' + this.cartService.getCart().orderDate.toLocaleDateString() +
+                        // ' ' + this.cartService.getCart().orderDate.toLocaleTimeString()
+                        + ' MODIFIEE', style: 'subheader'
+                },
+                {text: 'Ref client : ' + this.userService.getActiveCustomer().id},
+                {text: this.userService.getActiveCustomer().name},
+                {text: this.userService.getActiveCustomer().address},
+                {text: this.userService.getActiveCustomer().city.postalCode + ' ' + this.userService.getActiveCustomer().city.name}
+            ];
+        }
 
-                // c'est ici qu'on construit le tableau dans le pdf :
-                // on indique le nombre de colonnes et on injecte l'array myBody construit dans la méthode constructBody()
-                {
-                    style: 'tableExample',
-                    table: {
-                        widths: ['*', '*', '*'],
-                        body: this.constructBody()
-                    }
-                },
-                {text: 'Livraison : ' + this.shipping(), alignment: 'right'},
-                {
-                    text: 'Total HT : ' + Number(this.finalTotal).toFixed(2) + ' €', alignment: 'right'
-                },
-                {
-                    text: 'Retrait entrepôt : ' + this.isWarehouseRet(), alignment: 'right'
+        const docDefinitionPart3 = [
+            {
+                style: 'tableExample',
+                table: {
+                    widths: ['*', '*', '*'],
+                    body: this.constructBody()
                 }
-            ],
+            },
+            {text: 'Livraison : ' + this.shipping(), alignment: 'right'},
+            {
+                text: 'Total HT : ' + Number(this.finalTotal).toFixed(2) + ' €', alignment: 'right'
+            },
+            {
+                text: 'Retrait entrepôt : ' + this.isWarehouseRet(), alignment: 'right'
+            }
+        ];
+
+        const docDefinition = {
+            content: [docDefinitionPart1, docDefinitionPart2, docDefinitionPart3],
             styles: {
                 subheader: {
                     fontSize: 16,
@@ -157,10 +179,15 @@ export class OrderValidationPage implements OnInit {
         this.pdfObj = pdfMake.createPdf(docDefinition);
         this.downloadPdf();
         this.sendMail();
-        this.saveOrder(this.userService.getActiveCustomer().id);
+        if (this.order.orderNumber == null) {
+            this.saveOrder();
+        }
+        else {
+            this.editOrder();
+        }
 
-        const ORDER_HISTORY = cloneDeep(this.order);
-        this.orderService.addOrder(ORDER_HISTORY);
+        // const ORDER_HISTORY = cloneDeep(this.order);
+        // this.orderService.addOrder(ORDER_HISTORY);
         // this.deleteAll(this.order.orderLines)
     }
 
@@ -175,8 +202,11 @@ export class OrderValidationPage implements OnInit {
                     alignment: 'right'
                 },
                 // tslint:disable-next-line:max-line-length
-                {text: 'ATTENTION Commande ' + this.cartService.getCart().orderNumber + ' ' + this.cartService.getCart().orderDate.toLocaleDateString() +
-                       ' ' + this.cartService.getCart().orderDate.toLocaleTimeString() + ' MODIFIEE' , style: 'subheader'},
+                {
+                    text: 'ATTENTION Commande ' + this.cartService.getCart().orderNumber + ' ' + this.cartService.getCart().orderDate.toLocaleDateString() +
+                        ' ' + this.cartService.getCart().orderDate.toLocaleTimeString() + ' MODIFIEE',
+                    style: 'subheader'
+                },
                 {text: 'Ref client : ' + this.userService.getActiveCustomer().id},
                 {text: this.userService.getActiveCustomer().name},
                 {text: this.userService.getActiveCustomer().address},
@@ -191,7 +221,7 @@ export class OrderValidationPage implements OnInit {
                         body: this.constructBody()
                     }
                 },
-                {text : 'Livraison : ' + this.shipping(), alignment: 'right'},
+                {text: 'Livraison : ' + this.shipping(), alignment: 'right'},
                 {
                     text: 'Total HT : ' + Number(this.finalTotal).toFixed(2) + ' €', alignment: 'right'
                 },
@@ -291,15 +321,25 @@ export class OrderValidationPage implements OnInit {
     }
 
     // enregistrer la commande dans la bdd
-    saveOrder(idCustomer : string){
+    saveOrder() {
         console.log(this.order);
-        this.httpClient.post(environment.order + idCustomer,this.order).subscribe( () =>
-            console.log('enregistre'),
+        this.httpClient.post(environment.order, this.order).subscribe((data) =>
+                console.log('enregistre', data),
             error => console.log(error),
             () =>
                 // on reinitialise les orderlines de panier pour le remettre à 0
                 this.deleteAll(this.order.orderLines)
         );
+    }
 
+    editOrder() {
+        console.log(this.order);
+        this.httpClient.post(environment.order + 'edit', this.order).subscribe((data) =>
+                console.log('enregistre', data),
+            error => console.log(error),
+            () =>
+                // on reinitialise les orderlines de panier pour le remettre à 0
+                this.deleteAll(this.order.orderLines)
+        );
     }
 }

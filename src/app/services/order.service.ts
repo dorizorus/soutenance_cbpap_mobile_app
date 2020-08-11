@@ -28,22 +28,16 @@ export class OrderService {
         return this.order;
     }
 
-    getOrders(idCustomer : string): Order[] {
+    getOrders(idCustomer: string): void {
         this.http.get<Order[]>(environment.order + 'history/' + idCustomer).subscribe(ordersCustomer => {
-            ordersCustomer.forEach(element => {
-                const orderHistory = {
-                    orderNumber: element.orderNumber,
-                    orderDate: element.orderDate,
-                    customer: this.userService.getActiveCustomer(),
-                    orderLines: element.orderLines
-                };
-                this.orders.push(orderHistory);
-            })
-        },
-        error => console.log(error),
-        () => this.ordersList$.next(this.orders)
+                ordersCustomer.forEach(element =>
+                    this.orders.push(element)
+                )
+            },
+            error => console.log(error),
+            () => this.ordersList$.next(this.orders)
         );
-        return this.orders;
+
     }
 
     setOrders(orders: Order[]) {
