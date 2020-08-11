@@ -29,15 +29,10 @@ export class OrderService {
     }
 
     getOrders(idCustomer: string): void {
-        this.http.get<Order[]>(environment.order + 'history/' + idCustomer).subscribe(ordersCustomer => {
-                ordersCustomer.forEach(element =>
-                    this.orders.push(element)
-                )
-            },
-            error => console.log(error),
-            () => this.ordersList$.next(this.orders)
+        this.http.get<Order[]>(environment.order + 'history/' + idCustomer).subscribe(
+            ordersCustomer => this.ordersList$.next(ordersCustomer),
+            error => console.log(error)
         );
-
     }
 
     setOrders(orders: Order[]) {

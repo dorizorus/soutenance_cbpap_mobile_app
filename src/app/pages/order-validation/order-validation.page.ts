@@ -326,9 +326,11 @@ export class OrderValidationPage implements OnInit {
         this.httpClient.post(environment.order, this.order).subscribe((data) =>
                 console.log('enregistre', data),
             error => console.log(error),
-            () =>
+            () => {
                 // on reinitialise les orderlines de panier pour le remettre à 0
-                this.deleteAll(this.order.orderLines)
+                this.deleteAll(this.order.orderLines);
+                this.orderService.getOrders(this.order.customer.id);
+            }
         );
     }
 
@@ -337,9 +339,11 @@ export class OrderValidationPage implements OnInit {
         this.httpClient.post(environment.order + 'edit', this.order).subscribe((data) =>
                 console.log('enregistre', data),
             error => console.log(error),
-            () =>
+            () => {
                 // on reinitialise les orderlines de panier pour le remettre à 0
-                this.deleteAll(this.order.orderLines)
+                this.deleteAll(this.order.orderLines);
+                this.orderService.getOrders(this.order.customer.id);
+            }
         );
     }
 }
