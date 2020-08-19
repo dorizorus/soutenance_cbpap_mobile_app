@@ -17,6 +17,7 @@ export class HistoryPage implements OnInit {
 
     ngOnInit() {
         this.orderService.getOrders(this.userService.getActiveCustomer().id);
+        console.log('je rentre dans le ngoninit');
         this.orderService.ordersList$.subscribe(history => {this.history = history;
             console.log(history)});
     }

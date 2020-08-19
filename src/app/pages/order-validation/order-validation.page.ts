@@ -191,79 +191,79 @@ export class OrderValidationPage implements OnInit {
         // this.deleteAll(this.order.orderLines)
     }
 
-    sendPdfEdit() {
-        // enregistrement de la commande réalisée dans le tableau des commandes de orderService
-        const docDefinition = {
-            content: [
-                {text: 'CBPAPIERS', style: 'header'},
-                // impression de la date au format dd/mm/yyyy hh'h'mm
-                {
-                    text: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString(),
-                    alignment: 'right'
-                },
-                // tslint:disable-next-line:max-line-length
-                {
-                    text: 'ATTENTION Commande ' + this.cartService.getCart().orderNumber + ' ' + this.cartService.getCart().orderDate.toLocaleDateString() +
-                        ' ' + this.cartService.getCart().orderDate.toLocaleTimeString() + ' MODIFIEE',
-                    style: 'subheader'
-                },
-                {text: 'Ref client : ' + this.userService.getActiveCustomer().id},
-                {text: this.userService.getActiveCustomer().name},
-                {text: this.userService.getActiveCustomer().address},
-                {text: this.userService.getActiveCustomer().city.postalCode + ' ' + this.userService.getActiveCustomer().city.name},
-
-                // c'est ici qu'on construit le tableau dans le pdf :
-                // on indique le nombre de colonnes et on injecte l'array myBody construit dans la méthode constructBody()
-                {
-                    style: 'tableExample',
-                    table: {
-                        widths: ['*', '*', '*'],
-                        body: this.constructBody()
-                    }
-                },
-                {text: 'Livraison : ' + this.shipping(), alignment: 'right'},
-                {
-                    text: 'Total HT : ' + Number(this.finalTotal).toFixed(2) + ' €', alignment: 'right'
-                },
-                {
-                    text: 'Retrait entrepôt : ' + this.isWarehouseRet(), alignment: 'right'
-                }
-            ],
-            styles: {
-                subheader: {
-                    fontSize: 16,
-                    bold: true,
-                    margin: [0, 10, 0, 5]
-                },
-                tableExample: {
-                    margin: [0, 5, 0, 15]
-                },
-                tableHeader: {
-                    bold: true,
-                    fontSize: 13,
-                    color: 'black'
-                }
-            },
-            defaultStyle: {
-                alignment: 'justify'
-            }
-        };
-
-        this.pdfObj = pdfMake.createPdf(docDefinition);
-        this.downloadPdf();
-        this.sendMail();
-
-        // on fait un clone de la commande
-        // on envoie ce clone pour modification de la commande déjà existante avec le même numéro de commande
-        const ORDER_HISTORY = cloneDeep(this.order);
-        this.orderService.editOrder(ORDER_HISTORY);
-
-
-        // on reinitialise les orderlines de panier pour le remettre à 0
-        this.deleteAll(this.order.orderLines);
-        // on set le orderNumber à null car sinon lors des prochaines commandes il va encore modifier la dernière
-        this.cartService.getCart().orderNumber = null;
-    }
+    // sendPdfEdit() {
+    //     // enregistrement de la commande réalisée dans le tableau des commandes de orderService
+    //     const docDefinition = {
+    //         content: [
+    //             {text: 'CBPAPIERS', style: 'header'},
+    //             // impression de la date au format dd/mm/yyyy hh'h'mm
+    //             {
+    //                 text: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString(),
+    //                 alignment: 'right'
+    //             },
+    //             // tslint:disable-next-line:max-line-length
+    //             {
+    //                 text: 'ATTENTION Commande ' + this.cartService.getCart().orderNumber + ' ' + this.cartService.getCart().orderDate.toLocaleDateString() +
+    //                     ' ' + this.cartService.getCart().orderDate.toLocaleTimeString() + ' MODIFIEE',
+    //                 style: 'subheader'
+    //             },
+    //             {text: 'Ref client : ' + this.userService.getActiveCustomer().id},
+    //             {text: this.userService.getActiveCustomer().name},
+    //             {text: this.userService.getActiveCustomer().address},
+    //             {text: this.userService.getActiveCustomer().city.postalCode + ' ' + this.userService.getActiveCustomer().city.name},
+    //
+    //             // c'est ici qu'on construit le tableau dans le pdf :
+    //             // on indique le nombre de colonnes et on injecte l'array myBody construit dans la méthode constructBody()
+    //             {
+    //                 style: 'tableExample',
+    //                 table: {
+    //                     widths: ['*', '*', '*'],
+    //                     body: this.constructBody()
+    //                 }
+    //             },
+    //             {text: 'Livraison : ' + this.shipping(), alignment: 'right'},
+    //             {
+    //                 text: 'Total HT : ' + Number(this.finalTotal).toFixed(2) + ' €', alignment: 'right'
+    //             },
+    //             {
+    //                 text: 'Retrait entrepôt : ' + this.isWarehouseRet(), alignment: 'right'
+    //             }
+    //         ],
+    //         styles: {
+    //             subheader: {
+    //                 fontSize: 16,
+    //                 bold: true,
+    //                 margin: [0, 10, 0, 5]
+    //             },
+    //             tableExample: {
+    //                 margin: [0, 5, 0, 15]
+    //             },
+    //             tableHeader: {
+    //                 bold: true,
+    //                 fontSize: 13,
+    //                 color: 'black'
+    //             }
+    //         },
+    //         defaultStyle: {
+    //             alignment: 'justify'
+    //         }
+    //     };
+    //
+    //     this.pdfObj = pdfMake.createPdf(docDefinition);
+    //     this.downloadPdf();
+    //     this.sendMail();
+    //
+    //     // on fait un clone de la commande
+    //     // on envoie ce clone pour modification de la commande déjà existante avec le même numéro de commande
+    //     const ORDER_HISTORY = cloneDeep(this.order);
+    //     this.orderService.editOrder(ORDER_HISTORY);
+    //
+    //
+    //     // on reinitialise les orderlines de panier pour le remettre à 0
+    //     this.deleteAll(this.order.orderLines);
+    //     // on set le orderNumber à null car sinon lors des prochaines commandes il va encore modifier la dernière
+    //     this.cartService.getCart().orderNumber = null;
+    // }
 
     // permet d'enregistrer le pdf dans le data Directory de l'application
     downloadPdf() {
