@@ -14,11 +14,11 @@
     </ion-item>
     <div class="bottom">
         <div *ngIf="total > 250; else fraisLivraison">
-            TOTAL HT : <span> <b>{{total |number : '1.2-2'}}</b> €</span>
+<!--            TOTAL HT : <span> <b>{{total |number : '1.2-2'}}</b> €</span>-->
         </div>
         <ng-template #fraisLivraison>
-            <p>Frais de livraison pour commande < à 250€ : <b class="green">20€</b></p>
-            <p>Total HT : <span> <b>{{total + 20 |number : '1.2-2'}}</b> €</span></p>
+<!--            <p>Frais de livraison pour commande < à 250€ : <b class="green">20€</b></p>-->
+<!--            <p>Total HT : <span> <b>{{total + 20 |number : '1.2-2'}}</b> €</span></p>-->
         </ng-template>
         <div>
             <ion-button color="success" size="small" (click)="reorder()">Commander à nouveau</ion-button>

@@ -43,6 +43,7 @@ export class UserService {
     setCustomer(customer: Customer) {
         this.customer = customer;
         this.activeCustomer$.next(this.customer);
+        console.log(this.customer);
     }
 
 
@@ -73,12 +74,12 @@ export class UserService {
                                 this.addCustomer(responseCustomer);
                                 this.setActiveCustomer(responseCustomer);
                                 this.setUserStorage(responseCustomer);
-                                this.getStorageLength();
                                 resolve(responseCustomer);
+                                console.log('customer authentifié : ',responseCustomer);
                             });
                 },
                 error => {
-                    reject('Mauvais identifiant/mot de passe');
+                    reject('Mauvais identifiant ou mot de passe');
                 }
 
             );
@@ -103,8 +104,6 @@ export class UserService {
         this.dataStorage.ready().then(() => {
             // systéme de promesse
             this.dataStorage.get(login).then((data: Customer) => {
-                console.log("J'ai mon user " + data.id + " dans le storage");
-                console.log(this.getStorageLength());
                 return data;
             });
         });
@@ -115,7 +114,6 @@ export class UserService {
         this.dataStorage.ready().then(() => {
             this.dataStorage.forEach((valeur: Customer) => {
                 this.customerAccounts.push(valeur);
-                console.log("3 " + valeur.id + " ajouté a customerAccounts");
             });
         })
     }

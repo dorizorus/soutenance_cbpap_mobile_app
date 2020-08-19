@@ -13,6 +13,8 @@ import {UserService} from '../../services/user.service';
 import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
 import {ContactPage} from '../contact/contact.page';
+import {environment} from "../../../environments/environment";
+import {HttpClient} from "@angular/common/http";
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
@@ -40,7 +42,8 @@ export class SingleOrderPage implements OnInit {
                 private emailComposer: EmailComposer,
                 private userService: UserService,
                 public modalController: ModalController,
-                public animationCtrl: AnimationController) {
+                public animationCtrl: AnimationController,
+                private httpClient: HttpClient) {
     }
 
     ngOnInit(): void {
@@ -107,8 +110,20 @@ export class SingleOrderPage implements OnInit {
         this.createPdf();
         this.sendMail();
         this.orderService.getOrder().isCancelled = true;
+        this.saveOrderCancelled();
         this.navController.navigateBack(['/nav/history']);
 
+    }
+
+    // enregsitrement de la commande avec le booleen annulé à true dans le back
+    saveOrderCancelled() {
+        console.log(this.order);
+        this.httpClient.post(environment.order + 'cancel', this.order).subscribe((data) =>
+                console.log('Enregistrement effectué', data),
+            error => console.log(error),
+            () => {
+            }
+        );
     }
 
     // méthode appelée lorsqu'on veut recommander à partir de la commande (ajout des articles de la commande dans le panier)
@@ -158,8 +173,8 @@ export class SingleOrderPage implements OnInit {
                           + new Date().toLocaleTimeString(),
                       alignment: 'right'
                   },
-                  {text: 'Commande du : ' + this.order.orderDate.toLocaleDateString() + ' '
-                          + this.order.orderDate.toLocaleTimeString(), style: 'subheader'},
+                  {text: 'Commande du : ' + new Date(this.order.orderDate).toLocaleDateString() + ' '
+                          + new Date(this.order.orderDate).toLocaleTimeString(), style: 'subheader'},
                   {text: 'Ref client : ' + this.userService.getActiveCustomer().id},
                   {text: this.userService.getActiveCustomer().name},
                   {text: this.userService.getActiveCustomer().address},

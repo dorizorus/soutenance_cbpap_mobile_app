@@ -63,50 +63,29 @@ export class OrderValidationPage implements OnInit {
         return this.statusShipping ? '20 €' : 'gratuite';
     }
 
-    // construction du header du tableau du pdf = titres des colonnes du tableau
+
     header = [
         {text: 'Reference article', style: 'tableHeader', alignment: 'center'},
         {text: 'Quantité', style: 'tableHeader', alignment: 'center'},
         {text: 'Prix', style: 'tableHeader', alignment: 'center'}
     ];
 
-    // on initialise les lignes du tableau avec le header
     myBody = [this.header];
 
-    // construction des lignes du tableau : pour chaque orderline récupérée du panier
-    // on ajoute cette orderline dans une ligne du tableau avec les éléments dont on a besoin :
-    // ici reference de l'article, quantité et prix final
-    // l'array myBody est donc incrémenté de nouvelles données
     constructBody() {
         for (const orderline of this.order.orderLines) {
             // @ts-ignore
-            this.myBody.push([`${orderline.article.reference}`, `${orderline.quantity}`, `${Number(orderline.article.finalPrice * orderline.quantity).toFixed(2) + '€'}`]);
+            this.myBody.push([`${orderline.article.reference}`, `${orderline.quantity}`,
+                // @ts-ignore
+                `${Number(orderline.article.finalPrice * orderline.quantity).toFixed(2) + '€'}`]);
         }
         return this.myBody;
     }
 
-    // checkEditOrderOrNot() {
-    //     if (this.order.orderNumber == null) {
-    //         this.order =
-    //             {
-    //                 // numéro de commande généré dans le service generateID
-    //                 // orderNumber: this.generateIdService.generate(),
-    //                 orderDate: new Date(),
-    //                 customer: this.userService.getActiveCustomer(),
-    //                 orderLines: this.cartService.getCart().orderLines
-    //             };
-    //         this.sendPdf();
-    //     } else {
-    //         this.order = this.cartService.getCart();
-    //         this.sendPdfEdit();
-    //     }
-    // }
 
     sendPdf() {
-        // enregistrement de la commande réalisée dans le tableau des commandes de orderService
         const docDefinitionPart1 = [
             {text: 'CBPAPIERS', style: 'header'},
-            // impression de la date au format dd/mm/yyyy hh'h'mm
             {
                 text: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString(),
                 alignment: 'right'
@@ -123,12 +102,13 @@ export class OrderValidationPage implements OnInit {
                 {text: this.userService.getActiveCustomer().address},
                 {text: this.userService.getActiveCustomer().city.postalCode + ' ' + this.userService.getActiveCustomer().city.name}
             ];
+
         } else {
             docDefinitionPart2 = [
                 {
                     text: 'ATTENTION Commande ' + this.cartService.getCart().orderNumber
-                        // + ' ' + this.cartService.getCart().orderDate.toLocaleDateString() +
-                        // ' ' + this.cartService.getCart().orderDate.toLocaleTimeString()
+                        + ' ' + new Date(this.cartService.getCart().orderDate).toLocaleDateString()  +
+                        ' ' + new Date(this.cartService.getCart().orderDate).toLocaleTimeString()
                         + ' MODIFIEE', style: 'subheader'
                 },
                 {text: 'Ref client : ' + this.userService.getActiveCustomer().id},
@@ -185,10 +165,80 @@ export class OrderValidationPage implements OnInit {
         else {
             this.editOrder();
         }
+    }
 
-        // const ORDER_HISTORY = cloneDeep(this.order);
-        // this.orderService.addOrder(ORDER_HISTORY);
-        // this.deleteAll(this.order.orderLines)
+
+    downloadPdf() {
+        if (this.plt.is('cordova')) {
+            this.pdfObj.getBuffer((buffer) => {
+                let blob = new Blob([buffer], {type: 'application/pdf'});
+                this.file.writeFile(this.file.dataDirectory, 'commande.pdf', blob, {replace: true}).then(fileEntry => {
+                });
+            });
+        } else {
+            this.pdfObj.download();
+        }
+    }
+
+
+
+    sendMail() {
+        const email = {
+            to: 'contact@cbpapiers.com',
+            attachments: [
+                this.file.dataDirectory + 'commande.pdf'
+            ],
+            subject: ' REFCLIENT : ' + this.userService.getActiveCustomer().id,
+            body: 'Ci-joint le récapitulatif de la commande',
+            isHtml: true
+        };
+        this.emailComposer.open(email);
+
+    }
+
+
+    //fermeture de la modal après envoi commande
+    onDismiss() {
+        this.modalController.dismiss();
+    }
+
+    // remise à 0 du panier et des quantités d'article sélectionnées après envoi commande
+    deleteAll(orderlines: OrderLine[]) {
+        orderlines.forEach(
+            (orderLine) => {
+                orderLine.quantity = 0;
+            }
+        );
+
+        this.cartService.resetCart();
+        this.warehouseRetService.setStatus(false);
+        this.onDismiss();
+    }
+
+    // enregistrer la commande dans la bdd
+    saveOrder() {
+        console.log(this.order);
+        this.httpClient.post(environment.order, this.order).subscribe((data) =>
+                console.log('Enregistrement effectué', data),
+            error => console.log(error),
+            () => {
+                this.deleteAll(this.order.orderLines);
+                this.orderService.getOrders(this.order.customer.id);
+            }
+        );
+    }
+
+    editOrder() {
+        console.log(this.order);
+        this.httpClient.post(environment.order + 'edit', this.order).subscribe((data) =>
+                console.log('enregistre', data),
+            error => console.log(error),
+            () => {
+                // on reinitialise les orderlines de panier pour le remettre à 0
+                this.deleteAll(this.order.orderLines);
+                this.orderService.getOrders(this.order.customer.id);
+            }
+        );
     }
 
     // sendPdfEdit() {
@@ -264,86 +314,4 @@ export class OrderValidationPage implements OnInit {
     //     // on set le orderNumber à null car sinon lors des prochaines commandes il va encore modifier la dernière
     //     this.cartService.getCart().orderNumber = null;
     // }
-
-    // permet d'enregistrer le pdf dans le data Directory de l'application
-    downloadPdf() {
-        if (this.plt.is('cordova')) {
-            this.pdfObj.getBuffer((buffer) => {
-                // tslint:disable-next-line:prefer-const
-                let blob = new Blob([buffer], {type: 'application/pdf'});
-
-                // Save the PDF to the data Directory of our App
-                this.file.writeFile(this.file.dataDirectory, 'commande.pdf', blob, {replace: true}).then(fileEntry => {
-                    //  à enlever !  je laisse juste pour les tests sur pc
-                    // this.fileOpener.open(this.file.dataDirectory + 'myletter.pdf', 'application/pdf');
-                });
-            });
-        } else {
-            // On a browser simply use download!
-            this.pdfObj.download();
-        }
-
-    }
-
-    // permet de formater le mail à envoyer et demande à ouvrir le mail sur le telephone + ajoute le pdf en pièce jointe
-    sendMail() {
-        const email = {
-            // to: 'contact@cbpapiers.com',
-            to: 'adrien.fek@gmail.com',
-            cc: 'justine.gracia@gmail.com',
-            attachments: [
-                this.file.dataDirectory + 'commande.pdf'
-            ],
-            subject: ' REFCLIENT : ' + this.userService.getActiveCustomer().id,
-            body: 'Ci-joint le récapitulatif de la commande',
-            isHtml: true
-        };
-        this.emailComposer.open(email);
-
-    }
-
-    //fermeture de la modal après envoi commande
-    onDismiss() {
-        this.modalController.dismiss();
-    }
-
-    // remise à 0 du panier et des quantités d'article sélectionnées après envoi commande
-    deleteAll(orderlines: OrderLine[]) {
-        orderlines.forEach(
-            (orderLine) => {
-                orderLine.quantity = 0;
-            }
-        );
-
-        this.cartService.resetCart();
-        this.warehouseRetService.setStatus(false);
-        this.onDismiss();
-    }
-
-    // enregistrer la commande dans la bdd
-    saveOrder() {
-        console.log(this.order);
-        this.httpClient.post(environment.order, this.order).subscribe((data) =>
-                console.log('enregistre', data),
-            error => console.log(error),
-            () => {
-                // on reinitialise les orderlines de panier pour le remettre à 0
-                this.deleteAll(this.order.orderLines);
-                this.orderService.getOrders(this.order.customer.id);
-            }
-        );
-    }
-
-    editOrder() {
-        console.log(this.order);
-        this.httpClient.post(environment.order + 'edit', this.order).subscribe((data) =>
-                console.log('enregistre', data),
-            error => console.log(error),
-            () => {
-                // on reinitialise les orderlines de panier pour le remettre à 0
-                this.deleteAll(this.order.orderLines);
-                this.orderService.getOrders(this.order.customer.id);
-            }
-        );
-    }
 }

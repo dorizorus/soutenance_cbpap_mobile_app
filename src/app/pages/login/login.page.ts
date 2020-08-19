@@ -108,13 +108,10 @@ export class LoginPage implements OnInit {
         else if(this.password == '' || this.password == null)
             this.error = 'Veuillez entrer un mot de passe';
         else {
-            await this.userService.getUserValidity(this.login, this.password).then((data) => {
-                console.log(data);
-                console.log("win");
+            await this.userService.getUserValidity(this.login, this.password).then(() => {
                 this.navCtrl.navigateForward(['/nav/article']);
             }).catch((data) => {
                     this.error = data;
-                    console.log("fail");
                 }
             );
         }

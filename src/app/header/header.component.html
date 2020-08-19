@@ -12,6 +12,7 @@
           <img src="assets/icon/logo.jpg" alt="logo">
         </ion-col>
         <ion-col size="0.8"></ion-col>
+
         <ion-col size="3.7" (click)="createCart()">
           <ion-button color="light">
             <ion-icon class="icones" name="cart-outline" size="small"></ion-icon>
@@ -20,6 +21,7 @@
           <br/>
           <span class="green" [ngStyle]="{'font-size': total > 1000 ? 'small' : 'medium'}">{{total | number : '1.2-2'}}€</span>
         </ion-col>
+
       </ion-row>
       <ion-row class="colonne">
         <ion-col size="auto">

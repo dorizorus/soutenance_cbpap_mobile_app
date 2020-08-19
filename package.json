@@ -39,6 +39,7 @@
     "cordova-plugin-file-opener2": "^3.0.4",
     "cordova-res": "^0.15.1",
     "cordova-sqlite-storage": "^5.0.1",
+    "mx.ferreyra.callnumber": "0.0.2",
     "pdfmake": "^0.1.68",
     "rxjs": "~6.5.1",
     "tslib": "^1.10.0",
@@ -92,7 +93,8 @@
       "cordova-plugin-file-opener2": {
         "ANDROID_SUPPORT_V4_VERSION": "27.+"
       },
-      "cordova-plugin-file": {}
+      "cordova-plugin-file": {},
+      "call-number": {}
     },
     "platforms": [
       "android",

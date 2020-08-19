@@ -36,20 +36,17 @@ export class ArticlePage implements OnInit {
         this.cartService.orderLineList$.subscribe(
             (liste) => {
                 this.orderLineList = liste;
-                console.log(this.orderLineList);
             }
         );
 
         this.userService.activeCustomer$.subscribe(
             customer => {
-                console.log('in activecustomer$');
                 this.cartService.setOrderLineList([]);
                 this.customer = customer;
                 this.initTopArticles();
             }
         );
 
-        console.log(this.userService.getStorageLength());
         // this.userService.setAllUsersStorage();
     }
 

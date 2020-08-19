@@ -80,7 +80,8 @@ export class CartService {
             })
             },
             error => console.log(error),
-            () => this.orderLineList$.next(this.orderLineList)
+            () => {this.orderLineList$.next(this.orderLineList),
+                console.log('le top article du customer : ',this.orderLineList)}
         );
     }
 
@@ -94,7 +95,7 @@ export class CartService {
     // mise à jour des quantités dans la liste des articles : prend toutes les orderlines du panier en paramètre
     setOrderLineList(orderLinesFromCart: OrderLine[]) {
         if (orderLinesFromCart != [])
-            console.log('in cart service orderlinelist', orderLinesFromCart);
+            // console.log('in cart service orderlinelist', orderLinesFromCart);
         orderLinesFromCart.forEach(orderLine => {
             let index = 0;
             let found = false;
@@ -106,7 +107,7 @@ export class CartService {
                 index++;
             }
         });
-        console.log('right before setting orderlinelist', orderLinesFromCart);
+        // console.log('right before setting orderlinelist', orderLinesFromCart);
         this.orderLineList$.next(this.orderLineList);
     }
 
