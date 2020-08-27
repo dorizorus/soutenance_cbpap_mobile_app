@@ -16,6 +16,7 @@ import {FileOpener} from '@ionic-native/file-opener/ngx';
 import {EmailComposer} from '@ionic-native/email-composer/ngx';
 import {UserService} from "./services/user.service";
 import {HttpInterceptorService} from "./security/http-interceptor.service";
+import {JWT_OPTIONS, JwtHelperService, JwtModule} from "@auth0/angular-jwt";
 
 // todo verifier que cartPage, SingleOrderPage, OrderValidationPage marchent
 @NgModule({

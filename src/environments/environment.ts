@@ -6,7 +6,7 @@ export const environment = {
   production: false,
   baseURL: 'http://localhost:8080/',
   topArticle: 'http://localhost:8080/toparticles/customer/',
-  customer:  'http://localhost:8080/customers',
+  customer:  'http://localhost:8080/customers/',
   order: 'http://localhost:8080/orders/'
 };
 

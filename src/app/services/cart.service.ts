@@ -70,6 +70,7 @@ export class CartService {
 
     // permet d'initialiser la liste d'articles dans articlePage
     initOrderLinesList(idCustomer : string) {
+        this.orderLineList = [];
         this.http.get<TopArticle[]>(environment.topArticle + idCustomer).subscribe(data => {
             data.forEach( topArticle => {
                 const orderLine = {
@@ -78,10 +79,11 @@ export class CartService {
             };
                 this.orderLineList.push(orderLine);
             })
+                this.orderLineList$.next(this.orderLineList);
             },
             error => console.log(error),
-            () => {this.orderLineList$.next(this.orderLineList),
-                console.log('le top article du customer : ',this.orderLineList)}
+            () => {
+                console.log('le top article du customer : ',this.orderLineList);}
         );
     }
 
@@ -95,7 +97,6 @@ export class CartService {
     // mise à jour des quantités dans la liste des articles : prend toutes les orderlines du panier en paramètre
     setOrderLineList(orderLinesFromCart: OrderLine[]) {
         if (orderLinesFromCart != [])
-            // console.log('in cart service orderlinelist', orderLinesFromCart);
         orderLinesFromCart.forEach(orderLine => {
             let index = 0;
             let found = false;
@@ -107,7 +108,6 @@ export class CartService {
                 index++;
             }
         });
-        // console.log('right before setting orderlinelist', orderLinesFromCart);
         this.orderLineList$.next(this.orderLineList);
     }
 
@@ -153,5 +153,9 @@ export class CartService {
 
     getFinalTotal() {
         return this.finalTotal;
+    }
+
+    filterOrderLineList(orderLines: OrderLine[]) {
+        this.orderLineList$.next(orderLines);
     }
 }

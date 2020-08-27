@@ -25,7 +25,6 @@ export class UserService {
 
 
     constructor(private http: HttpClient, private dataStorage: Storage) {
-
     }
 
 
@@ -34,17 +33,6 @@ export class UserService {
         return this.activeCustomer;
     }
 
-
-    // permet de définir quel est le compte actif puis l'envoie au subscribe
-    setActiveCustomer(customer: Customer) {
-        this.dataStorage.get(customer.id + 'token').then(token => this.token = token);
-        this.dataStorage.get(customer.id).then(customer => {
-            this.activeCustomer = customer;
-            this.activeCustomer$.next(this.activeCustomer);
-        });
-    }
-
-
     // ici on fait simplement transiter un compte (pas forcément actif, utilisé dans settings)
     setCustomer(customer: Customer) {
         this.customer = customer;
@@ -52,13 +40,21 @@ export class UserService {
         console.log(this.customer);
     }
 
+    // permet de définir quel est le compte actif puis l'envoie au subscribe
+    setActiveCustomer(customer: Customer) {
+        this.dataStorage.get(customer.id + 'token').then(token => this.token = token);
+        this.dataStorage.get(customer.id).then(customer => {
+            this.activeCustomer = customer;
+            console.log('activecustomer:', customer);
+            this.activeCustomer$.next(this.activeCustomer);
+        });
+    }
 
     // Ajoute un compte au tableau de comptes du téléphone. Le client actif est attribué à ce moment la
-    addCustomer(customer: Customer) {
-        this.dataStorage.set(customer.id, customer);
+    async addCustomer(customer: Customer) {
+        await this.dataStorage.set(customer.id, customer);
         this.customerAccounts.push(customer);
         this.customerAccounts$.next(this.customerAccounts);
-        this.setActiveCustomer(customer);
     }
 
     // permet de récupérer la liste de comptes
@@ -66,22 +62,19 @@ export class UserService {
         return this.customerAccounts;
     }
 
-
     async getUserValidity(id: string, password: string) {
         return new Promise((resolve, reject) => {
             this.http.post(environment.baseURL + 'customers/authentification',
-                {id, password},
+                {id: id.toUpperCase(), password},
                 {responseType: 'text'}).subscribe(
                 (token) => {
                     this.token = token;
-                    this.dataStorage.set(id + 'token', token);
-                    this.http.get<Customer>(environment.customer + '/' + id)
+                    this.dataStorage.set(id.toUpperCase() + 'token', token);
+                    this.http.get<Customer>(environment.customer + id.toUpperCase())
                         .subscribe(responseCustomer => {
+                            this.activeCustomer$.next(responseCustomer);
                             this.addCustomer(responseCustomer);
-                            this.setActiveCustomer(responseCustomer);
-                            this.setUserStorage(responseCustomer);
                             resolve(responseCustomer);
-                            console.log('customer authentifié : ', responseCustomer);
                         });
                 },
                 error => {
@@ -94,6 +87,7 @@ export class UserService {
     getToken() {
         return this.token;
     }
+
 
     setUserStorage(customer: Customer) {
         // On attend que le storage prêt
@@ -157,8 +151,10 @@ export class UserService {
     }
 
     isTokenExpired(){
+       this.getActiveCustomer()
         if(this.getToken()!=null){
-            return this.jwtHelper.isTokenExpired(this.getToken())?true:false;
+
+            return this.jwtHelper.isTokenExpired(this.getToken());
         } else {
             return true;
         }

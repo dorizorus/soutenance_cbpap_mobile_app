@@ -41,7 +41,8 @@ export class ArticlePage implements OnInit {
 
         this.userService.activeCustomer$.subscribe(
             customer => {
-                this.cartService.setOrderLineList([]);
+                console.log("sub to activeCustomer$", customer);
+                this.orderLineList = [];
                 this.customer = customer;
                 this.initTopArticles();
             }
@@ -60,23 +61,26 @@ export class ArticlePage implements OnInit {
     // méthode pour la searchbar de ionic.
     getArticleSearched(ev: any) {
 
-        // ici on récupère notre backup qu'on pourra manipuler dans un objet différent.
-        let orderLines = this.getOrderLines();
-        // set la valeur de l'input de la searchbar dans "val". On indique que c'est un input html
-        const val = (ev.target as HTMLInputElement).value;
+            // ici on récupère notre backup qu'on pourra manipuler dans un objet différent.
+            let orderLines = this.getOrderLines();
+            // set la valeur de l'input de la searchbar dans "val". On indique que c'est un input html
+            const val = (ev.target as HTMLInputElement).value;
 
-        // si rien n'est mis on affiche tout, sinon on filtre avec ce qui a été inséré
-        if (val && val.trim() !== '') {
+            // si rien n'est mis on affiche tout, sinon on filtre avec ce qui a été inséré
+            if (val && val.trim() !== '') {
 
-            // on manipule et filtre l'objet
-            orderLines = orderLines.filter((orderLine) => {
-                return (orderLine.article.reference.toLowerCase().indexOf(val.toLowerCase()) > -1 ||
-                    orderLine.article.label.toLowerCase().indexOf(val.toLowerCase()) > -1);
-            });
-        }
+                // on manipule et filtre l'objet
+                orderLines = orderLines.filter((orderLine) => {
+                    return (orderLine.article.reference.toLowerCase().indexOf(val.toLowerCase()) > -1 ||
+                        orderLine.article.label.toLowerCase().indexOf(val.toLowerCase()) > -1);
+                });
+            }
 
-        // on l'envoie à l'observable pour que la page se mette à jour
-        this.cartService.setOrderLineList(orderLines);
+            // on l'envoie à l'observable pour que la page se mette à jour
+            // la raison pour laquelle la quantité ne revient pas à 0 est probablement dûe
+            // au fait que le select est initialité à la création de la page
+            // et modifié seulement si ionChange est appelé dans le template
+            this.cartService.filterOrderLineList(orderLines);
     }
 
     async createOrderLineDetails(orderLine: OrderLine) {
