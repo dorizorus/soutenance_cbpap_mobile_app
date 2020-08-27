@@ -17,11 +17,6 @@ const routes: Routes = [
         loadChildren: () => import('./pages/acc-choice/acc-choice.module').then(m => m.AccChoicePageModule)
     },
     {
-        path: 'administration',
-        loadChildren: () => import('./pages/administration/administration.module').then(m => m.AdministrationPageModule),
-        canActivate: [AuthGuard]
-    },
-    {
         path: '',
         redirectTo: 'login',
         pathMatch: 'full'

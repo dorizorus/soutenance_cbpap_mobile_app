@@ -1,8 +1,8 @@
 <app-header></app-header>
 <ion-toolbar>
-    <ion-buttons slot="start">
-        <ion-back-button icon="chevron-back-outline" default-href="/"></ion-back-button>
-    </ion-buttons>
+    <ion-button slot="start" class="backbutton" color="success">
+        <ion-back-button class="backbutton" icon="chevron-back-outline" default-href="/"></ion-back-button>
+    </ion-button>
     {{order.orderNumber | uppercase}}
 </ion-toolbar>
 <ion-content class="ion-padding">

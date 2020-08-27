@@ -36,8 +36,6 @@ export class UserService {
     // ici on fait simplement transiter un compte (pas forcément actif, utilisé dans settings)
     setCustomer(customer: Customer) {
         this.customer = customer;
-        this.activeCustomer$.next(this.customer);
-        console.log(this.customer);
     }
 
     // permet de définir quel est le compte actif puis l'envoie au subscribe

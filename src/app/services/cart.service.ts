@@ -71,6 +71,7 @@ export class CartService {
 
     // permet d'initialiser la liste d'articles dans articlePage
     initOrderLinesList(idCustomer: string) {
+        this.orderLineList = [];
         this.http.get<TopArticle[]>(environment.topArticle + idCustomer).subscribe(data => {
                 data.forEach(topArticle => {
                     const orderLine = {

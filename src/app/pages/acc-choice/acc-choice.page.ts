@@ -38,7 +38,7 @@ export class AccChoicePage implements OnInit, OnDestroy {
 
     // on indique simplement le compte que l'on va récupérer dans la page des options
     goToSettings(compte: Customer) {
-        this.userService.setActiveCustomer(compte);
+        this.userService.setCustomer(compte);
         this.navCtrl.navigateForward(['/acc-choice/settings']);
     }
 
