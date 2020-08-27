@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ModalController, NavController} from '@ionic/angular';
 import {OrderService} from '../services/order.service';
 import {CartPage} from '../pages/cart/cart.page';
@@ -8,18 +8,23 @@ import {CartService} from '../services/cart.service';
 import {Order} from '../models/Order';
 import { cloneDeep } from 'lodash';
 import {Customer} from "../models/Customer";
+import {Subscription} from "rxjs";
 
 @Component({
     selector: 'app-header',
     templateUrl: './header.component.html',
     styleUrls: ['./header.component.scss'],
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, OnDestroy {
 
     cart: Order;
     total = 0;
     WHRetrieval = false;
     customer: Customer = null;
+
+    cartSub: Subscription;
+    activeCustomerSub: Subscription;
+    warehouseSub: Subscription;
 
     constructor(private modalController: ModalController,
                 private navCtrl: NavController,
@@ -31,19 +36,19 @@ export class HeaderComponent implements OnInit {
 
     ngOnInit() {
         // on subscribe à toute nouvelles données du cart
-        this.cartService.cart$.subscribe((data) => {
+        this.cartSub = this.cartService.cart$.subscribe((data) => {
             this.cart = data;
             this.total = this.cartService.getTotal();
         });
 
         // on subscribe à tout nouveau changement du customer actif
-        this.userService.activeCustomer$.subscribe((data) => {
+        this.activeCustomerSub = this.userService.activeCustomer$.subscribe((data) => {
             this.customer = data;
             this.cart.customer = data;
         });
 
         // on subscribe à tout nouveau changement du status du toogle
-        this.warehouseRetService.toggle$.subscribe((status) => {
+        this.warehouseSub = this.warehouseRetService.toggle$.subscribe((status) => {
             this.WHRetrieval = status;
             this.total = this.cartService.getTotal();
         });
@@ -80,6 +85,12 @@ export class HeaderComponent implements OnInit {
         // Et inversement s'il était à false au toggle -> on le met à true;
         setTimeout(() => this.warehouseRetService.setStatus(!this.WHRetrieval));
 
+    }
+
+    ngOnDestroy(): void {
+        this.warehouseSub.unsubscribe();
+        this.activeCustomerSub.unsubscribe();
+        this.cartSub.unsubscribe();
     }
 }
 

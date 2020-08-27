@@ -20,6 +20,7 @@ export class CartService {
 
     private orderLineList: OrderLine[] = [];
     public orderLineList$: BehaviorSubject<OrderLine[]> = new BehaviorSubject<OrderLine[]>([]); // liste qui apparait sur la page article
+    public orderLineBackup$: BehaviorSubject<OrderLine[]> = new BehaviorSubject<OrderLine[]>([]);
 
     private WHRetrieval: boolean;
     private finalTotal: number;
@@ -69,21 +70,22 @@ export class CartService {
 
 
     // permet d'initialiser la liste d'articles dans articlePage
-    initOrderLinesList(idCustomer : string) {
-        this.orderLineList = [];
+    initOrderLinesList(idCustomer: string) {
         this.http.get<TopArticle[]>(environment.topArticle + idCustomer).subscribe(data => {
-            data.forEach( topArticle => {
-                const orderLine = {
-                    article : topArticle.article,
-                    quantity : 0
-            };
-                this.orderLineList.push(orderLine);
-            })
+                data.forEach(topArticle => {
+                    const orderLine = {
+                        article: topArticle.article,
+                        quantity: 0
+                    };
+                    this.orderLineList.push(orderLine);
+                })
                 this.orderLineList$.next(this.orderLineList);
+                this.orderLineBackup$.next(this.orderLineList);
             },
             error => console.log(error),
             () => {
-                console.log('le top article du customer : ',this.orderLineList);}
+                console.log('le top article du customer : ', this.orderLineList);
+            }
         );
     }
 
@@ -97,22 +99,22 @@ export class CartService {
     // mise à jour des quantités dans la liste des articles : prend toutes les orderlines du panier en paramètre
     setOrderLineList(orderLinesFromCart: OrderLine[]) {
         if (orderLinesFromCart != [])
-        orderLinesFromCart.forEach(orderLine => {
-            let index = 0;
-            let found = false;
-            while (!found && index < this.orderLineList.length) {
-                if (orderLine.article.reference == this.orderLineList[index].article.reference) {
-                    this.orderLineList[index].quantity = orderLine.quantity;
-                    found = true;
+            orderLinesFromCart.forEach(orderLine => {
+                let index = 0;
+                let found = false;
+                while (!found && index < this.orderLineList.length) {
+                    if (orderLine.article.reference == this.orderLineList[index].article.reference) {
+                        this.orderLineList[index].quantity = orderLine.quantity;
+                        found = true;
+                    }
+                    index++;
                 }
-                index++;
-            }
-        });
+            });
         this.orderLineList$.next(this.orderLineList);
     }
 
     // remise à 0 des quantités dans la liste d'article
-    resetQuantityOfOrderLineList(){
+    resetQuantityOfOrderLineList() {
         this.orderLineList.forEach(orderLine => orderLine.quantity = 0);
         this.orderLineList$.next(this.orderLineList);
     }
@@ -155,7 +157,7 @@ export class CartService {
         return this.finalTotal;
     }
 
-    filterOrderLineList(orderLines: OrderLine[]) {
-        this.orderLineList$.next(orderLines);
+    filterOrderLineList(orderLinesFiltered: OrderLine[]) {
+        this.orderLineList$.next(orderLinesFiltered);
     }
 }

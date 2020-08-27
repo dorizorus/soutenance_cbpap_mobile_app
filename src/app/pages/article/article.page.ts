@@ -1,19 +1,19 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ModalController} from '@ionic/angular';
 import {SingleArticlePage} from '../single-article/single-article.page';
 import {OrderLine} from 'src/app/models/OrderLine';
 import {UserService} from 'src/app/services/user.service';
 import {CartService} from '../../services/cart.service';
-import {cloneDeep} from 'lodash';
 import {Order} from "../../models/Order";
 import {Customer} from "../../models/Customer";
+import {Subscription} from "rxjs";
 
 @Component({
     selector: 'app-articles',
     templateUrl: './article.page.html',
     styleUrls: ['./article.page.scss'],
 })
-export class ArticlePage implements OnInit {
+export class ArticlePage implements OnInit, OnDestroy {
 
     possibleQuantities: number[] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
     cart: Order;
@@ -22,30 +22,40 @@ export class ArticlePage implements OnInit {
     totalQuantity: number;
     customer: Customer;
 
+    cartSub: Subscription;
+    orderLineListSub: Subscription;
+    orderLineBackupSub: Subscription;
+    activeCustomerSub: Subscription;
+
+
     constructor(private modalController: ModalController,
                 private cartService: CartService,
                 private userService: UserService) {
     }
 
     ngOnInit(): void {
-        this.cartService.cart$.subscribe(data => {
+       this.cartSub = this.cartService.cart$.subscribe(data => {
             this.cart = data;
             this.totalQuantity = data.orderLines.length;
         });
 
-        this.cartService.orderLineList$.subscribe(
+        this. orderLineListSub = this.cartService.orderLineList$.subscribe(
             (liste) => {
                 this.orderLineList = liste;
             }
         );
 
-        this.userService.activeCustomer$.subscribe(
+        this.activeCustomerSub = this.userService.activeCustomer$.subscribe(
             customer => {
                 console.log("sub to activeCustomer$", customer);
                 this.orderLineList = [];
                 this.customer = customer;
                 this.initTopArticles();
             }
+        );
+
+        this.orderLineBackupSub = this.cartService.orderLineBackup$.subscribe(
+            orderLines => this.orderLineBackup = orderLines
         );
 
         // this.userService.setAllUsersStorage();
@@ -130,6 +140,13 @@ export class ArticlePage implements OnInit {
 
     private initTopArticles() {
         this.cartService.initOrderLinesList(this.customer.id);
+    }
+
+    ngOnDestroy(): void {
+        this.orderLineBackupSub.unsubscribe();
+        this.activeCustomerSub.unsubscribe();
+        this.orderLineListSub.unsubscribe();
+        this.cartSub.unsubscribe();
     }
 }
 

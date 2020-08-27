@@ -1,17 +1,21 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {NavController} from '@ionic/angular';
 import {UserService} from 'src/app/services/user.service';
 import {Customer} from 'src/app/models/Customer';
+import {Subscription} from "rxjs";
 
 @Component({
     selector: 'app-choix-compte',
     templateUrl: './acc-choice.page.html',
     styleUrls: ['./acc-choice.page.scss'],
 })
-export class AccChoicePage implements OnInit {
+export class AccChoicePage implements OnInit, OnDestroy {
 
     accounts: Customer[];
     customer: Customer;
+
+    activeCustomerSub: Subscription;
+    customerAccountsSub: Subscription;
 
     constructor(private navCtrl: NavController,
                 private userService: UserService) {
@@ -19,10 +23,10 @@ export class AccChoicePage implements OnInit {
 
     ngOnInit() {
         // susbscribe à tout changement dans la liste de comptes
-        this.userService.activeCustomer$.subscribe(data => {
+        this.activeCustomerSub = this.userService.activeCustomer$.subscribe(data => {
             this.customer = data;
         });
-        this.userService.customerAccounts$.subscribe(data => {
+        this.customerAccountsSub = this.userService.customerAccounts$.subscribe(data => {
             this.accounts = data;
         });
     }
@@ -40,5 +44,10 @@ export class AccChoicePage implements OnInit {
 
     goToAddAccount() {
         this.navCtrl.navigateForward(['/acc-choice/add-acc']);
+    }
+
+    ngOnDestroy(): void {
+        this.customerAccountsSub.unsubscribe();
+        this.activeCustomerSub.unsubscribe();
     }
 }
