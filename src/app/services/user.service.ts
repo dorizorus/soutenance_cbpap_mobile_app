@@ -30,7 +30,7 @@ export class UserService {
 
     // récupère le compte actif
     getActiveCustomer() {
-        return this.activeCustomer;
+        return this.activeCustomer$.getValue();
     }
 
     // ici on fait simplement transiter un compte (pas forcément actif, utilisé dans settings)
