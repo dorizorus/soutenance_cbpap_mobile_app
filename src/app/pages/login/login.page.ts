@@ -27,37 +27,42 @@ export class LoginPage implements OnInit {
                 private modalController: ModalController,
                 private userService: UserService,
                 private router: Router,
-                private platForm : Platform) {
+                private platForm: Platform) {
 
-                    this.platForm.ready().then(() => {
-                        this.userService.setAllUsersStorage();
-                        this.userService.getStorageLength();
-                    });
-                    // on subscribe a l'evenement lié au routeur, a chaque changement d'url, on lance
-                    // la méthode. Si l'url est similaire a la page de login et si c'est vide, redirige vers la liste
-                    this.router.events.subscribe((e) => {
-                        if (e instanceof NavigationEnd) {
-                            if (e.url == '/login' && this.userService.getSizeStorage() > 0)
-                                this.router.navigateByUrl('/nav/article');
-                        }
-                    });
-                }
-
-    ngOnInit() {}
-     /*
-    redirection() {
-        this.dataStorage.ready().then(() => {
-            if (this.userService.sizeStorage == 1) {
-                console.log("4 c'est pas vide!");
-                this.router.navigateByUrl('/nav/article');
-            } else if (this.userService.sizeStorage> 1) {
-                this.router.navigateByUrl('/acc-choice');
-            } else {
-                console.log("4 c'est vide :'(, storage vaut " + this.userService.sizeStorage);
+        this.platForm.ready().then(() => {
+            this.userService.setAllUsersStorage();
+            this.userService.getStorageLength();
+        });
+        // on subscribe a l'evenement lié au routeur, a chaque changement d'url, on lance
+        // la méthode. Si l'url est similaire a la page de login et si c'est vide, redirige vers la liste
+        this.router.events.subscribe((e) => {
+            if (e instanceof NavigationEnd) {
+                if (e.url == '/login' && this.userService.getSizeStorage() > 0)
+                    this.router.navigateByUrl('/nav/article');
             }
         });
     }
-    */
+
+    ngOnInit() {
+        if (!this.userService.isTokenExpired()) {
+            this.navCtrl.navigateForward(['/nav/article']);
+        }
+    }
+
+    /*
+   redirection() {
+       this.dataStorage.ready().then(() => {
+           if (this.userService.sizeStorage == 1) {
+               console.log("4 c'est pas vide!");
+               this.router.navigateByUrl('/nav/article');
+           } else if (this.userService.sizeStorage> 1) {
+               this.router.navigateByUrl('/acc-choice');
+           } else {
+               console.log("4 c'est vide :'(, storage vaut " + this.userService.sizeStorage);
+           }
+       });
+   }
+   */
 
     async initClient() {
         // on créer le compte
@@ -67,14 +72,14 @@ export class LoginPage implements OnInit {
                 name: "ADRANO PIZZ",
                 address: "9 ZONE COMMERCIALE DU TRIANGLE",
                 city: {
-                    postalCode : 57525,
-                    name : "TALANGE",
+                    postalCode: 57525,
+                    name: "TALANGE",
                 },
                 country: "FRANCE",
                 phoneNumber: "06 01 03 10 07",
                 email: "contact@adranopizz.fr"
             };
-        
+
         // on ne va pas utiliser de set mais un systeme d'ajout/suppresion de compte. Ici, il est ajouté
         this.userService.addCustomer(compte);
     }
@@ -100,20 +105,26 @@ export class LoginPage implements OnInit {
     }
 
     async logIn() {
-        if(this.login == '' || this.login == null)
-            if(this.password == '' || this.password == null)
+        if (this.login == '' || this.login == null)
+            if (this.password == '' || this.password == null)
                 this.error = 'Veuillez entrer un identifiant & mot de passe';
             else
                 this.error = 'Veuillez entrer un identifiant';
-        else if(this.password == '' || this.password == null)
+        else if (this.password == '' || this.password == null)
             this.error = 'Veuillez entrer un mot de passe';
         else {
+            // if(this.userService.isTokenExpired()) {
             await this.userService.getUserValidity(this.login, this.password).then(() => {
                 this.navCtrl.navigateForward(['/nav/article']);
             }).catch((data) => {
                     this.error = data;
                 }
             );
+            // } else{
+            //         console.log('token : ' + this.userService.getToken())
+            //         console.log('token expiré ? ' + this.userService.isTokenExpired())
+            //         this.navCtrl.navigateForward(['/nav/article']);
         }
     }
 }
+

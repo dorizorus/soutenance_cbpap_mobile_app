@@ -5,6 +5,10 @@ import {Storage} from "@ionic/storage";
 import {Customer} from "../models/Customer";
 import {environment} from "../../environments/environment";
 
+import {JwtHelperService} from '@auth0/angular-jwt';
+
+
+
 @Injectable({
     providedIn: 'root'
 })
@@ -17,9 +21,11 @@ export class UserService {
     public activeCustomer$: BehaviorSubject<Customer> = new BehaviorSubject<Customer>(null);
     private customerAccounts: Customer[] = [];
     public customerAccounts$: BehaviorSubject<Customer[]> = new BehaviorSubject<Customer[]>([]);
+    public jwtHelper = new JwtHelperService();
 
 
     constructor(private http: HttpClient, private dataStorage: Storage) {
+
     }
 
 
@@ -30,8 +36,8 @@ export class UserService {
 
 
     // permet de définir quel est le compte actif puis l'envoie au subscribe
-    setActiveCustomer(customer : Customer) {
-        this.dataStorage.get(customer.id+'token').then(token => this.token = token);
+    setActiveCustomer(customer: Customer) {
+        this.dataStorage.get(customer.id + 'token').then(token => this.token = token);
         this.dataStorage.get(customer.id).then(customer => {
             this.activeCustomer = customer;
             this.activeCustomer$.next(this.activeCustomer);
@@ -68,20 +74,19 @@ export class UserService {
                 {responseType: 'text'}).subscribe(
                 (token) => {
                     this.token = token;
-                    this.dataStorage.set(id+'token', token);
-                        this.http.get<Customer>(environment.customer + '/' + id)
-                            .subscribe(responseCustomer => {
-                                this.addCustomer(responseCustomer);
-                                this.setActiveCustomer(responseCustomer);
-                                this.setUserStorage(responseCustomer);
-                                resolve(responseCustomer);
-                                console.log('customer authentifié : ',responseCustomer);
-                            });
+                    this.dataStorage.set(id + 'token', token);
+                    this.http.get<Customer>(environment.customer + '/' + id)
+                        .subscribe(responseCustomer => {
+                            this.addCustomer(responseCustomer);
+                            this.setActiveCustomer(responseCustomer);
+                            this.setUserStorage(responseCustomer);
+                            resolve(responseCustomer);
+                            console.log('customer authentifié : ', responseCustomer);
+                        });
                 },
                 error => {
                     reject('Mauvais identifiant ou mot de passe');
                 }
-
             );
         });
     }
@@ -126,9 +131,9 @@ export class UserService {
         });
     }
 
-        getSizeStorage() {
-            return this.sizeStorage;
-        }
+    getSizeStorage() {
+        return this.sizeStorage;
+    }
 
     /**
      * méthodes pour le del-acc
@@ -150,4 +155,14 @@ export class UserService {
         this.customerAccounts.splice(i, 1);
         this.customerAccounts$.next(this.customerAccounts);
     }
+
+    isTokenExpired(){
+        if(this.getToken()!=null){
+            return this.jwtHelper.isTokenExpired(this.getToken())?true:false;
+        } else {
+            return true;
+        }
+    }
+
+
 }
